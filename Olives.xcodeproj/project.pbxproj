@@ -164,10 +164,10 @@
 		15DCF56A1CF3593800013F19 = {
 			isa = PBXGroup;
 			children = (
-				15DCF5751CF3593800013F19 /* SLideViewDemo */,
+				15DCF5751CF3593800013F19 /* Olives */,
 				15E9D6FE1D06BD51006D5DD1 /* CoreData.framework */,
 				15DCF5A71CF385E800013F19 /* QuartzCore.framework */,
-				15DCF5921CF3593800013F19 /* SLideViewDemoTests */,
+				15DCF5921CF3593800013F19 /* OlivesTests */,
 				15DCF5741CF3593800013F19 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -181,7 +181,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		15DCF5751CF3593800013F19 /* SLideViewDemo */ = {
+		15DCF5751CF3593800013F19 /* Olives */ = {
 			isa = PBXGroup;
 			children = (
 				156734D91D1044F600392ADA /* workingWithAPI */,
@@ -198,7 +198,7 @@
 				15DCF5821CF3593800013F19 /* Olives.xcdatamodeld */,
 				15DCF5761CF3593800013F19 /* Supporting Files */,
 			);
-			path = SLideViewDemo;
+			path = Olives;
 			sourceTree = "<group>";
 		};
 		15DCF5761CF3593800013F19 /* Supporting Files */ = {
@@ -210,13 +210,13 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		15DCF5921CF3593800013F19 /* SLideViewDemoTests */ = {
+		15DCF5921CF3593800013F19 /* OlivesTests */ = {
 			isa = PBXGroup;
 			children = (
 				15DCF5931CF3593800013F19 /* SLideViewDemoTests.m */,
 				15DCF5951CF3593800013F19 /* Info.plist */,
 			);
-			path = SLideViewDemoTests;
+			path = OlivesTests;
 			sourceTree = "<group>";
 		};
 		15DCF5AC1CF4A52200013F19 /* image */ = {
@@ -553,9 +553,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = SLideViewDemo/Info.plist;
+				INFOPLIST_FILE = Olives/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.SelfLearning.SLideViewDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.SelfLearning.Olives;
 				PRODUCT_NAME = Olives;
 			};
 			name = Debug;
@@ -564,9 +564,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = SLideViewDemo/Info.plist;
+				INFOPLIST_FILE = Olives/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.SelfLearning.SLideViewDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.SelfLearning.Olives;
 				PRODUCT_NAME = Olives;
 			};
 			name = Release;
