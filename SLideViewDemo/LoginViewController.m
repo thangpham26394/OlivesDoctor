@@ -127,12 +127,9 @@
 //        [self setLoginStatusToBeNO];
 
     }
-    
 
 
 }
-
-
 
 
 -(void)saveDoctorInfoToCoreData:(NSDictionary*) jsonData
