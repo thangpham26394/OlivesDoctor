@@ -9,6 +9,7 @@
 #import "OLTableViewController.h"
 #import <QuartzCore/QuartzCore.h>
 #import "OLTableViewCell.h"
+#import "SWRevealViewController.h"
 @interface OLTableViewController ()
 
 @end
@@ -21,7 +22,23 @@
     UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"blurbackgroundIOS.jpg"]];
 
     self.tableView.backgroundView = imageView;
+    SWRevealViewController *revealController = [self revealViewController];
+    [revealController panGestureRecognizer];
+    [revealController tapGestureRecognizer];
 
+}
+
+-(void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+
+    [self.revealViewController.frontViewController.view setUserInteractionEnabled:NO];
+    [self.revealViewController.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
+}
+
+-(void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+
+    [self.revealViewController.frontViewController.view setUserInteractionEnabled:YES];
 }
 
 - (void)didReceiveMemoryWarning {

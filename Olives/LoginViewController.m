@@ -115,7 +115,7 @@
     dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
 
 
-    if (!self.canLogin ) {
+    if (self.canLogin ) {
         //store doctor's data to Coredata
         [self saveDoctorInfoToCoreData:self.responseJSONData];
 
@@ -165,18 +165,18 @@
     }
 
     [newDoctor setValue: [NSString stringWithFormat:@"%@", status] forKey:@"status"];
-    [newDoctor setValue:photoURL forKey:@"photoURL"];
-    [newDoctor setValue:doctorID forKey:@"doctorID"];
-    [newDoctor setValue:@"lastName" forKey:@"lastName"];
-    [newDoctor setValue:@"firstName" forKey:@"firstName"];
-    [newDoctor setValue:[NSString stringWithFormat:@"%@", dob]  forKey:@"dob"];
+    [newDoctor setValue:@"photoURL" forKey:@"photoURL"];
+    [newDoctor setValue:@"doctorID" forKey:@"doctorID"];
+    [newDoctor setValue:lastName forKey:@"lastName"];
+    [newDoctor setValue:firstName forKey:@"firstName"];
+    [newDoctor setValue:@"Birthday" forKey:@"dob"];
     if ([gender  isEqual: 0]) {
         [newDoctor setValue:@"Female" forKey:@"gender"];
     }else{
         [newDoctor setValue:@"Male" forKey:@"gender"];
     }
-    [newDoctor setValue:[NSString stringWithFormat:@"%@", phone]  forKey:@"phone"];
-    [newDoctor setValue:[NSString stringWithFormat:@"%@", money]  forKey:@"money"];
+    [newDoctor setValue:@"phone" forKey:@"phone"];
+    [newDoctor setValue:@"money" forKey:@"money"];
     [newDoctor setValue:@"address" forKey:@"address"];
 
     NSError *error = nil;
