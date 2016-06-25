@@ -39,7 +39,7 @@
     //set up layout for calendar subview
     calendar.translatesAutoresizingMaskIntoConstraints = NO;
     [self.calendarView setBackgroundColor:[UIColor clearColor]];
-    UIImage *image = [UIImage imageNamed: @"backgroundIOS.jpeg"];
+    UIImage *image = [UIImage imageNamed: @"screen2.jpg"];
     [self.backgroundImageView setImage:image];
     [self.calendarView addSubview:calendar];
     [self.calendarView  addConstraint:[NSLayoutConstraint constraintWithItem:calendar

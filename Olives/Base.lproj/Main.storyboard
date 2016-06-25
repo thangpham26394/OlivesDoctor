@@ -793,6 +793,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="homescreen2.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="XKs-HC-DNk">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                            </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="avatar.png" translatesAutoresizingMaskIntoConstraints="NO" id="4tc-bo-fAc">
                                 <rect key="frame" x="200" y="114" width="200" height="200"/>
                                 <constraints>
@@ -819,6 +822,10 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="GC7-4c-pGY" firstAttribute="top" secondItem="4tc-bo-fAc" secondAttribute="bottom" constant="60" id="0SL-E6-jI0"/>
+                            <constraint firstItem="XKs-HC-DNk" firstAttribute="top" secondItem="TWq-8r-Gxi" secondAttribute="top" id="60b-7q-T9R"/>
+                            <constraint firstAttribute="bottom" secondItem="XKs-HC-DNk" secondAttribute="bottom" id="JA6-IE-wdd"/>
+                            <constraint firstAttribute="trailing" secondItem="XKs-HC-DNk" secondAttribute="trailing" id="OOq-d2-i9J"/>
+                            <constraint firstItem="XKs-HC-DNk" firstAttribute="leading" secondItem="TWq-8r-Gxi" secondAttribute="leading" id="ec2-FF-KvR"/>
                             <constraint firstItem="4tc-bo-fAc" firstAttribute="top" secondItem="u0N-oy-uET" secondAttribute="bottom" constant="50" id="oiA-En-t1Z"/>
                             <constraint firstItem="GC7-4c-pGY" firstAttribute="centerX" secondItem="TWq-8r-Gxi" secondAttribute="centerX" id="ueJ-7Y-ilZ"/>
                             <constraint firstItem="4tc-bo-fAc" firstAttribute="centerX" secondItem="TWq-8r-Gxi" secondAttribute="centerX" id="uih-Ut-P0H"/>
@@ -862,6 +869,7 @@
     </scenes>
     <resources>
         <image name="avatar.png" width="300" height="300"/>
+        <image name="homescreen2.jpg" width="744" height="1392"/>
         <image name="menu.png" width="28" height="20"/>
         <image name="strawhat.png" width="204" height="204"/>
     </resources>

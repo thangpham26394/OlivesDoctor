@@ -17,7 +17,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    [[UINavigationBar appearance] setBackgroundImage:[UIImage imageNamed:@"imagesbar.jpeg"] forBarMetrics:UIBarMetricsDefault];
+    //[[UINavigationBar appearance] setBackgroundImage:[UIImage imageNamed:@"imagesbar.jpeg"] forBarMetrics:UIBarMetricsDefault];
 
     UIStoryboard *storyboard = self.window.rootViewController.storyboard;
     UIViewController *rootViewController ;

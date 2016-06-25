@@ -23,7 +23,7 @@
     self.patientArray = [NSArray arrayWithObjects: @"Monkey.D Luffy", @"Tony Tony Chopper",@"Tony Tony Chopper Chopper",nil];
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     [self.tableView setShowsVerticalScrollIndicator:NO];
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"blurbackground.jpg"]];
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"homescreen2.jpg"]];
 
     self.tableView.backgroundView = imageView;
     SWRevealViewController *revealViewController = self.revealViewController;

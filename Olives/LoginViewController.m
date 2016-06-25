@@ -148,13 +148,9 @@
    // NSString * address = [doctorInfo objectForKey:@"Address"];
 
     NSManagedObjectContext *context = [self managedObjectContext];
-    //delete all the previous data
+    //Check if there is already a doctor account in coredata
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
     NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
-
-//    for (int index =0; index < doctorObject.count; index ++) {
-//        [context deleteObject:[doctorObject objectAtIndex:index]];
-//    }
 
     // Create a new managed object
     NSManagedObject *newDoctor;

@@ -48,6 +48,19 @@
 		15E9D7041D07FE77006D5DD1 /* Sign in.png in Resources */ = {isa = PBXBuildFile; fileRef = 15E9D7031D07FE77006D5DD1 /* Sign in.png */; };
 		15E9D7071D0812DD006D5DD1 /* ForgotPasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E9D7061D0812DD006D5DD1 /* ForgotPasswordViewController.m */; };
 		15F01D3E1CF81DC700EAAF9B /* PatientTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 15F01D3D1CF81DC700EAAF9B /* PatientTableViewCell.m */; };
+		15F0A6351D1E72EB00A32848 /* homescreen.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 15F0A6341D1E72EB00A32848 /* homescreen.jpg */; };
+		15F0A6371D1E751F00A32848 /* homescreen1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 15F0A6361D1E751F00A32848 /* homescreen1.jpg */; };
+		15F0A63A1D1E75F600A32848 /* menuscreen.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 15F0A6381D1E75F600A32848 /* menuscreen.jpg */; };
+		15F0A63B1D1E75F600A32848 /* homescreen2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 15F0A6391D1E75F600A32848 /* homescreen2.jpg */; };
+		15F0A63E1D1E77E100A32848 /* screen1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 15F0A63C1D1E77E100A32848 /* screen1.jpg */; };
+		15F0A63F1D1E77E100A32848 /* patientlist.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 15F0A63D1D1E77E100A32848 /* patientlist.jpg */; };
+		15F0A6411D1E792600A32848 /* screen2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 15F0A6401D1E792600A32848 /* screen2.jpg */; };
+		15F0A6481D1E7B2900A32848 /* logouticon.png in Resources */ = {isa = PBXBuildFile; fileRef = 15F0A6421D1E7B2900A32848 /* logouticon.png */; };
+		15F0A6491D1E7B2900A32848 /* settingicon.png in Resources */ = {isa = PBXBuildFile; fileRef = 15F0A6431D1E7B2900A32848 /* settingicon.png */; };
+		15F0A64A1D1E7B2900A32848 /* loanicon.png in Resources */ = {isa = PBXBuildFile; fileRef = 15F0A6441D1E7B2900A32848 /* loanicon.png */; };
+		15F0A64B1D1E7B2900A32848 /* appointmenticon.png in Resources */ = {isa = PBXBuildFile; fileRef = 15F0A6451D1E7B2900A32848 /* appointmenticon.png */; };
+		15F0A64C1D1E7B2900A32848 /* patienticon.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 15F0A6461D1E7B2900A32848 /* patienticon.jpg */; };
+		15F0A64D1D1E7B2900A32848 /* homeicon.png in Resources */ = {isa = PBXBuildFile; fileRef = 15F0A6471D1E7B2900A32848 /* homeicon.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -123,6 +136,19 @@
 		15E9D7061D0812DD006D5DD1 /* ForgotPasswordViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ForgotPasswordViewController.m; sourceTree = "<group>"; };
 		15F01D3C1CF81DC700EAAF9B /* PatientTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PatientTableViewCell.h; sourceTree = "<group>"; };
 		15F01D3D1CF81DC700EAAF9B /* PatientTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PatientTableViewCell.m; sourceTree = "<group>"; };
+		15F0A6341D1E72EB00A32848 /* homescreen.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = homescreen.jpg; sourceTree = "<group>"; };
+		15F0A6361D1E751F00A32848 /* homescreen1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = homescreen1.jpg; sourceTree = "<group>"; };
+		15F0A6381D1E75F600A32848 /* menuscreen.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = menuscreen.jpg; sourceTree = "<group>"; };
+		15F0A6391D1E75F600A32848 /* homescreen2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = homescreen2.jpg; sourceTree = "<group>"; };
+		15F0A63C1D1E77E100A32848 /* screen1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = screen1.jpg; sourceTree = "<group>"; };
+		15F0A63D1D1E77E100A32848 /* patientlist.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = patientlist.jpg; sourceTree = "<group>"; };
+		15F0A6401D1E792600A32848 /* screen2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = screen2.jpg; sourceTree = "<group>"; };
+		15F0A6421D1E7B2900A32848 /* logouticon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logouticon.png; sourceTree = "<group>"; };
+		15F0A6431D1E7B2900A32848 /* settingicon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settingicon.png; sourceTree = "<group>"; };
+		15F0A6441D1E7B2900A32848 /* loanicon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = loanicon.png; sourceTree = "<group>"; };
+		15F0A6451D1E7B2900A32848 /* appointmenticon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = appointmenticon.png; sourceTree = "<group>"; };
+		15F0A6461D1E7B2900A32848 /* patienticon.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = patienticon.jpg; sourceTree = "<group>"; };
+		15F0A6471D1E7B2900A32848 /* homeicon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = homeicon.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -222,6 +248,19 @@
 		15DCF5AC1CF4A52200013F19 /* image */ = {
 			isa = PBXGroup;
 			children = (
+				15F0A6421D1E7B2900A32848 /* logouticon.png */,
+				15F0A6431D1E7B2900A32848 /* settingicon.png */,
+				15F0A6441D1E7B2900A32848 /* loanicon.png */,
+				15F0A6451D1E7B2900A32848 /* appointmenticon.png */,
+				15F0A6461D1E7B2900A32848 /* patienticon.jpg */,
+				15F0A6471D1E7B2900A32848 /* homeicon.png */,
+				15F0A6401D1E792600A32848 /* screen2.jpg */,
+				15F0A63C1D1E77E100A32848 /* screen1.jpg */,
+				15F0A63D1D1E77E100A32848 /* patientlist.jpg */,
+				15F0A6381D1E75F600A32848 /* menuscreen.jpg */,
+				15F0A6391D1E75F600A32848 /* homescreen2.jpg */,
+				15F0A6361D1E751F00A32848 /* homescreen1.jpg */,
+				15F0A6341D1E72EB00A32848 /* homescreen.jpg */,
 				15E75A481CF767F900A985E7 /* barimage.jpeg */,
 				15E9D7031D07FE77006D5DD1 /* Sign in.png */,
 				15E75A461CF764BF00A985E7 /* avatar.png */,
@@ -373,25 +412,38 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				15F0A64B1D1E7B2900A32848 /* appointmenticon.png in Resources */,
+				15F0A63A1D1E75F600A32848 /* menuscreen.jpg in Resources */,
 				15E9D7041D07FE77006D5DD1 /* Sign in.png in Resources */,
 				15E75A471CF764BF00A985E7 /* avatar.png in Resources */,
 				1502F7B71CF5F52500663B59 /* menu@2x.png in Resources */,
 				15DCF5B31CF4A65000013F19 /* robin.jpeg in Resources */,
 				15DCF5B71CF4A65000013F19 /* chopper.jpeg in Resources */,
 				15DCF5B51CF4A65000013F19 /* zoro.jpeg in Resources */,
+				15F0A64C1D1E7B2900A32848 /* patienticon.jpg in Resources */,
 				15DCF5891CF3593800013F19 /* LaunchScreen.storyboard in Resources */,
+				15F0A6411D1E792600A32848 /* screen2.jpg in Resources */,
 				15E75A341CF73C2C00A985E7 /* blurbackgroundIOS.jpg in Resources */,
+				15F0A6481D1E7B2900A32848 /* logouticon.png in Resources */,
 				15E75A351CF73C2C00A985E7 /* blurbackground.jpg in Resources */,
 				15E75A311CF7345C00A985E7 /* backgroundIOS.jpeg in Resources */,
+				15F0A6351D1E72EB00A32848 /* homescreen.jpg in Resources */,
 				15E75A431CF7633600A985E7 /* homeimage.JPG in Resources */,
+				15F0A64D1D1E7B2900A32848 /* homeicon.png in Resources */,
 				15DCF5861CF3593800013F19 /* Assets.xcassets in Resources */,
 				1502F7BB1CF60FC200663B59 /* imagesbar.jpeg in Resources */,
 				15DCF5B81CF4A65000013F19 /* strawhat.png in Resources */,
 				1502F7B61CF5F52500663B59 /* menu.png in Resources */,
 				15DCF5B61CF4A65000013F19 /* nami.jpeg in Resources */,
 				15DCF5B41CF4A65000013F19 /* sanji.jpeg in Resources */,
+				15F0A6491D1E7B2900A32848 /* settingicon.png in Resources */,
+				15F0A63E1D1E77E100A32848 /* screen1.jpg in Resources */,
+				15F0A63F1D1E77E100A32848 /* patientlist.jpg in Resources */,
 				156735411D1C408700392ADA /* Main.storyboard in Resources */,
+				15F0A63B1D1E75F600A32848 /* homescreen2.jpg in Resources */,
 				15E75A491CF767F900A985E7 /* barimage.jpeg in Resources */,
+				15F0A64A1D1E7B2900A32848 /* loanicon.png in Resources */,
+				15F0A6371D1E751F00A32848 /* homescreen1.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
