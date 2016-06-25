@@ -23,6 +23,7 @@
     self.patientArray = [NSArray arrayWithObjects: @"Monkey.D Luffy", @"Tony Tony Chopper",@"Tony Tony Chopper Chopper",nil];
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     [self.tableView setShowsVerticalScrollIndicator:NO];
+    
     UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"homescreen2.jpg"]];
 
     self.tableView.backgroundView = imageView;
@@ -34,6 +35,8 @@
         [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
     }
 }
+
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -60,7 +63,10 @@
     return cell;
 }
 
-
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    // Do some stuff when the row is selected
+    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+}
 /*
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {

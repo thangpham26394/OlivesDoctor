@@ -28,6 +28,7 @@
 		15DCF5B61CF4A65000013F19 /* nami.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 15DCF5B01CF4A65000013F19 /* nami.jpeg */; };
 		15DCF5B71CF4A65000013F19 /* chopper.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 15DCF5B11CF4A65000013F19 /* chopper.jpeg */; };
 		15DCF5B81CF4A65000013F19 /* strawhat.png in Resources */ = {isa = PBXBuildFile; fileRef = 15DCF5B21CF4A65000013F19 /* strawhat.png */; };
+		15E63CFA1D1E91C700706875 /* PatientDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E63CF91D1E91C700706875 /* PatientDetailsViewController.m */; };
 		15E75A311CF7345C00A985E7 /* backgroundIOS.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 15E75A301CF7345C00A985E7 /* backgroundIOS.jpeg */; };
 		15E75A341CF73C2C00A985E7 /* blurbackgroundIOS.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 15E75A321CF73C2C00A985E7 /* blurbackgroundIOS.jpg */; };
 		15E75A351CF73C2C00A985E7 /* blurbackground.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 15E75A331CF73C2C00A985E7 /* blurbackground.jpg */; };
@@ -104,6 +105,8 @@
 		15DCF5B01CF4A65000013F19 /* nami.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = nami.jpeg; sourceTree = "<group>"; };
 		15DCF5B11CF4A65000013F19 /* chopper.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = chopper.jpeg; sourceTree = "<group>"; };
 		15DCF5B21CF4A65000013F19 /* strawhat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = strawhat.png; sourceTree = "<group>"; };
+		15E63CF81D1E91C700706875 /* PatientDetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PatientDetailsViewController.h; sourceTree = "<group>"; };
+		15E63CF91D1E91C700706875 /* PatientDetailsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PatientDetailsViewController.m; sourceTree = "<group>"; };
 		15E75A301CF7345C00A985E7 /* backgroundIOS.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = backgroundIOS.jpeg; sourceTree = "<group>"; };
 		15E75A321CF73C2C00A985E7 /* blurbackgroundIOS.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = blurbackgroundIOS.jpg; sourceTree = "<group>"; };
 		15E75A331CF73C2C00A985E7 /* blurbackground.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = blurbackground.jpg; sourceTree = "<group>"; };
@@ -328,6 +331,8 @@
 				15E9D7061D0812DD006D5DD1 /* ForgotPasswordViewController.m */,
 				1567353C1D19522A00392ADA /* HomeViewController.h */,
 				1567353D1D19522A00392ADA /* HomeViewController.m */,
+				15E63CF81D1E91C700706875 /* PatientDetailsViewController.h */,
+				15E63CF91D1E91C700706875 /* PatientDetailsViewController.m */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -480,6 +485,7 @@
 				15DCF5841CF3593800013F19 /* Olives.xcdatamodeld in Sources */,
 				15E9D6FA1D06B3D6006D5DD1 /* UIView+convenience.m in Sources */,
 				15E75A381CF756EB00A985E7 /* PatientsTableViewController.m in Sources */,
+				15E63CFA1D1E91C700706875 /* PatientDetailsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
