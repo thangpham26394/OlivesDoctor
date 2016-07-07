@@ -42,7 +42,7 @@
     [comps setDay:1];
     NSDate *newDate = [gregorian dateFromComponents:comps];
 
-    return (int)[gregorian ordinalityOfUnit:NSCalendarUnitWeekday inUnit:NSCalendarUnitWeekday forDate:newDate];
+    return (int)[gregorian ordinalityOfUnit:NSCalendarUnitWeekday inUnit:NSCalendarUnitWeekOfMonth forDate:newDate];
 }
 
 -(NSDate *)offsetMonth:(int)numMonths {
