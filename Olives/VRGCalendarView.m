@@ -435,6 +435,7 @@
     }
 
     for (int i=0; i<numBlocks; i++) {
+        UIColor *currentDateColor;
         int targetDate = i;
         int targetColumn = i%7;
         int targetRow = i/7;
@@ -448,17 +449,20 @@
 
             CGContextSetFillColorWithColor(context,
                                            [UIColor colorWithHexString:hex].CGColor);
+            currentDateColor = [UIColor colorWithHexString:hex];
         } else if (i>=(firstWeekDay+currentMonthNumDays)) { //next month
             targetDate = (i+1) - (firstWeekDay+currentMonthNumDays);
             NSString *hex = (isSelectedDateNextMonth) ? @"0x383838" : @"aaaaaa";
             CGContextSetFillColorWithColor(context,
                                            [UIColor colorWithHexString:hex].CGColor);
+            currentDateColor = [UIColor colorWithHexString:hex];
         } else { //current month
             // isCurrentMonth = YES;
             targetDate = (i-firstWeekDay)+1;
             NSString *hex = (isSelectedDatePreviousMonth || isSelectedDateNextMonth) ? @"0xaaaaaa" : @"0x383838";
             CGContextSetFillColorWithColor(context,
                                            [UIColor colorWithHexString:hex].CGColor);
+            currentDateColor = [UIColor colorWithHexString:hex];
         }
 
         NSString *date = [NSString stringWithFormat:@"%i",targetDate];
@@ -483,7 +487,8 @@
                                            [UIColor whiteColor].CGColor);
         }
 
-        //        [date drawInRect:CGRectMake(targetX+2, targetY+10, self.kVRGCalendarViewDayWidth, self.kVRGCalendarViewDayHeight) withFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:17] lineBreakMode:UILineBreakModeClip alignment:UITextAlignmentCenter];
+
+
         UIFont *font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:17];
         NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
         // Set line break mode
@@ -492,7 +497,8 @@
         paragraphStyle.alignment = NSTextAlignmentCenter;
         //Set font
         NSDictionary *attributes = @{ NSFontAttributeName: font,
-                                      NSParagraphStyleAttributeName: paragraphStyle };
+                                      NSParagraphStyleAttributeName: paragraphStyle,
+                                      NSForegroundColorAttributeName: currentDateColor};
 
         [date drawInRect:CGRectMake(targetX+2, targetY+10, self.kVRGCalendarViewDayWidth, self.kVRGCalendarViewDayHeight)  withAttributes:attributes];
     }

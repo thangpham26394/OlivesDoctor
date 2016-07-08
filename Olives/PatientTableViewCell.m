@@ -12,8 +12,8 @@
 
 - (void)awakeFromNib {
     // Initialization code
-    self.contentView.backgroundColor = [UIColor clearColor];
-    [self setBackgroundColor:[UIColor clearColor]];
+//    self.contentView.backgroundColor = [UIColor clearColor];
+//    [self setBackgroundColor:[UIColor clearColor]];
     [self.backgroundCardView.layer setCornerRadius:10.0f];
     [self.backgroundCardView.layer setMasksToBounds:NO];
     [self.backgroundCardView setBackgroundColor:[UIColor colorWithWhite:1 alpha:0.7]];

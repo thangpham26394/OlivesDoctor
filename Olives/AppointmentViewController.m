@@ -8,13 +8,14 @@
 
 #import "AppointmentViewController.h"
 #import "SWRevealViewController.h"
+#import "AppointmentListViewController.h"
 
 @interface AppointmentViewController ()
 @property (weak, nonatomic) IBOutlet UIView *calendarView;
 @property (weak, nonatomic) IBOutlet UIImageView *backgroundImageView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *calendarViewToBottomDistance;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *menuButton;
-
+@property(strong,nonatomic) NSString * chosenDate;
 @end
 
 @implementation AppointmentViewController
@@ -39,40 +40,10 @@
     //set up layout for calendar subview
     calendar.translatesAutoresizingMaskIntoConstraints = NO;
     [self.calendarView setBackgroundColor:[UIColor clearColor]];
-    UIImage *image = [UIImage imageNamed: @"screen2.jpg"];
+    UIImage *image = [UIImage imageNamed: @"blurbackgroundIOS.jpg"];
     [self.backgroundImageView setImage:image];
     [self.calendarView addSubview:calendar];
-    [self.calendarView  addConstraint:[NSLayoutConstraint constraintWithItem:calendar
-                                                                   attribute:NSLayoutAttributeTop
-                                                                   relatedBy:NSLayoutRelationEqual
-                                                                      toItem:self.calendarView
-                                                                   attribute:NSLayoutAttributeTop
-                                                                  multiplier:1.0
-                                                                    constant:0.0]];
 
-    [self.calendarView  addConstraint:[NSLayoutConstraint constraintWithItem:calendar
-                                                                   attribute:NSLayoutAttributeLeading
-                                                                   relatedBy:NSLayoutRelationEqual
-                                                                      toItem:self.calendarView
-                                                                   attribute:NSLayoutAttributeLeading
-                                                                  multiplier:1.0
-                                                                    constant:0.0]];
-
-    [self.calendarView  addConstraint:[NSLayoutConstraint constraintWithItem:calendar
-                                                                   attribute:NSLayoutAttributeBottom
-                                                                   relatedBy:NSLayoutRelationEqual
-                                                                      toItem:self.calendarView
-                                                                   attribute:NSLayoutAttributeBottom
-                                                                  multiplier:1.0
-                                                                    constant:0.0]];
-
-    [self.calendarView  addConstraint:[NSLayoutConstraint constraintWithItem:calendar
-                                                                   attribute:NSLayoutAttributeTrailing
-                                                                   relatedBy:NSLayoutRelationEqual
-                                                                      toItem:self.calendarView
-                                                                   attribute:NSLayoutAttributeTrailing
-                                                                  multiplier:1.0
-                                                                    constant:0.0]];
     [self.calendarView  layoutIfNeeded];
 }
 
@@ -101,7 +72,11 @@
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
     [dateFormatter setDateFormat:@"dd MMMM yyyy"];
+
     NSLog(@"Selected date = %@",[dateFormatter stringFromDate:date]);
+    self.chosenDate =[dateFormatter stringFromDate:date];
+
+    [self performSegueWithIdentifier:@"showAppointment" sender:self];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -109,14 +84,23 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+    // Make sure your segue name in storyboard is the same as this line
+    if ([[segue identifier] isEqualToString:@"showAppointment"])
+    {
+        // Get reference to the destination view controller
+        UINavigationController *nav = [segue destinationViewController];
+        AppointmentListViewController *appointmentListViewController = (AppointmentListViewController*)nav.topViewController;
+        // Pass any objects to the view controller here, like...
+        appointmentListViewController.chosenDateString = self.chosenDate;
+    }
 }
-*/
+
 
 @end
