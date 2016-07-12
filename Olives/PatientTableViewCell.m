@@ -14,11 +14,9 @@
     // Initialization code
 //    self.contentView.backgroundColor = [UIColor clearColor];
 //    [self setBackgroundColor:[UIColor clearColor]];
-    [self.backgroundCardView.layer setCornerRadius:10.0f];
+    [self.backgroundCardView.layer setCornerRadius:5.0f];
     [self.backgroundCardView.layer setMasksToBounds:NO];
     [self.backgroundCardView setBackgroundColor:[UIColor colorWithWhite:1 alpha:0.7]];
-    self.backgroundCardView.layer.borderColor = [[UIColor colorWithWhite:1 alpha:0.1] CGColor];
-    self.backgroundCardView.layer.borderWidth = 5.0f;
 
     self.avatar.layer.cornerRadius = self.avatar.frame.size.width / 2;
     self.avatar.clipsToBounds = YES;
@@ -31,7 +29,7 @@
    // set up for selected cell
     self.selectionStyle = UITableViewCellSelectionStyleDefault;
     UIView *bgColorView = [[UIView alloc] init];
-    [bgColorView.layer setCornerRadius:10.0f];
+    [bgColorView.layer setCornerRadius:5.0f];
     [bgColorView.layer setMasksToBounds:NO];
     [bgColorView setBackgroundColor:[UIColor colorWithRed:143/255.0 green:225/255.0 blue: 247/255.0 alpha:0.5f]];
 

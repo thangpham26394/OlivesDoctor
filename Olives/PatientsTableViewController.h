@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface PatientsTableViewController : UITableViewController
-
+@property (strong,nonatomic) NSString *isAppointmentViewDetailPatient;
 @end

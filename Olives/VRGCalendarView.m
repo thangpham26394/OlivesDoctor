@@ -323,7 +323,13 @@
                                    [UIColor grayColor].CGColor);
     for (int i =0; i<[weekdays count]; i++) {
         NSString *weekdayValue = (NSString *)[weekdays objectAtIndex:i];
-        UIFont *font = [UIFont fontWithName:@"HelveticaNeue" size:12];
+        UIFont *font;
+        if ( [[UIScreen mainScreen] bounds].size.height == 568) {
+            font = [UIFont fontWithName:@"HelveticaNeue" size:10];
+        }else{
+            font = [UIFont fontWithName:@"HelveticaNeue" size:12];
+        }
+
 
         NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
         // Set line break mode
@@ -571,7 +577,11 @@
 
 #pragma mark - Init
 -(id)init {
-    self.kVRGCalendarViewTopBarHeight = 70;
+    if ( [[UIScreen mainScreen] bounds].size.height == 568) {
+        self.kVRGCalendarViewTopBarHeight = 52;
+    }else{
+        self.kVRGCalendarViewTopBarHeight = 60;
+    }
     self.kVRGCalendarViewWidth =  [[UIScreen mainScreen] bounds].size.width- 20;
     self.kVRGCalendarViewDayWidth = (NSInteger) floor((self.kVRGCalendarViewWidth -8)/7);
     self.kVRGCalendarViewDayHeight = self.kVRGCalendarViewDayWidth;
@@ -581,10 +591,15 @@
         self.clipsToBounds=YES;
 
         isAnimating=NO;
-        self.labelCurrentMonth = [[UILabel alloc] initWithFrame:CGRectMake(34, 0,self.kVRGCalendarViewWidth-68, 40)];
+        if ( [[UIScreen mainScreen] bounds].size.height == 568) {
+            self.labelCurrentMonth = [[UILabel alloc] initWithFrame:CGRectMake(34, 0,self.kVRGCalendarViewWidth-68, 30)];
+        }
+        else{
+            self.labelCurrentMonth = [[UILabel alloc] initWithFrame:CGRectMake(34, 0,self.kVRGCalendarViewWidth-68, 40)];
+        }
         [self addSubview:labelCurrentMonth];
         labelCurrentMonth.backgroundColor=[UIColor whiteColor];
-        labelCurrentMonth.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:22];
+        labelCurrentMonth.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:20];
         labelCurrentMonth.textColor = [UIColor blackColor];
         labelCurrentMonth.textAlignment = NSTextAlignmentCenter;
 

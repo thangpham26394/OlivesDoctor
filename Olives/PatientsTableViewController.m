@@ -11,15 +11,21 @@
 #import "PatientTableViewCell.h"
 
 @interface PatientsTableViewController ()
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *menuButton;
+//@property (weak, nonatomic) IBOutlet UIBarButtonItem *menuButton;
 @property (strong,nonatomic) NSArray *patientArray;
+@property (assign,nonatomic) BOOL isAddNewAppointment;
 
+
+-(IBAction)cancel:(id)sender;
 @end
 
 @implementation PatientsTableViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.isAddNewAppointment = NO;
+    //setup barbutton
+    UIBarButtonItem *leftBarButton ;
     self.patientArray = [NSArray arrayWithObjects: @"Monkey.D Luffy", @"Tony Tony Chopper",@"Tony Tony Chopper Chopper",nil];
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     [self.tableView setShowsVerticalScrollIndicator:NO];
@@ -27,13 +33,36 @@
     UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"homescreen2.jpg"]];
 
     self.tableView.backgroundView = imageView;
-    SWRevealViewController *revealViewController = self.revealViewController;
 
-    if (revealViewController) {
-        [self.menuButton setTarget:self.revealViewController];
-        [self.menuButton setAction:@selector(revealToggle:)];
-        [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
+    //set up menu button if not isAppointmentViewDetailPatient
+    if ([self.isAppointmentViewDetailPatient  isEqual: @""] || self.isAppointmentViewDetailPatient == nil) {
+
+
+        SWRevealViewController *revealViewController = self.revealViewController;
+
+        if (revealViewController) {
+            leftBarButton = [[UIBarButtonItem alloc]
+                             initWithImage:[UIImage imageNamed:@"menu.png"]
+                             style:UIBarButtonItemStylePlain
+                             target:self.revealViewController
+                             action:@selector(revealToggle:)];
+            self.navigationItem.leftBarButtonItem = leftBarButton;
+
+//            [self.menuButton setTarget:self.revealViewController];
+//            [self.menuButton setAction:@selector(revealToggle:)];
+            [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
+        }
+    }else{
+        // when user choose add new appointment
+        self.isAddNewAppointment = YES;
+        leftBarButton = [[UIBarButtonItem alloc]
+                         initWithTitle:@"Cancel"
+                         style:UIBarButtonItemStylePlain
+                         target:self
+                         action:@selector(cancel:)];
+        self.navigationItem.leftBarButtonItem = leftBarButton;
     }
+
 }
 
 
@@ -41,6 +70,10 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+-(IBAction)cancel:(id)sender{
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - Table view data source
@@ -65,6 +98,14 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // Do some stuff when the row is selected
+    if (!self.isAddNewAppointment) {
+        // if the view current state is not for add new appointment
+        [self performSegueWithIdentifier:@"showDetailPatient" sender:self];
+    }else{
+        //if the view current state is for add new appointment
+        
+    }
+
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 /*

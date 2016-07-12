@@ -20,7 +20,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *editButton;
 -(IBAction)cancel:(id)sender;
 -(IBAction)edit:(id)sender;
--(IBAction)done:(id)sender;
+
 @end
 
 @implementation AppointmentViewDetailViewController
@@ -46,9 +46,7 @@
 -(IBAction)edit:(id)sender{
 
 }
--(IBAction)done:(id)sender{
-    [self dismissViewControllerAnimated:YES completion:nil];
-}
+
 /*
 #pragma mark - Navigation
 

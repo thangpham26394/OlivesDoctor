@@ -7,9 +7,9 @@
 //
 
 #import "PatientDetailsViewController.h"
-#import "AppointmentDetailTableViewCell.h"
+
 @interface PatientDetailsViewController ()
--(IBAction)doneBarButton:(id)sender;
+
 @property (weak, nonatomic) IBOutlet UIImageView *avatarImage;
 @property (weak, nonatomic) IBOutlet UIButton *sendMessageButton;
 @property (weak, nonatomic) IBOutlet UIButton *viewPrescriptionButton;
@@ -33,10 +33,6 @@
     // Dispose of any resources that can be recreated.
 }
 
--(IBAction)doneBarButton:(id)sender
-{
-    [self dismissViewControllerAnimated:YES completion:nil];
-}
 
 #pragma mark - Table view data source
 
@@ -51,7 +47,7 @@
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    AppointmentDetailTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"appointmentDetailCell" forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"medicalInfoCell" forIndexPath:indexPath];
 
     // Configure the cell...
 

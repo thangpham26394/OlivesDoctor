@@ -9,7 +9,7 @@
 #import "PrescriptionTableViewController.h"
 
 @interface PrescriptionTableViewController ()
--(IBAction)done:(id)sender;
+
 @end
 
 @implementation PrescriptionTableViewController
@@ -30,9 +30,7 @@
 }
 
 
--(IBAction)done:(id)sender{
-    [self dismissViewControllerAnimated:YES completion:nil];
-}
+
 
 #pragma mark - Table view data source
 

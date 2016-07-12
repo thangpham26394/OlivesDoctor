@@ -8,20 +8,40 @@
 
 #import "AppointmentViewController.h"
 #import "SWRevealViewController.h"
-#import "AppointmentListViewController.h"
+#import "PatientsTableViewController.h"
+#import "AppointmentViewDetailViewController.h"
 
 @interface AppointmentViewController ()
 @property (weak, nonatomic) IBOutlet UIView *calendarView;
 @property (weak, nonatomic) IBOutlet UIImageView *backgroundImageView;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *calendarViewToBottomDistance;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *calendarViewToTopDistance;
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentViewHeight;
+@property (weak, nonatomic) IBOutlet UITableView *listAppointMentInDayTableView;
+
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *menuButton;
+@property(strong,nonatomic) NSMutableArray * markedDayList;
 @property(strong,nonatomic) NSString * chosenDate;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *addNewAppointmentBarButton;
+
+-(IBAction)addNewAppointment:(id)sender;
 @end
 
 @implementation AppointmentViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.markedDayList = [[NSMutableArray alloc] init];
+
+    //set add new appointment button to disable until user choose a date
+    [self.addNewAppointmentBarButton setEnabled:NO];
+
+    //setup listAppointMentInDayTableView
+    [self.listAppointMentInDayTableView.layer setCornerRadius:5.0f];
+    [self.listAppointMentInDayTableView setShowsVerticalScrollIndicator:NO];
+    [self.listAppointMentInDayTableView setSeparatorColor:[UIColor colorWithRed:0/255.0 green:153/255.0 blue:153/255.0 alpha:1.0]];
+    [self.listAppointMentInDayTableView setHidden:YES];
+
     SWRevealViewController *revealViewController = self.revealViewController;
 
     if (revealViewController) {
@@ -29,13 +49,16 @@
         [self.menuButton setAction:@selector(revealToggle:)];
         [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
     }
+    //check device using is 4inch screen or not to et distance to top from calendar view
     if ( [[UIScreen mainScreen] bounds].size.height == 568) {
-        self.calendarViewToBottomDistance.constant = 120;
+        self.calendarViewToTopDistance.constant = 30;
     }else{
-        self.calendarViewToBottomDistance.constant = 170;
+        self.calendarViewToTopDistance.constant = 50;
     }
     VRGCalendarView *calendar = [[VRGCalendarView alloc] init];
-    [calendar.layer setCornerRadius:10.0f];
+
+    [calendar.layer setCornerRadius:5.0f];
+
     calendar.delegate = self;
     //set up layout for calendar subview
     calendar.translatesAutoresizingMaskIntoConstraints = NO;
@@ -48,6 +71,22 @@
 }
 
 -(void)calendarView:(VRGCalendarView *)calendarView switchedToMonth:(int)month targetHeight:(float)targetHeight animated:(BOOL)animated {
+    //set add new appointment button to disable until user choose a date
+    [self.addNewAppointmentBarButton setEnabled:NO];
+
+    //hide listAppointMentInDayTableView if need
+    CATransition *animation = [CATransition animation];
+    animation.type = kCATransitionPush;
+    animation.duration = 0.25;
+    [self.listAppointMentInDayTableView.layer addAnimation:animation forKey:nil];
+    [self.listAppointMentInDayTableView setHidden:YES];
+
+    //set up height for listAppointMentInDayTableView to fit the calendar
+    self.contentViewHeight.constant = targetHeight;
+    [UIView animateWithDuration:0.35
+                     animations:^{
+                         [self.view layoutIfNeeded]; // Called on parent view
+                     }];
     //declare some example date
     NSDateFormatter *mmddccyy = [[NSDateFormatter alloc] init];
     mmddccyy.timeStyle = NSDateFormatterNoStyle;
@@ -62,21 +101,48 @@
 
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSDate *date = [NSDate date];
-    if (month==[calendar component:NSCalendarUnitMonth fromDate:date]) {
-        NSArray *dates = [NSArray arrayWithObjects:d1,d2,d3,d4,d5,d6,d7,nil];
-        [calendarView markDates:dates];
+    if (month==[calendar component:NSCalendarUnitMonth fromDate:date] && self.markedDayList.count ==0) {
+        
+        self.markedDayList = [NSMutableArray arrayWithObjects:d1,d2,d3,d4,d5,d6,d7,nil];
+        [calendarView markDates:self.markedDayList];
     }
 }
 
 -(void)calendarView:(VRGCalendarView *)calendarView dateSelected:(NSDate *)date {
+    [self.addNewAppointmentBarButton setEnabled:YES];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
-    [dateFormatter setDateFormat:@"dd MMMM yyyy"];
+    [dateFormatter setDateFormat:@"MM/dd/yyyy"];
 
     NSLog(@"Selected date = %@",[dateFormatter stringFromDate:date]);
     self.chosenDate =[dateFormatter stringFromDate:date];
 
-    [self performSegueWithIdentifier:@"showAppointment" sender:self];
+    //check if chosen date is marked date or not
+    BOOL isMarkedDate = NO;
+    for (int runIndex = 0; runIndex <self.markedDayList.count; runIndex ++) {
+        NSString *currentDate = [dateFormatter stringFromDate:[self.markedDayList objectAtIndex:runIndex]];
+        if ([self.chosenDate isEqual:currentDate]) {
+            isMarkedDate = YES;
+        }
+    }
+
+    //if the chosen date is also a marked date then show the list appointment in chosenday
+
+    //animation to show or hide listAppointMentInDayTableView
+    CATransition *animation = [CATransition animation];
+    animation.type = kCATransitionPush;
+    if (isMarkedDate) {
+        animation.duration = 0.35;
+        [self.listAppointMentInDayTableView.layer addAnimation:animation forKey:nil];
+        [self.listAppointMentInDayTableView setHidden:NO];
+        
+    }else{
+        animation.duration = 0.25;
+        [self.listAppointMentInDayTableView.layer addAnimation:animation forKey:nil];
+        [self.listAppointMentInDayTableView setHidden:YES];
+    }
+    
+//    [self performSegueWithIdentifier:@"showAppointment" sender:self];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -84,6 +150,45 @@
     // Dispose of any resources that can be recreated.
 }
 
+-(IBAction)addNewAppointment:(id)sender{
+    [self performSegueWithIdentifier: @"addNewAppointment" sender: self];
+}
+
+
+#pragma mark - Table view data source
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return 4;
+}
+
+
+ - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"appointmentDetailCell" ];
+     if(cell == nil)
+     {
+         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1  reuseIdentifier:@"appointmentDetailCell"];
+         
+     }
+      // Configure the cell...
+     cell.textLabel.text = @" Pham Duc Thang";
+     cell.detailTextLabel.text = @"06-June-2016";
+
+     cell.preservesSuperviewLayoutMargins = NO;
+     cell.separatorInset = UIEdgeInsetsZero;
+     cell.layoutMargins = UIEdgeInsetsZero;
+
+
+     return cell;
+ }
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    // Do some stuff when the row is selected
+    [self performSegueWithIdentifier:@"showDetalAppointment" sender:self];
+    [self.listAppointMentInDayTableView deselectRowAtIndexPath:indexPath animated:YES];
+}
 
 #pragma mark - Navigation
 
@@ -92,13 +197,21 @@
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
     // Make sure your segue name in storyboard is the same as this line
-    if ([[segue identifier] isEqualToString:@"showAppointment"])
+    if ([[segue identifier] isEqualToString:@"showAppointmentDetail"])
     {
         // Get reference to the destination view controller
         UINavigationController *nav = [segue destinationViewController];
-        AppointmentListViewController *appointmentListViewController = (AppointmentListViewController*)nav.topViewController;
+        AppointmentViewDetailViewController *appointmentDetailViewController = (AppointmentViewDetailViewController*)nav.topViewController;
         // Pass any objects to the view controller here, like...
-        appointmentListViewController.chosenDateString = self.chosenDate;
+        
+    }
+    if ([[segue identifier] isEqualToString:@"addNewAppointment"])
+    {
+        // Get reference to the destination view controller
+        UINavigationController *nav = [segue destinationViewController];
+        PatientsTableViewController *patientTableViewController = (PatientsTableViewController*)nav.topViewController;
+        // Pass any objects to the view controller here, like...
+        patientTableViewController.isAppointmentViewDetailPatient = @"addNewAppointment";
     }
 }
 
