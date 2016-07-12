@@ -9,6 +9,8 @@
 #import "TimePickerViewController.h"
 
 @interface TimePickerViewController ()
+@property (weak, nonatomic) IBOutlet UIDatePicker *dateTimePicker;
+@property (weak, nonatomic) IBOutlet UITextView *noteLabel;
 
 @end
 
@@ -17,6 +19,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    [self.dateTimePicker setValue:[UIColor whiteColor] forKey:@"textColor"];
+    self.noteLabel.layer.cornerRadius = 5.0f;
+    [self.noteLabel setShowsVerticalScrollIndicator:NO];
 }
 
 - (void)didReceiveMemoryWarning {

@@ -30,7 +30,7 @@
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     [self.tableView setShowsVerticalScrollIndicator:NO];
     
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"homescreen2.jpg"]];
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"menuscreen.jpg"]];
 
     self.tableView.backgroundView = imageView;
 
@@ -103,7 +103,7 @@
         [self performSegueWithIdentifier:@"showDetailPatient" sender:self];
     }else{
         //if the view current state is for add new appointment
-        
+        [self performSegueWithIdentifier:@"requestNewAppointment" sender:self];
     }
 
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];

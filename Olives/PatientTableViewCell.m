@@ -16,11 +16,11 @@
 //    [self setBackgroundColor:[UIColor clearColor]];
     [self.backgroundCardView.layer setCornerRadius:5.0f];
     [self.backgroundCardView.layer setMasksToBounds:NO];
-    [self.backgroundCardView setBackgroundColor:[UIColor colorWithWhite:1 alpha:0.7]];
+    [self.backgroundCardView setBackgroundColor:[UIColor colorWithWhite:1 alpha:0.3]];
 
     self.avatar.layer.cornerRadius = self.avatar.frame.size.width / 2;
     self.avatar.clipsToBounds = YES;
-    self.avatar.layer.borderWidth = 3.0f;
+    self.avatar.layer.borderWidth = 1.0f;
     self.avatar.layer.borderColor = [UIColor blackColor].CGColor;
 
 
