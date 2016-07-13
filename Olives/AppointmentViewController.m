@@ -33,9 +33,6 @@
     [super viewDidLoad];
     self.markedDayList = [[NSMutableArray alloc] init];
 
-    //set add new appointment button to disable until user choose a date
-    [self.addNewAppointmentBarButton setEnabled:NO];
-
     //setup listAppointMentInDayTableView
     [self.listAppointMentInDayTableView.layer setCornerRadius:5.0f];
     [self.listAppointMentInDayTableView setShowsVerticalScrollIndicator:NO];
@@ -71,9 +68,12 @@
 }
 
 -(void)calendarView:(VRGCalendarView *)calendarView switchedToMonth:(int)month targetHeight:(float)targetHeight animated:(BOOL)animated {
-    //set add new appointment button to disable until user choose a date
+
+    //disable addnew appointment button if thereis no day selected
     [self.addNewAppointmentBarButton setEnabled:NO];
 
+
+    //set add new appointment button to disable until user choose a date
     //hide listAppointMentInDayTableView if need
     CATransition *animation = [CATransition animation];
     animation.type = kCATransitionPush;
@@ -97,7 +97,7 @@
     NSDate *d4 = [mmddccyy dateFromString:@"07/09/2016"];
     NSDate *d5 = [mmddccyy dateFromString:@"05/10/2016"];
     NSDate *d6 = [mmddccyy dateFromString:@"08/13/2016"];
-    NSDate *d7 = [mmddccyy dateFromString:@"06/02/2016"];
+    NSDate *d7 = [mmddccyy dateFromString:@"07/14/2016"];
 
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSDate *date = [NSDate date];
@@ -105,6 +105,34 @@
         
         self.markedDayList = [NSMutableArray arrayWithObjects:d1,d2,d3,d4,d5,d6,d7,nil];
         [calendarView markDates:self.markedDayList];
+    }
+
+
+    //check if today is marked date
+    BOOL isMarkedDate = NO;
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+    [dateFormatter setDateFormat:@"MM/dd/yyyy"];
+    
+    NSString *today = [dateFormatter stringFromDate:[NSDate date]];
+
+    //set enable for add new appointment bar button if the current month is showing in first time
+    if ([[dateFormatter stringFromDate:calendarView.currentMonth] isEqual:today]) {
+        [self.addNewAppointmentBarButton setEnabled:YES];
+    }
+    for (int runIndex = 0; runIndex <self.markedDayList.count; runIndex ++) {
+        NSString *currentDate = [dateFormatter stringFromDate:[self.markedDayList objectAtIndex:runIndex]];
+        if ([today isEqual:currentDate]) {
+            isMarkedDate = YES;
+        }
+    }
+
+    //show list appoint for today
+    if (isMarkedDate && [[dateFormatter stringFromDate:calendarView.currentMonth] isEqual:today]) {
+        animation.duration = 0.35;
+        [self.listAppointMentInDayTableView.layer addAnimation:animation forKey:nil];
+        [self.listAppointMentInDayTableView setHidden:NO];
+
     }
 }
 

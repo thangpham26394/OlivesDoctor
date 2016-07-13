@@ -35,7 +35,7 @@
     {
 
         //if the current account is still login
-        if (![[NSUserDefaults standardUserDefaults] boolForKey:@"loginStatus"]) {
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"loginStatus"]) {
             rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"HomeView"];
         }else{
             rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"LoginView"];

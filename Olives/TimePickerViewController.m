@@ -12,6 +12,7 @@
 @property (weak, nonatomic) IBOutlet UIDatePicker *dateTimePicker;
 @property (weak, nonatomic) IBOutlet UITextView *noteLabel;
 
+-(IBAction)sendRequestButton:(id)sender;
 @end
 
 @implementation TimePickerViewController
@@ -28,6 +29,30 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+
+-(IBAction)sendRequestButton:(id)sender{
+    [self showAlertView];
+}
+
+
+
+-(void)showAlertView{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Request Sent"
+                                                               message:@"Your Request will be sent to your patient soon"
+                                                               preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {
+                                                              //sent request to API here
+                                                              NSLog(@"OK Action!");
+                                                              [self.navigationController popViewControllerAnimated:YES];
+                                                          }];
+
+
+    [alert addAction:OKAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
 
 /*
 #pragma mark - Navigation

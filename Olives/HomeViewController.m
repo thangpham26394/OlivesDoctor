@@ -31,6 +31,7 @@
     // Do any additional setup after loading the view, typically from a nib.
     self.title = @"Home";
     self.avatar.layer.cornerRadius = self.avatar.frame.size.width / 2;
+
     SWRevealViewController *revealViewController = self.revealViewController;
     if (revealViewController) {
         [self.menuButton setTarget:self.revealViewController];
@@ -45,6 +46,17 @@
     NSMutableArray *doctorObject = [[managedObjectContext executeFetchRequest:fetchRequest error:nil] mutableCopy];
     NSManagedObject *doctor = [doctorObject objectAtIndex:0];
     self.nameLabel.text = [NSString stringWithFormat:@"%@ %@", [doctor valueForKey:@"firstName"], [doctor valueForKey:@"lastName"]];
+    self.avatar.image = [UIImage imageWithData:[doctor valueForKey:@"photoURL"]];
+
+
+
+//    NSString * doctorBirthDay = [doctor valueForKey:@"birthday"];
+//    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+//    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+//    [dateFormatter setDateFormat:@"MM/dd/yyyy"];
+//
+//    NSDate *reverseDate = [NSDate dateWithTimeIntervalSince1970:[doctorBirthDay doubleValue]];
+//    self.nameLabel.text =     [NSString stringWithFormat:@"%@",[dateFormatter stringFromDate:reverseDate] ];
 }
 
 - (void)didReceiveMemoryWarning {

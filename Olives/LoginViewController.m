@@ -5,8 +5,8 @@
 //  Created by Tony Tony Chopper on 6/8/16.
 //  Copyright © 2016 Thang. All rights reserved.
 //
-#define APIURL @"http://oliveshealth.azurewebsites.net/api/account/login"
-#define DOCTORROLE @"3"
+#define APIURL @"http://olive.azurewebsites.net/api/account/login"
+
 
 #import "LoginViewController.h"
 #import <CoreData/CoreData.h>
@@ -62,9 +62,8 @@
     NSURL *url = [NSURL URLWithString:APIURL];
     //create JSON data to post to API
     NSDictionary *account = @{
-                              @"Email" :   self.emailTextField.text,
-                              @"Password" : self.passwordTextField.text,
-                              @"Role" :DOCTORROLE
+                              @"Email" :  @"doctor26@gmail.com", //self.emailTextField.text,
+                              @"Password" : @"doctor199x" // self.passwordTextField.text
                               };
     NSError *error = nil;
     NSData *jsondata = [NSJSONSerialization dataWithJSONObject:account options:NSJSONWritingPrettyPrinted error:&error];
@@ -136,16 +135,19 @@
 {
     NSDictionary * doctorInfo = [jsonData valueForKey:@"User"];
 
-    NSString * status = [doctorInfo objectForKey:@"Status"];
-    NSString * photoURL = [doctorInfo objectForKey:@"Photo"];
     NSString * doctorID = [doctorInfo objectForKey:@"Id"];
-    NSString * lastName = [doctorInfo objectForKey:@"LastName"];
-    NSString * firstName = [doctorInfo objectForKey:@"FirstName"];
-    NSString * dob = [doctorInfo objectForKey:@"Birthday"];
-    NSString * gender = [doctorInfo objectForKey:@"Gender"];
-    NSString * phone = [doctorInfo objectForKey:@"Phone"];
-    NSString * money = [doctorInfo objectForKey:@"Money"];
-   // NSString * address = [doctorInfo objectForKey:@"Address"];
+    NSString * doctorEmail = [doctorInfo objectForKey:@"Email"];
+    NSString * doctorPassword = [doctorInfo objectForKey:@"Password"];
+    NSString * doctorFirstName = [doctorInfo objectForKey:@"FirstName"];
+    NSString * doctorLastName = [doctorInfo objectForKey:@"LastName"];
+    NSString * doctorBirthDay = [doctorInfo objectForKey:@"Birthday"];
+    NSString * doctorPhone = [doctorInfo objectForKey:@"Phone"];
+    NSString * doctorGender = [doctorInfo objectForKey:@"Gender"];
+    NSString * doctorCreatedAccountDay = [doctorInfo objectForKey:@"Created"];
+    NSString * doctorStatus = [doctorInfo objectForKey:@"Status"];
+    NSString * doctorAddress= [doctorInfo objectForKey:@"Address"];
+    NSString * doctorPhoto = [doctorInfo objectForKey:@"Photo"];
+
 
     NSManagedObjectContext *context = [self managedObjectContext];
     //Check if there is already a doctor account in coredata
@@ -160,20 +162,28 @@
         newDoctor = [doctorObject objectAtIndex:0];
     }
 
-    [newDoctor setValue: [NSString stringWithFormat:@"%@", status] forKey:@"status"];
-    [newDoctor setValue:@"photoURL" forKey:@"photoURL"];
-    [newDoctor setValue:@"doctorID" forKey:@"doctorID"];
-    [newDoctor setValue:lastName forKey:@"lastName"];
-    [newDoctor setValue:firstName forKey:@"firstName"];
-    [newDoctor setValue:@"Birthday" forKey:@"dob"];
-    if ([gender  isEqual: 0]) {
-        [newDoctor setValue:@"Female" forKey:@"gender"];
-    }else{
-        [newDoctor setValue:@"Male" forKey:@"gender"];
-    }
-    [newDoctor setValue:@"phone" forKey:@"phone"];
-    [newDoctor setValue:@"money" forKey:@"money"];
-    [newDoctor setValue:@"address" forKey:@"address"];
+    [newDoctor setValue: [NSString stringWithFormat:@"%@", doctorID] forKey:@"doctorID"];
+    [newDoctor setValue: [NSString stringWithFormat:@"%@", doctorEmail] forKey:@"email"];
+    [newDoctor setValue: [NSString stringWithFormat:@"%@", doctorPassword] forKey:@"password"];
+    [newDoctor setValue: [NSString stringWithFormat:@"%@", doctorFirstName] forKey:@"firstName"];
+    [newDoctor setValue: [NSString stringWithFormat:@"%@", doctorLastName] forKey:@"lastName"];
+    [newDoctor setValue: [NSString stringWithFormat:@"%@", doctorBirthDay] forKey:@"birthday"];
+    [newDoctor setValue: [NSString stringWithFormat:@"%@", doctorGender] forKey:@"gender"];
+    [newDoctor setValue: [NSString stringWithFormat:@"%@", doctorPhone] forKey:@"phone"];
+    [newDoctor setValue: [NSString stringWithFormat:@"%@", doctorCreatedAccountDay] forKey:@"accountCreatedDay"];
+    [newDoctor setValue: [NSString stringWithFormat:@"%@", doctorStatus] forKey:@"status"];
+    [newDoctor setValue: [NSString stringWithFormat:@"%@", doctorAddress] forKey:@"address"];
+
+    //get avatar from receive url
+    NSURL *url = [NSURL URLWithString:doctorPhoto];
+    NSData *doctorPhotoData = [NSData dataWithContentsOfURL:url];
+    
+
+
+    [newDoctor setValue:doctorPhotoData  forKey:@"photoURL"];
+
+
+
 
     NSError *error = nil;
     // Save the object to persistent store
