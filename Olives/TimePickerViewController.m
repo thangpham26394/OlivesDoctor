@@ -23,6 +23,28 @@
     [self.dateTimePicker setValue:[UIColor whiteColor] forKey:@"textColor"];
     self.noteLabel.layer.cornerRadius = 5.0f;
     [self.noteLabel setShowsVerticalScrollIndicator:NO];
+
+    //set time zone for date time picker to GMT
+    [self.dateTimePicker setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+
+    //format initial date time
+    NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
+    [formatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+    [formatter setLocale:[NSLocale systemLocale]];
+    [formatter setDateFormat:@"dd/MM/yyyy HH:mm:ss:SSS"];
+
+    //formt initial date
+    NSDateFormatter * dateFormat = [[NSDateFormatter alloc] init];
+    [dateFormat setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+    [dateFormat setLocale:[NSLocale systemLocale]];
+    [dateFormat setDateFormat:@"dd/MM/yyyy"];
+    NSString *initialDate = [dateFormat stringFromDate:[NSDate date]];
+
+    //set up initial date time for dateTimePicker
+    NSString *initialTime = [NSString stringWithFormat:@"%@  00:00:00:000",initialDate];
+    NSDate * date = [formatter dateFromString:initialTime];
+
+    [self.dateTimePicker setDate:date];
 }
 
 - (void)didReceiveMemoryWarning {
