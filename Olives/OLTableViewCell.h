@@ -1,6 +1,6 @@
 //
 //  OLTableViewCell.h
-//  SLideViewDemo
+//  Olives
 //
 //  Created by Tony Tony Chopper on 5/24/16.
 //  Copyright © 2016 Thang. All rights reserved.

@@ -1,6 +1,6 @@
 //
 //  LoanTableViewController.h
-//  SLideViewDemo
+//  Olives
 //
 //  Created by Tony Tony Chopper on 5/26/16.
 //  Copyright © 2016 Thang. All rights reserved.

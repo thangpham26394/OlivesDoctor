@@ -1,6 +1,6 @@
 //
 //  PatientTableViewCell.m
-//  SLideViewDemo
+//  Olives
 //
 //  Created by Tony Tony Chopper on 5/27/16.
 //  Copyright © 2016 Thang. All rights reserved.
