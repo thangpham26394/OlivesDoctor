@@ -1,6 +1,6 @@
 //
-//  SLideViewDemoTests.m
-//  SLideViewDemoTests
+//  OlivesTests.m
+//  OlivesTests
 //
 //  Created by Tony Tony Chopper on 5/23/16.
 //  Copyright © 2016 Thang. All rights reserved.
@@ -8,11 +8,11 @@
 
 #import <XCTest/XCTest.h>
 
-@interface SLideViewDemoTests : XCTestCase
+@interface OlivesTests : XCTestCase
 
 @end
 
-@implementation SLideViewDemoTests
+@implementation OlivesTests
 
 - (void)setUp {
     [super setUp];

@@ -278,12 +278,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Olives/LoginViewController.m"
-            timestampString = "490111914.245613"
+            timestampString = "490166854.005355"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "175"
-            endingLineNumber = "175"
-            landmarkName = "-saveDoctorInfoToCoreData:"
+            startingLineNumber = "96"
+            endingLineNumber = "96"
+            landmarkName = "-loginButton:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

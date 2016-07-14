@@ -18,7 +18,7 @@
 		15DCF5841CF3593800013F19 /* Olives.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 15DCF5821CF3593800013F19 /* Olives.xcdatamodeld */; };
 		15DCF5861CF3593800013F19 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 15DCF5851CF3593800013F19 /* Assets.xcassets */; };
 		15DCF5891CF3593800013F19 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 15DCF5871CF3593800013F19 /* LaunchScreen.storyboard */; };
-		15DCF5941CF3593800013F19 /* SLideViewDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 15DCF5931CF3593800013F19 /* SLideViewDemoTests.m */; };
+		15DCF5941CF3593800013F19 /* OlivesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 15DCF5931CF3593800013F19 /* OlivesTests.m */; };
 		15DCF5A61CF3820F00013F19 /* OLTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15DCF5A51CF3820F00013F19 /* OLTableViewController.m */; };
 		15DCF5A81CF385E800013F19 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15DCF5A71CF385E800013F19 /* QuartzCore.framework */; };
 		15DCF5AB1CF3870F00013F19 /* OLTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 15DCF5AA1CF3870F00013F19 /* OLTableViewCell.m */; };
@@ -99,7 +99,7 @@
 		15DCF5881CF3593800013F19 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		15DCF58A1CF3593800013F19 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		15DCF58F1CF3593800013F19 /* Olives.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Olives.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		15DCF5931CF3593800013F19 /* SLideViewDemoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLideViewDemoTests.m; sourceTree = "<group>"; };
+		15DCF5931CF3593800013F19 /* OlivesTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OlivesTests.m; sourceTree = "<group>"; };
 		15DCF5951CF3593800013F19 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		15DCF5A41CF3820F00013F19 /* OLTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLTableViewController.h; sourceTree = "<group>"; };
 		15DCF5A51CF3820F00013F19 /* OLTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLTableViewController.m; sourceTree = "<group>"; };
@@ -260,7 +260,7 @@
 		15DCF5921CF3593800013F19 /* OlivesTests */ = {
 			isa = PBXGroup;
 			children = (
-				15DCF5931CF3593800013F19 /* SLideViewDemoTests.m */,
+				15DCF5931CF3593800013F19 /* OlivesTests.m */,
 				15DCF5951CF3593800013F19 /* Info.plist */,
 			);
 			path = OlivesTests;
@@ -529,7 +529,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				15DCF5941CF3593800013F19 /* SLideViewDemoTests.m in Sources */,
+				15DCF5941CF3593800013F19 /* OlivesTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -669,9 +669,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				INFOPLIST_FILE = SLideViewDemoTests/Info.plist;
+				INFOPLIST_FILE = Olives/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.SelfLearning.SLideViewDemoTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.SelfLearning.OlivesTests;
 				PRODUCT_NAME = Olives;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Olives.app/Olives";
 			};
@@ -681,9 +681,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				INFOPLIST_FILE = SLideViewDemoTests/Info.plist;
+				INFOPLIST_FILE = Olives/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.SelfLearning.SLideViewDemoTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.SelfLearning.OlivesTests;
 				PRODUCT_NAME = Olives;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Olives.app/Olives";
 			};
