@@ -12,7 +12,7 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *avatarImage;
 @property (weak, nonatomic) IBOutlet UIButton *sendMessageButton;
-@property (weak, nonatomic) IBOutlet UIButton *viewPrescriptionButton;
+
 
 @end
 
@@ -24,7 +24,6 @@
     self.avatarImage.layer.cornerRadius = self.avatarImage.frame.size.width / 2;
     self.avatarImage.clipsToBounds = YES;
     self.sendMessageButton.backgroundColor = [UIColor colorWithRed:0/255.0 green:153/255.0 blue:153/255.0 alpha:1.0];
-    self.viewPrescriptionButton.backgroundColor = [UIColor colorWithRed:0/255.0 green:102/255.0 blue:204/255.0 alpha:1.0];
 
 }
 

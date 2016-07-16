@@ -428,7 +428,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1hG-Ai-qTk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2898" y="2075"/>
+            <point key="canvasLocation" x="642" y="-925"/>
         </scene>
         <!--Forgot Password View Controller-->
         <scene sceneID="qEw-OP-5he">
@@ -497,7 +497,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EgA-DI-KRT" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3628" y="2075"/>
+            <point key="canvasLocation" x="1372" y="-925"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="ro7-75-yxW">
@@ -798,15 +798,64 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Patients" id="MVH-nv-TuV"/>
                     <connections>
-                        <segue destination="UZf-iz-Lp2" kind="show" identifier="showDetailPatient" id="GGX-9W-29P"/>
                         <segue destination="Ewy-Hm-5VS" kind="show" identifier="requestNewAppointment" id="yz9-9s-kt6"/>
+                        <segue destination="67E-ag-jJT" kind="show" identifier="showDetailPatient" id="q21-24-ZtI"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6yO-6Z-aMc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="3638" y="-1272"/>
         </scene>
-        <!--Patient Details View Controller-->
+        <!--Tab Bar Controller-->
+        <scene sceneID="aOE-NM-yHf">
+            <objects>
+                <tabBarController id="67E-ag-jJT" sceneMemberID="viewController">
+                    <tabBar key="tabBar" contentMode="scaleToFill" id="TWT-dL-HjP">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="49"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </tabBar>
+                    <connections>
+                        <segue destination="UZf-iz-Lp2" kind="relationship" relationship="viewControllers" id="KIP-3y-UFk"/>
+                        <segue destination="aR4-Oa-8K2" kind="relationship" relationship="viewControllers" id="ncr-dD-fW7"/>
+                        <segue destination="d0e-UB-UY4" kind="relationship" relationship="viewControllers" id="HlX-Kb-pyM"/>
+                        <segue destination="CIE-h3-QXU" kind="relationship" relationship="viewControllers" id="0JU-Ne-Nu9"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="hPV-nU-MaQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4374" y="-1272"/>
+        </scene>
+        <!--Important Info Table View Controller-->
+        <scene sceneID="R2Z-B6-OPO">
+            <objects>
+                <tableViewController id="CIE-h3-QXU" customClass="ImportantInfoTableViewController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="GDn-zv-l71">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="bvv-A5-d1X">
+                                <rect key="frame" x="0.0" y="92" width="600" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="bvv-A5-d1X" id="mVR-vG-5n2">
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="CIE-h3-QXU" id="ZgX-hc-qNV"/>
+                            <outlet property="delegate" destination="CIE-h3-QXU" id="h3z-hV-sJG"/>
+                        </connections>
+                    </tableView>
+                    <tabBarItem key="tabBarItem" systemItem="favorites" id="5Oc-ah-K51"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Xc2-3d-GcX" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5188" y="-3016"/>
+        </scene>
+        <!--Thong tin benh nhan-->
         <scene sceneID="s9g-MP-u3W">
             <objects>
                 <viewController id="UZf-iz-Lp2" customClass="PatientDetailsViewController" sceneMemberID="viewController">
@@ -866,7 +915,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FDl-ob-Vip">
-                                <rect key="frame" x="0.0" y="565" width="300" height="35"/>
+                                <rect key="frame" x="0.0" y="516" width="600" height="35"/>
                                 <color key="backgroundColor" red="0.43824625830000002" green="0.7082583442" blue="0.65507155159999997" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="35" id="VKH-Yy-WfY"/>
@@ -876,22 +925,11 @@
                                     <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 </state>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oCT-Tc-5lo">
-                                <rect key="frame" x="300" y="565" width="300" height="35"/>
-                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="View Prescription">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <segue destination="aR4-Oa-8K2" kind="show" id="hh4-Wm-BY7"/>
-                                </connections>
-                            </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GGp-9O-IfZ">
-                                <rect key="frame" x="10" y="184" width="580" height="361"/>
+                                <rect key="frame" x="10" y="184" width="580" height="312"/>
                                 <subviews>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="rFg-Yp-Tfj">
-                                        <rect key="frame" x="1" y="1" width="578" height="359"/>
+                                        <rect key="frame" x="1" y="1" width="578" height="310"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <prototypes>
                                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="medicalInfoCell" textLabel="x9F-PH-ykp" detailTextLabel="LvA-LT-jaN" style="IBUITableViewCellStyleValue1" id="jax-51-89c">
@@ -939,8 +977,6 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="oCT-Tc-5lo" secondAttribute="trailing" id="0mB-kw-Ad0"/>
-                            <constraint firstItem="oCT-Tc-5lo" firstAttribute="width" secondItem="FDl-ob-Vip" secondAttribute="width" id="4Sn-TU-Q8B"/>
                             <constraint firstItem="n9B-XB-Rcn" firstAttribute="trailing" secondItem="g6c-nC-2Pl" secondAttribute="trailing" id="8r5-Ia-c0M"/>
                             <constraint firstItem="LgX-ih-Bwk" firstAttribute="leading" secondItem="SY8-Yh-ZZN" secondAttribute="leading" constant="10" id="DbM-ue-Hda"/>
                             <constraint firstItem="ewO-U3-HfT" firstAttribute="top" secondItem="to6-IN-wNN" secondAttribute="bottom" constant="4" id="ECh-Ah-PKN"/>
@@ -948,7 +984,6 @@
                             <constraint firstItem="ewO-U3-HfT" firstAttribute="width" secondItem="to6-IN-wNN" secondAttribute="width" id="GwM-5m-sov"/>
                             <constraint firstAttribute="bottom" secondItem="FiG-cQ-yvD" secondAttribute="bottom" id="Iis-05-wKF"/>
                             <constraint firstAttribute="trailing" secondItem="GGp-9O-IfZ" secondAttribute="trailing" constant="10" id="JXC-BZ-hQe"/>
-                            <constraint firstItem="oCT-Tc-5lo" firstAttribute="height" secondItem="FDl-ob-Vip" secondAttribute="height" id="Jfx-uj-R5a"/>
                             <constraint firstItem="GGp-9O-IfZ" firstAttribute="leading" secondItem="SY8-Yh-ZZN" secondAttribute="leading" constant="10" id="NIC-hL-ElM"/>
                             <constraint firstItem="ewO-U3-HfT" firstAttribute="bottom" secondItem="LgX-ih-Bwk" secondAttribute="bottom" id="NIK-OD-h0u"/>
                             <constraint firstAttribute="trailing" secondItem="g6c-nC-2Pl" secondAttribute="trailing" constant="18" id="TQy-DV-tdn"/>
@@ -967,21 +1002,20 @@
                             <constraint firstItem="LgX-ih-Bwk" firstAttribute="top" secondItem="TS5-c7-7lE" secondAttribute="bottom" constant="20" id="pFg-8I-3oZ"/>
                             <constraint firstItem="ewO-U3-HfT" firstAttribute="top" secondItem="p60-Tu-c6J" secondAttribute="bottom" constant="4" id="u7A-I0-SU1"/>
                             <constraint firstAttribute="trailing" secondItem="FiG-cQ-yvD" secondAttribute="trailing" id="vhd-M6-hnD"/>
-                            <constraint firstItem="CCr-t9-JEc" firstAttribute="top" secondItem="oCT-Tc-5lo" secondAttribute="bottom" id="wJ5-Q6-m2B"/>
                             <constraint firstItem="ewO-U3-HfT" firstAttribute="leading" secondItem="g6c-nC-2Pl" secondAttribute="leading" id="xJI-3z-WDB"/>
-                            <constraint firstItem="oCT-Tc-5lo" firstAttribute="leading" secondItem="FDl-ob-Vip" secondAttribute="trailing" id="y4S-sK-JVQ"/>
+                            <constraint firstAttribute="trailing" secondItem="FDl-ob-Vip" secondAttribute="trailing" id="xPf-RQ-lJ2"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="fJC-Md-QHK"/>
+                    <tabBarItem key="tabBarItem" title="A1" image="menu.png" id="8HT-7i-5JY"/>
+                    <navigationItem key="navigationItem" title="Thong tin benh nhan" id="fJC-Md-QHK"/>
                     <connections>
                         <outlet property="avatarImage" destination="LgX-ih-Bwk" id="d23-fU-hkY"/>
                         <outlet property="sendMessageButton" destination="FDl-ob-Vip" id="9G4-3N-xRg"/>
-                        <outlet property="viewPrescriptionButton" destination="oCT-Tc-5lo" id="JeA-oL-YRk"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ne1-QK-kaZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4436" y="-1272"/>
+            <point key="canvasLocation" x="5188" y="-2316"/>
         </scene>
         <!--Appointment View Detail View Controller-->
         <scene sceneID="AeE-iD-oYF">
@@ -1207,7 +1241,7 @@
             </objects>
             <point key="canvasLocation" x="4337" y="-497"/>
         </scene>
-        <!--Prescription Table View Controller-->
+        <!--Don thuoc-->
         <scene sceneID="kJX-fz-nVL">
             <objects>
                 <tableViewController id="aR4-Oa-8K2" customClass="PrescriptionTableViewController" sceneMemberID="viewController">
@@ -1246,11 +1280,41 @@
                             <outlet property="delegate" destination="aR4-Oa-8K2" id="8hd-Xv-2Gh"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="e27-b9-vVe"/>
+                    <tabBarItem key="tabBarItem" systemItem="bookmarks" id="rBb-Ni-QI2"/>
+                    <navigationItem key="navigationItem" title="Don thuoc" id="e27-b9-vVe"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0gy-Rg-aZZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5316" y="-2047"/>
+            <point key="canvasLocation" x="5180" y="-1599"/>
+        </scene>
+        <!--Doctor Note Table View Controller-->
+        <scene sceneID="r4f-Hi-b0g">
+            <objects>
+                <tableViewController id="d0e-UB-UY4" customClass="DoctorNoteTableViewController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="CBx-Jd-SDh">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="LUI-fC-cgc">
+                                <rect key="frame" x="0.0" y="92" width="600" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="LUI-fC-cgc" id="TN0-pv-Q74">
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="d0e-UB-UY4" id="Nui-rx-PkP"/>
+                            <outlet property="delegate" destination="d0e-UB-UY4" id="lSo-mN-ZOg"/>
+                        </connections>
+                    </tableView>
+                    <tabBarItem key="tabBarItem" systemItem="history" id="4eH-ip-ZzC"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Y18-2A-Zgj" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5176" y="-829"/>
         </scene>
         <!--Medical Record Detail Table View Controller-->
         <scene sceneID="r3Z-nZ-0F9">
@@ -1279,23 +1343,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VNg-BO-kR2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5316" y="-1272"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="upQ-6B-NiF">
-            <objects>
-                <navigationController id="7a1-uP-gUB" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="0NR-40-JJg">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <connections>
-                        <segue destination="6qD-RH-A2u" kind="relationship" relationship="rootViewController" id="Od4-s4-VOq"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="2pl-hC-ccp" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2898" y="-2076"/>
+            <point key="canvasLocation" x="5956" y="-2316"/>
         </scene>
         <!--Appointment View Controller-->
         <scene sceneID="mSl-sV-Yim">
@@ -1376,7 +1424,7 @@
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="sJK-eb-47p">
                             <connections>
                                 <action selector="addNewAppointment:" destination="MSe-TL-Tqq" id="Vva-K9-ecj"/>
-                                <segue destination="7a1-uP-gUB" kind="show" identifier="addNewAppointment" id="qRb-G3-pAT"/>
+                                <segue destination="6qD-RH-A2u" kind="show" identifier="addNewAppointment" id="baP-2a-MAS"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -1510,6 +1558,6 @@
     <inferredMetricsTieBreakers>
         <segue reference="GdO-pr-fBl"/>
         <segue reference="KBZ-BF-bL1"/>
-        <segue reference="Od4-s4-VOq"/>
+        <segue reference="baP-2a-MAS"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -43,7 +43,10 @@
 		15E76B771D2F973D0028EFEB /* timeicon.png in Resources */ = {isa = PBXBuildFile; fileRef = 15E76B741D2F973D0028EFEB /* timeicon.png */; };
 		15E76B7A1D2F9BA80028EFEB /* AppointmentViewDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E76B791D2F9BA80028EFEB /* AppointmentViewDetailViewController.m */; };
 		15E76B7D1D2FA7EE0028EFEB /* PrescriptionTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E76B7C1D2FA7EE0028EFEB /* PrescriptionTableViewController.m */; };
-		15E76B801D2FA9B40028EFEB /* MedicalRecordDetailTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E76B7F1D2FA9B40028EFEB /* MedicalRecordDetailTableViewController.m */; };
+		15E8C4D91D3ADE020056E8AE /* mypatient2.png in Resources */ = {isa = PBXBuildFile; fileRef = 15E8C4D81D3ADE020056E8AE /* mypatient2.png */; };
+		15E8C4E81D3AE7150056E8AE /* DoctorNoteTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8C4E71D3AE7150056E8AE /* DoctorNoteTableViewController.m */; };
+		15E8C4EB1D3AE7420056E8AE /* ImportantInfoTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8C4EA1D3AE7420056E8AE /* ImportantInfoTableViewController.m */; };
+		15E8C4EF1D3AE8D40056E8AE /* MedicalRecordDetailTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8C4EE1D3AE8D40056E8AE /* MedicalRecordDetailTableViewController.m */; };
 		15E9D6EE1D06A99C006D5DD1 /* AppointmentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E9D6ED1D06A99C006D5DD1 /* AppointmentViewController.m */; };
 		15E9D6F91D06B3D6006D5DD1 /* VRGCalendarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E9D6F01D06B3D6006D5DD1 /* VRGCalendarView.m */; };
 		15E9D6FA1D06B3D6006D5DD1 /* UIView+convenience.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E9D6F21D06B3D6006D5DD1 /* UIView+convenience.m */; };
@@ -133,8 +136,13 @@
 		15E76B791D2F9BA80028EFEB /* AppointmentViewDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppointmentViewDetailViewController.m; sourceTree = "<group>"; };
 		15E76B7B1D2FA7EE0028EFEB /* PrescriptionTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrescriptionTableViewController.h; sourceTree = "<group>"; };
 		15E76B7C1D2FA7EE0028EFEB /* PrescriptionTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrescriptionTableViewController.m; sourceTree = "<group>"; };
-		15E76B7E1D2FA9B40028EFEB /* MedicalRecordDetailTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MedicalRecordDetailTableViewController.h; sourceTree = "<group>"; };
-		15E76B7F1D2FA9B40028EFEB /* MedicalRecordDetailTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MedicalRecordDetailTableViewController.m; sourceTree = "<group>"; };
+		15E8C4D81D3ADE020056E8AE /* mypatient2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mypatient2.png; sourceTree = "<group>"; };
+		15E8C4E61D3AE7150056E8AE /* DoctorNoteTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoctorNoteTableViewController.h; sourceTree = "<group>"; };
+		15E8C4E71D3AE7150056E8AE /* DoctorNoteTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DoctorNoteTableViewController.m; sourceTree = "<group>"; };
+		15E8C4E91D3AE7420056E8AE /* ImportantInfoTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImportantInfoTableViewController.h; sourceTree = "<group>"; };
+		15E8C4EA1D3AE7420056E8AE /* ImportantInfoTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImportantInfoTableViewController.m; sourceTree = "<group>"; };
+		15E8C4ED1D3AE8D40056E8AE /* MedicalRecordDetailTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MedicalRecordDetailTableViewController.h; sourceTree = "<group>"; };
+		15E8C4EE1D3AE8D40056E8AE /* MedicalRecordDetailTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MedicalRecordDetailTableViewController.m; sourceTree = "<group>"; };
 		15E9D6EC1D06A99C006D5DD1 /* AppointmentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppointmentViewController.h; sourceTree = "<group>"; };
 		15E9D6ED1D06A99C006D5DD1 /* AppointmentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppointmentViewController.m; sourceTree = "<group>"; };
 		15E9D6EF1D06B3D6006D5DD1 /* VRGCalendarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRGCalendarView.h; sourceTree = "<group>"; };
@@ -231,9 +239,9 @@
 		15DCF5751CF3593800013F19 /* Olives */ = {
 			isa = PBXGroup;
 			children = (
+				15F01D3F1CF81DEE00EAAF9B /* Controller */,
 				156734D91D1044F600392ADA /* workingWithAPI */,
 				15E9D6DC1D06A93C006D5DD1 /* calendarView */,
-				15F01D3F1CF81DEE00EAAF9B /* Controller */,
 				1502F7B01CF5F36D00663B59 /* SWRevealViewController */,
 				15F01D3B1CF81DA600EAAF9B /* TableViewCell */,
 				15DCF5791CF3593800013F19 /* AppDelegate.h */,
@@ -269,6 +277,7 @@
 		15DCF5AC1CF4A52200013F19 /* image */ = {
 			isa = PBXGroup;
 			children = (
+				15E8C4D81D3ADE020056E8AE /* mypatient2.png */,
 				15E76B721D2F973D0028EFEB /* noteicon.png */,
 				15E76B731D2F973D0028EFEB /* typeicon.jpeg */,
 				15E76B741D2F973D0028EFEB /* timeicon.png */,
@@ -305,6 +314,104 @@
 			name = image;
 			sourceTree = "<group>";
 		};
+		15E8C4DA1D3AE4AF0056E8AE /* DoctorNote */ = {
+			isa = PBXGroup;
+			children = (
+				15E8C4E61D3AE7150056E8AE /* DoctorNoteTableViewController.h */,
+				15E8C4E71D3AE7150056E8AE /* DoctorNoteTableViewController.m */,
+			);
+			name = DoctorNote;
+			sourceTree = "<group>";
+		};
+		15E8C4DB1D3AE4CB0056E8AE /* Prescription */ = {
+			isa = PBXGroup;
+			children = (
+				15E76B7B1D2FA7EE0028EFEB /* PrescriptionTableViewController.h */,
+				15E76B7C1D2FA7EE0028EFEB /* PrescriptionTableViewController.m */,
+			);
+			name = Prescription;
+			sourceTree = "<group>";
+		};
+		15E8C4DC1D3AE4D50056E8AE /* MedicalRecordDetails */ = {
+			isa = PBXGroup;
+			children = (
+				15E8C4ED1D3AE8D40056E8AE /* MedicalRecordDetailTableViewController.h */,
+				15E8C4EE1D3AE8D40056E8AE /* MedicalRecordDetailTableViewController.m */,
+			);
+			name = MedicalRecordDetails;
+			sourceTree = "<group>";
+		};
+		15E8C4DD1D3AE5010056E8AE /* ImportantInfo */ = {
+			isa = PBXGroup;
+			children = (
+				15E8C4E91D3AE7420056E8AE /* ImportantInfoTableViewController.h */,
+				15E8C4EA1D3AE7420056E8AE /* ImportantInfoTableViewController.m */,
+			);
+			name = ImportantInfo;
+			sourceTree = "<group>";
+		};
+		15E8C4DE1D3AE5260056E8AE /* MainMenu */ = {
+			isa = PBXGroup;
+			children = (
+				15E75A361CF756EB00A985E7 /* PatientsTableViewController.h */,
+				15E75A371CF756EB00A985E7 /* PatientsTableViewController.m */,
+				15E75A3C1CF760F200A985E7 /* LoanTableViewController.h */,
+				15E75A3D1CF760F200A985E7 /* LoanTableViewController.m */,
+				15E75A3F1CF7610100A985E7 /* SettingTableViewController.h */,
+				15E75A401CF7610100A985E7 /* SettingTableViewController.m */,
+				15DCF5A41CF3820F00013F19 /* OLTableViewController.h */,
+				15DCF5A51CF3820F00013F19 /* OLTableViewController.m */,
+				15E9D6EC1D06A99C006D5DD1 /* AppointmentViewController.h */,
+				15E9D6ED1D06A99C006D5DD1 /* AppointmentViewController.m */,
+				1567353C1D19522A00392ADA /* HomeViewController.h */,
+				1567353D1D19522A00392ADA /* HomeViewController.m */,
+			);
+			name = MainMenu;
+			sourceTree = "<group>";
+		};
+		15E8C4DF1D3AE5530056E8AE /* Login + Forgot password */ = {
+			isa = PBXGroup;
+			children = (
+				15E9D7051D0812DD006D5DD1 /* ForgotPasswordViewController.h */,
+				15E9D7061D0812DD006D5DD1 /* ForgotPasswordViewController.m */,
+				15E9D7001D07FB2D006D5DD1 /* LoginViewController.h */,
+				15E9D7011D07FB2D006D5DD1 /* LoginViewController.m */,
+			);
+			name = "Login + Forgot password";
+			sourceTree = "<group>";
+		};
+		15E8C4E01D3AE5880056E8AE /* PatientDetails */ = {
+			isa = PBXGroup;
+			children = (
+				15E8C4EC1D3AE7620056E8AE /* PatientDetailInfo */,
+				15E8C4DD1D3AE5010056E8AE /* ImportantInfo */,
+				15E8C4DB1D3AE4CB0056E8AE /* Prescription */,
+				15E8C4DA1D3AE4AF0056E8AE /* DoctorNote */,
+			);
+			name = PatientDetails;
+			sourceTree = "<group>";
+		};
+		15E8C4E21D3AE6050056E8AE /* AppointmentDetails */ = {
+			isa = PBXGroup;
+			children = (
+				15E76B781D2F9BA80028EFEB /* AppointmentViewDetailViewController.h */,
+				15E76B791D2F9BA80028EFEB /* AppointmentViewDetailViewController.m */,
+				15EB44B91D34F80C00C489A2 /* TimePickerViewController.h */,
+				15EB44BA1D34F80C00C489A2 /* TimePickerViewController.m */,
+			);
+			name = AppointmentDetails;
+			sourceTree = "<group>";
+		};
+		15E8C4EC1D3AE7620056E8AE /* PatientDetailInfo */ = {
+			isa = PBXGroup;
+			children = (
+				15E63CF81D1E91C700706875 /* PatientDetailsViewController.h */,
+				15E63CF91D1E91C700706875 /* PatientDetailsViewController.m */,
+				15E8C4DC1D3AE4D50056E8AE /* MedicalRecordDetails */,
+			);
+			name = PatientDetailInfo;
+			sourceTree = "<group>";
+		};
 		15E9D6DC1D06A93C006D5DD1 /* calendarView */ = {
 			isa = PBXGroup;
 			children = (
@@ -336,32 +443,10 @@
 		15F01D3F1CF81DEE00EAAF9B /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				15E75A361CF756EB00A985E7 /* PatientsTableViewController.h */,
-				15E75A371CF756EB00A985E7 /* PatientsTableViewController.m */,
-				15E75A3C1CF760F200A985E7 /* LoanTableViewController.h */,
-				15E75A3D1CF760F200A985E7 /* LoanTableViewController.m */,
-				15E75A3F1CF7610100A985E7 /* SettingTableViewController.h */,
-				15E75A401CF7610100A985E7 /* SettingTableViewController.m */,
-				15DCF5A41CF3820F00013F19 /* OLTableViewController.h */,
-				15DCF5A51CF3820F00013F19 /* OLTableViewController.m */,
-				15E9D6EC1D06A99C006D5DD1 /* AppointmentViewController.h */,
-				15E9D6ED1D06A99C006D5DD1 /* AppointmentViewController.m */,
-				15E9D7001D07FB2D006D5DD1 /* LoginViewController.h */,
-				15E9D7011D07FB2D006D5DD1 /* LoginViewController.m */,
-				15E9D7051D0812DD006D5DD1 /* ForgotPasswordViewController.h */,
-				15E9D7061D0812DD006D5DD1 /* ForgotPasswordViewController.m */,
-				1567353C1D19522A00392ADA /* HomeViewController.h */,
-				1567353D1D19522A00392ADA /* HomeViewController.m */,
-				15E63CF81D1E91C700706875 /* PatientDetailsViewController.h */,
-				15E63CF91D1E91C700706875 /* PatientDetailsViewController.m */,
-				15E76B781D2F9BA80028EFEB /* AppointmentViewDetailViewController.h */,
-				15E76B791D2F9BA80028EFEB /* AppointmentViewDetailViewController.m */,
-				15E76B7B1D2FA7EE0028EFEB /* PrescriptionTableViewController.h */,
-				15E76B7C1D2FA7EE0028EFEB /* PrescriptionTableViewController.m */,
-				15E76B7E1D2FA9B40028EFEB /* MedicalRecordDetailTableViewController.h */,
-				15E76B7F1D2FA9B40028EFEB /* MedicalRecordDetailTableViewController.m */,
-				15EB44B91D34F80C00C489A2 /* TimePickerViewController.h */,
-				15EB44BA1D34F80C00C489A2 /* TimePickerViewController.m */,
+				15E8C4E21D3AE6050056E8AE /* AppointmentDetails */,
+				15E8C4E01D3AE5880056E8AE /* PatientDetails */,
+				15E8C4DF1D3AE5530056E8AE /* Login + Forgot password */,
+				15E8C4DE1D3AE5260056E8AE /* MainMenu */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -448,6 +533,7 @@
 			files = (
 				15F0A64B1D1E7B2900A32848 /* appointmenticon.png in Resources */,
 				15F0A63A1D1E75F600A32848 /* menuscreen.jpg in Resources */,
+				15E8C4D91D3ADE020056E8AE /* mypatient2.png in Resources */,
 				15E76B761D2F973D0028EFEB /* typeicon.jpeg in Resources */,
 				15E9D7041D07FE77006D5DD1 /* Sign in.png in Resources */,
 				15E75A471CF764BF00A985E7 /* avatar.png in Resources */,
@@ -499,6 +585,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1502F7B31CF5F39D00663B59 /* SWRevealViewController.m in Sources */,
+				15E8C4EF1D3AE8D40056E8AE /* MedicalRecordDetailTableViewController.m in Sources */,
 				15E75A3E1CF760F200A985E7 /* LoanTableViewController.m in Sources */,
 				1567353E1D19522A00392ADA /* HomeViewController.m in Sources */,
 				15DCF57B1CF3593800013F19 /* AppDelegate.m in Sources */,
@@ -510,17 +597,18 @@
 				15EB44BB1D34F80C00C489A2 /* TimePickerViewController.m in Sources */,
 				15E9D6FD1D06B3D6006D5DD1 /* UIColor+expanded.m in Sources */,
 				15E9D6FB1D06B3D6006D5DD1 /* NSMutableArray+convenience.m in Sources */,
-				15E76B801D2FA9B40028EFEB /* MedicalRecordDetailTableViewController.m in Sources */,
 				15E9D7071D0812DD006D5DD1 /* ForgotPasswordViewController.m in Sources */,
 				15DCF5A61CF3820F00013F19 /* OLTableViewController.m in Sources */,
 				15E76B7D1D2FA7EE0028EFEB /* PrescriptionTableViewController.m in Sources */,
 				15DCF5781CF3593800013F19 /* main.m in Sources */,
 				15F01D3E1CF81DC700EAAF9B /* PatientTableViewCell.m in Sources */,
 				15E76B7A1D2F9BA80028EFEB /* AppointmentViewDetailViewController.m in Sources */,
+				15E8C4E81D3AE7150056E8AE /* DoctorNoteTableViewController.m in Sources */,
 				15E9D7021D07FB2D006D5DD1 /* LoginViewController.m in Sources */,
 				15DCF5841CF3593800013F19 /* Olives.xcdatamodeld in Sources */,
 				15E9D6FA1D06B3D6006D5DD1 /* UIView+convenience.m in Sources */,
 				15E75A381CF756EB00A985E7 /* PatientsTableViewController.m in Sources */,
+				15E8C4EB1D3AE7420056E8AE /* ImportantInfoTableViewController.m in Sources */,
 				15E63CFA1D1E91C700706875 /* PatientDetailsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

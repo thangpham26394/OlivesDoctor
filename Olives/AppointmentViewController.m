@@ -236,8 +236,8 @@
     if ([[segue identifier] isEqualToString:@"addNewAppointment"])
     {
         // Get reference to the destination view controller
-        UINavigationController *nav = [segue destinationViewController];
-        PatientsTableViewController *patientTableViewController = (PatientsTableViewController*)nav.topViewController;
+//        UINavigationController *nav = [segue destinationViewController];
+        PatientsTableViewController *patientTableViewController = [segue destinationViewController];
         // Pass any objects to the view controller here, like...
         patientTableViewController.isAppointmentViewDetailPatient = @"addNewAppointment";
     }
