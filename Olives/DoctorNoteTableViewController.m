@@ -7,9 +7,9 @@
 //
 
 #import "DoctorNoteTableViewController.h"
-
+#import "DoctorNoteTableViewCell.h"
 @interface DoctorNoteTableViewController ()
-
+@property(assign,nonatomic) CGFloat noteLabelHeight;
 @end
 
 @implementation DoctorNoteTableViewController
@@ -32,24 +32,57 @@
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-#warning Incomplete implementation, return the number of sections
-    return 0;
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-#warning Incomplete implementation, return the number of rows
-    return 0;
+    return 4;
 }
 
-/*
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
-    
+
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"doctorNoteCell" ];
+    if(cell == nil)
+    {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle  reuseIdentifier:@"doctorNoteCell"];
+
+    }
     // Configure the cell...
-    
+
+    NSString *doctorNote ;
+    NSString *dateTime;
+    if (indexPath.row %2 ==0) {
+      dateTime = @"20/10/2010";
+      doctorNote  = @"phát hiện triệu chứng ung thư máu, mỡ máu rất cao, mức độ đường huyết không ổn định can som phat hien va dieu tri de tranh nhung bien chung sau nay khong mong muon phát hiện triệu chứng ung thư máu, mỡ máu rất cao, mức độ đường huyết không ổn định can som phat hien va dieu tri de tranh nhung bien chung sau nay khong mong muon";
+    }else{
+        dateTime = @"1/11/2011";
+        doctorNote  = @"phát hiện triệu chứng ung thư máu, mỡ máu rất cao, mức độ đường huyết không ổn định";
+    }
+    cell.textLabel.text = dateTime;
+    cell.detailTextLabel.text =doctorNote;
+
+    cell.preservesSuperviewLayoutMargins = NO;
+    cell.separatorInset = UIEdgeInsetsZero;
+    cell.layoutMargins = UIEdgeInsetsZero;
+
+//    self.noteLabelHeight=[doctorNote sizeWithFont:[UIFont fontWithName:@"Arial" size:14] constrainedToSize:CGSizeMake(500, CGFLOAT_MAX) lineBreakMode:UILineBreakModeWordWrap].height;
+
+//    self.noteLabelHeight = [doctorNote sizeWithFont:[UIFont systemFontOfSize:20]
+//       constrainedToSize:CGSizeMake(self.view.bounds.size.width - 40, CGFLOAT_MAX) // - 40 For cell padding
+//           lineBreakMode:NSLineBreakByWordWrapping].height;
+
+    self.noteLabelHeight = [doctorNote boundingRectWithSize:CGSizeMake(self.view.bounds.size.width - 40, CGFLOAT_MAX)
+                                              options:NSStringDrawingUsesLineFragmentOrigin
+                                           attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:20]}
+                                              context:nil].size.height;
+
     return cell;
 }
-*/
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return self.noteLabelHeight + 20;
+}
 
 /*
 // Override to support conditional editing of the table view.

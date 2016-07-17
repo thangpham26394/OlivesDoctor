@@ -1,5 +1,5 @@
 //
-//  ImportantInfoTableViewController.h
+//  MedicalRecordImagesCollectionViewController.h
 //  Olives
 //
 //  Created by Tony Tony Chopper on 7/17/16.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ImportantInfoTableViewController : UITableViewController
+@interface MedicalRecordImagesCollectionViewController : UICollectionViewController
 
 @end

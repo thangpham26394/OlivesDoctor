@@ -12,17 +12,25 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *avatarImage;
 @property (weak, nonatomic) IBOutlet UIButton *sendMessageButton;
+@property (weak, nonatomic) IBOutlet UITableView *importantInfoTableView;
 
 
 @end
 
 @implementation PatientDetailsViewController
 
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:YES];
+    self.navigationController.topViewController.title=@"Patient Details";
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    self.view.backgroundColor = [UIColor colorWithRed:52/255.0 green:152/255.0 blue:219/255.0 alpha:1.0];
     self.avatarImage.layer.cornerRadius = self.avatarImage.frame.size.width / 2;
     self.avatarImage.clipsToBounds = YES;
+    self.importantInfoTableView.layer.cornerRadius = 5;
+    self.importantInfoTableView.clipsToBounds = YES;
     self.sendMessageButton.backgroundColor = [UIColor colorWithRed:0/255.0 green:153/255.0 blue:153/255.0 alpha:1.0];
 
 }
@@ -41,13 +49,25 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
-    return 1;
+    return 10;
 }
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"medicalInfoCell" forIndexPath:indexPath];
 
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"importantInfoCell" ];
+    if(cell == nil)
+    {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1  reuseIdentifier:@"importantInfoCell"];
+
+    }
+    // Configure the cell...
+    cell.textLabel.text = @"Diabetes";
+//    cell.detailTextLabel.text = @"details";
+
+    cell.preservesSuperviewLayoutMargins = NO;
+    cell.separatorInset = UIEdgeInsetsZero;
+    cell.layoutMargins = UIEdgeInsetsZero;
     // Configure the cell...
 
     return cell;

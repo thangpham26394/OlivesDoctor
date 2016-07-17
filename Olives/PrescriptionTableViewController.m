@@ -14,6 +14,11 @@
 
 @implementation PrescriptionTableViewController
 
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:YES];
+    self.navigationController.topViewController.title=@"Prescription";
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -44,8 +49,20 @@
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"prescriptionCell" forIndexPath:indexPath];
-    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"prescriptionCell" ];
+    if(cell == nil)
+    {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1  reuseIdentifier:@"prescriptionCell"];
+
+    }
+    // Configure the cell...
+    cell.textLabel.text = @"Panadol";
+    //cell.detailTextLabel.text = @"details";
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    cell.preservesSuperviewLayoutMargins = NO;
+    cell.separatorInset = UIEdgeInsetsZero;
+    cell.layoutMargins = UIEdgeInsetsZero;
+    return cell;
     // Configure the cell...
     
     return cell;

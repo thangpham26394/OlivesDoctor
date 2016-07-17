@@ -45,8 +45,12 @@
 		15E76B7D1D2FA7EE0028EFEB /* PrescriptionTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E76B7C1D2FA7EE0028EFEB /* PrescriptionTableViewController.m */; };
 		15E8C4D91D3ADE020056E8AE /* mypatient2.png in Resources */ = {isa = PBXBuildFile; fileRef = 15E8C4D81D3ADE020056E8AE /* mypatient2.png */; };
 		15E8C4E81D3AE7150056E8AE /* DoctorNoteTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8C4E71D3AE7150056E8AE /* DoctorNoteTableViewController.m */; };
-		15E8C4EB1D3AE7420056E8AE /* ImportantInfoTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8C4EA1D3AE7420056E8AE /* ImportantInfoTableViewController.m */; };
 		15E8C4EF1D3AE8D40056E8AE /* MedicalRecordDetailTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8C4EE1D3AE8D40056E8AE /* MedicalRecordDetailTableViewController.m */; };
+		15E8C4F31D3AEB290056E8AE /* MedicalRecordImagesCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8C4F21D3AEB290056E8AE /* MedicalRecordImagesCollectionViewController.m */; };
+		15E8C4F51D3AEBCB0056E8AE /* scrollphoto.png in Resources */ = {isa = PBXBuildFile; fileRef = 15E8C4F41D3AEBCB0056E8AE /* scrollphoto.png */; };
+		15E8C4F81D3AEE460056E8AE /* MedicalRecordImageShowViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8C4F71D3AEE460056E8AE /* MedicalRecordImageShowViewController.m */; };
+		15E8C4FB1D3AF3A80056E8AE /* MedicalRecordListCollectionReusableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8C4FA1D3AF3A80056E8AE /* MedicalRecordListCollectionReusableView.m */; };
+		15E8C4FE1D3B70970056E8AE /* DoctorNoteTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8C4FD1D3B70970056E8AE /* DoctorNoteTableViewCell.m */; };
 		15E9D6EE1D06A99C006D5DD1 /* AppointmentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E9D6ED1D06A99C006D5DD1 /* AppointmentViewController.m */; };
 		15E9D6F91D06B3D6006D5DD1 /* VRGCalendarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E9D6F01D06B3D6006D5DD1 /* VRGCalendarView.m */; };
 		15E9D6FA1D06B3D6006D5DD1 /* UIView+convenience.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E9D6F21D06B3D6006D5DD1 /* UIView+convenience.m */; };
@@ -139,10 +143,17 @@
 		15E8C4D81D3ADE020056E8AE /* mypatient2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mypatient2.png; sourceTree = "<group>"; };
 		15E8C4E61D3AE7150056E8AE /* DoctorNoteTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoctorNoteTableViewController.h; sourceTree = "<group>"; };
 		15E8C4E71D3AE7150056E8AE /* DoctorNoteTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DoctorNoteTableViewController.m; sourceTree = "<group>"; };
-		15E8C4E91D3AE7420056E8AE /* ImportantInfoTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImportantInfoTableViewController.h; sourceTree = "<group>"; };
-		15E8C4EA1D3AE7420056E8AE /* ImportantInfoTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImportantInfoTableViewController.m; sourceTree = "<group>"; };
 		15E8C4ED1D3AE8D40056E8AE /* MedicalRecordDetailTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MedicalRecordDetailTableViewController.h; sourceTree = "<group>"; };
 		15E8C4EE1D3AE8D40056E8AE /* MedicalRecordDetailTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MedicalRecordDetailTableViewController.m; sourceTree = "<group>"; };
+		15E8C4F11D3AEB290056E8AE /* MedicalRecordImagesCollectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MedicalRecordImagesCollectionViewController.h; sourceTree = "<group>"; };
+		15E8C4F21D3AEB290056E8AE /* MedicalRecordImagesCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MedicalRecordImagesCollectionViewController.m; sourceTree = "<group>"; };
+		15E8C4F41D3AEBCB0056E8AE /* scrollphoto.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = scrollphoto.png; sourceTree = "<group>"; };
+		15E8C4F61D3AEE460056E8AE /* MedicalRecordImageShowViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MedicalRecordImageShowViewController.h; sourceTree = "<group>"; };
+		15E8C4F71D3AEE460056E8AE /* MedicalRecordImageShowViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MedicalRecordImageShowViewController.m; sourceTree = "<group>"; };
+		15E8C4F91D3AF3A80056E8AE /* MedicalRecordListCollectionReusableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MedicalRecordListCollectionReusableView.h; sourceTree = "<group>"; };
+		15E8C4FA1D3AF3A80056E8AE /* MedicalRecordListCollectionReusableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MedicalRecordListCollectionReusableView.m; sourceTree = "<group>"; };
+		15E8C4FC1D3B70970056E8AE /* DoctorNoteTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoctorNoteTableViewCell.h; sourceTree = "<group>"; };
+		15E8C4FD1D3B70970056E8AE /* DoctorNoteTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DoctorNoteTableViewCell.m; sourceTree = "<group>"; };
 		15E9D6EC1D06A99C006D5DD1 /* AppointmentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppointmentViewController.h; sourceTree = "<group>"; };
 		15E9D6ED1D06A99C006D5DD1 /* AppointmentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppointmentViewController.m; sourceTree = "<group>"; };
 		15E9D6EF1D06B3D6006D5DD1 /* VRGCalendarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRGCalendarView.h; sourceTree = "<group>"; };
@@ -277,6 +288,7 @@
 		15DCF5AC1CF4A52200013F19 /* image */ = {
 			isa = PBXGroup;
 			children = (
+				15E8C4F41D3AEBCB0056E8AE /* scrollphoto.png */,
 				15E8C4D81D3ADE020056E8AE /* mypatient2.png */,
 				15E76B721D2F973D0028EFEB /* noteicon.png */,
 				15E76B731D2F973D0028EFEB /* typeicon.jpeg */,
@@ -337,6 +349,7 @@
 			children = (
 				15E8C4ED1D3AE8D40056E8AE /* MedicalRecordDetailTableViewController.h */,
 				15E8C4EE1D3AE8D40056E8AE /* MedicalRecordDetailTableViewController.m */,
+				15E8C4F01D3AEAF10056E8AE /* MedicalRecordImages */,
 			);
 			name = MedicalRecordDetails;
 			sourceTree = "<group>";
@@ -344,8 +357,8 @@
 		15E8C4DD1D3AE5010056E8AE /* ImportantInfo */ = {
 			isa = PBXGroup;
 			children = (
-				15E8C4E91D3AE7420056E8AE /* ImportantInfoTableViewController.h */,
-				15E8C4EA1D3AE7420056E8AE /* ImportantInfoTableViewController.m */,
+				15E63CF81D1E91C700706875 /* PatientDetailsViewController.h */,
+				15E63CF91D1E91C700706875 /* PatientDetailsViewController.m */,
 			);
 			name = ImportantInfo;
 			sourceTree = "<group>";
@@ -383,7 +396,7 @@
 		15E8C4E01D3AE5880056E8AE /* PatientDetails */ = {
 			isa = PBXGroup;
 			children = (
-				15E8C4EC1D3AE7620056E8AE /* PatientDetailInfo */,
+				15E8C4DC1D3AE4D50056E8AE /* MedicalRecordDetails */,
 				15E8C4DD1D3AE5010056E8AE /* ImportantInfo */,
 				15E8C4DB1D3AE4CB0056E8AE /* Prescription */,
 				15E8C4DA1D3AE4AF0056E8AE /* DoctorNote */,
@@ -402,14 +415,15 @@
 			name = AppointmentDetails;
 			sourceTree = "<group>";
 		};
-		15E8C4EC1D3AE7620056E8AE /* PatientDetailInfo */ = {
+		15E8C4F01D3AEAF10056E8AE /* MedicalRecordImages */ = {
 			isa = PBXGroup;
 			children = (
-				15E63CF81D1E91C700706875 /* PatientDetailsViewController.h */,
-				15E63CF91D1E91C700706875 /* PatientDetailsViewController.m */,
-				15E8C4DC1D3AE4D50056E8AE /* MedicalRecordDetails */,
+				15E8C4F11D3AEB290056E8AE /* MedicalRecordImagesCollectionViewController.h */,
+				15E8C4F21D3AEB290056E8AE /* MedicalRecordImagesCollectionViewController.m */,
+				15E8C4F61D3AEE460056E8AE /* MedicalRecordImageShowViewController.h */,
+				15E8C4F71D3AEE460056E8AE /* MedicalRecordImageShowViewController.m */,
 			);
-			name = PatientDetailInfo;
+			name = MedicalRecordImages;
 			sourceTree = "<group>";
 		};
 		15E9D6DC1D06A93C006D5DD1 /* calendarView */ = {
@@ -436,6 +450,10 @@
 				15DCF5AA1CF3870F00013F19 /* OLTableViewCell.m */,
 				15F01D3C1CF81DC700EAAF9B /* PatientTableViewCell.h */,
 				15F01D3D1CF81DC700EAAF9B /* PatientTableViewCell.m */,
+				15E8C4F91D3AF3A80056E8AE /* MedicalRecordListCollectionReusableView.h */,
+				15E8C4FA1D3AF3A80056E8AE /* MedicalRecordListCollectionReusableView.m */,
+				15E8C4FC1D3B70970056E8AE /* DoctorNoteTableViewCell.h */,
+				15E8C4FD1D3B70970056E8AE /* DoctorNoteTableViewCell.m */,
 			);
 			name = TableViewCell;
 			sourceTree = "<group>";
@@ -539,6 +557,7 @@
 				15E75A471CF764BF00A985E7 /* avatar.png in Resources */,
 				1502F7B71CF5F52500663B59 /* menu@2x.png in Resources */,
 				15DCF5B31CF4A65000013F19 /* robin.jpeg in Resources */,
+				15E8C4F51D3AEBCB0056E8AE /* scrollphoto.png in Resources */,
 				15DCF5B71CF4A65000013F19 /* chopper.jpeg in Resources */,
 				15DCF5B51CF4A65000013F19 /* zoro.jpeg in Resources */,
 				15F0A64C1D1E7B2900A32848 /* patienticon.jpg in Resources */,
@@ -592,15 +611,18 @@
 				15E9D6F91D06B3D6006D5DD1 /* VRGCalendarView.m in Sources */,
 				15E9D6EE1D06A99C006D5DD1 /* AppointmentViewController.m in Sources */,
 				15E9D6FC1D06B3D6006D5DD1 /* NSDate+convenience.m in Sources */,
+				15E8C4F31D3AEB290056E8AE /* MedicalRecordImagesCollectionViewController.m in Sources */,
 				15E75A411CF7610100A985E7 /* SettingTableViewController.m in Sources */,
 				15DCF5AB1CF3870F00013F19 /* OLTableViewCell.m in Sources */,
 				15EB44BB1D34F80C00C489A2 /* TimePickerViewController.m in Sources */,
+				15E8C4FE1D3B70970056E8AE /* DoctorNoteTableViewCell.m in Sources */,
 				15E9D6FD1D06B3D6006D5DD1 /* UIColor+expanded.m in Sources */,
 				15E9D6FB1D06B3D6006D5DD1 /* NSMutableArray+convenience.m in Sources */,
 				15E9D7071D0812DD006D5DD1 /* ForgotPasswordViewController.m in Sources */,
 				15DCF5A61CF3820F00013F19 /* OLTableViewController.m in Sources */,
 				15E76B7D1D2FA7EE0028EFEB /* PrescriptionTableViewController.m in Sources */,
 				15DCF5781CF3593800013F19 /* main.m in Sources */,
+				15E8C4F81D3AEE460056E8AE /* MedicalRecordImageShowViewController.m in Sources */,
 				15F01D3E1CF81DC700EAAF9B /* PatientTableViewCell.m in Sources */,
 				15E76B7A1D2F9BA80028EFEB /* AppointmentViewDetailViewController.m in Sources */,
 				15E8C4E81D3AE7150056E8AE /* DoctorNoteTableViewController.m in Sources */,
@@ -608,7 +630,7 @@
 				15DCF5841CF3593800013F19 /* Olives.xcdatamodeld in Sources */,
 				15E9D6FA1D06B3D6006D5DD1 /* UIView+convenience.m in Sources */,
 				15E75A381CF756EB00A985E7 /* PatientsTableViewController.m in Sources */,
-				15E8C4EB1D3AE7420056E8AE /* ImportantInfoTableViewController.m in Sources */,
+				15E8C4FB1D3AF3A80056E8AE /* MedicalRecordListCollectionReusableView.m in Sources */,
 				15E63CFA1D1E91C700706875 /* PatientDetailsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -43,9 +43,9 @@
     }
 
 
-
-
-
+    [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0]];
+    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
+    [[UINavigationBar appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName : [UIColor whiteColor]}];
     self.window.rootViewController = rootViewController;
     [self.window makeKeyAndVisible];
     return YES;

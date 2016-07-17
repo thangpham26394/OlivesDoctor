@@ -9,14 +9,25 @@
 #import "MedicalRecordDetailTableViewController.h"
 
 @interface MedicalRecordDetailTableViewController ()
--(IBAction)done:(id)sender;
+
 @end
 
 @implementation MedicalRecordDetailTableViewController
 
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:YES];
+    self.navigationController.topViewController.title=@"MedicalRecord";
+}
+
+//-(void)viewWillDisappear:(BOOL)animated{
+//    [super viewWillAppear:YES];
+//    self.navigationController.topViewController.title=@"";
+//    NSLog(@"unload");
+//}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
     
@@ -29,31 +40,43 @@
     // Dispose of any resources that can be recreated.
 }
 
--(IBAction)done:(id)sender{
-    [self dismissViewControllerAnimated:YES completion:nil];
-}
+
 
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-#warning Incomplete implementation, return the number of sections
-    return 0;
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-#warning Incomplete implementation, return the number of rows
-    return 0;
+    return 5;
 }
 
-/*
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
-    
+
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"medicalInfoCell" ];
+    if(cell == nil)
+    {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1  reuseIdentifier:@"medicalInfoCell"];
+
+    }
     // Configure the cell...
-    
+    cell.textLabel.text = @"Bệnh án tiểu đường";
+    //cell.detailTextLabel.text = @"details";
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    cell.preservesSuperviewLayoutMargins = NO;
+    cell.separatorInset = UIEdgeInsetsZero;
+    cell.layoutMargins = UIEdgeInsetsZero;
     return cell;
 }
-*/
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    // Do some stuff when the row is selected
+    [self performSegueWithIdentifier:@"showTotalImage" sender:self];
+
+    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+}
 
 /*
 // Override to support conditional editing of the table view.
