@@ -5,11 +5,13 @@
 //  Created by Tony Tony Chopper on 6/7/16.
 //  Copyright © 2016 Thang. All rights reserved.
 //
-
+#define APIURL @"http://olive.azurewebsites.net/api/appointment/filter"
 #import "AppointmentViewController.h"
 #import "SWRevealViewController.h"
 #import "PatientsTableViewController.h"
 #import "AppointmentViewDetailViewController.h"
+#import <CoreData/CoreData.h>
+
 
 @interface AppointmentViewController ()
 @property (weak, nonatomic) IBOutlet UIView *calendarView;
@@ -22,15 +24,147 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *menuButton;
 @property(strong,nonatomic) NSMutableArray * markedDayList;
 @property(strong,nonatomic) NSString * chosenDate;
+@property (strong,nonatomic) NSDictionary *responseJSONData ;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *addNewAppointmentBarButton;
 
 -(IBAction)addNewAppointment:(id)sender;
 @end
 
+
 @implementation AppointmentViewController
 
+
+#pragma mark - Coredata function
+- (NSManagedObjectContext *)managedObjectContext {
+    NSManagedObjectContext *context = nil;
+    id delegate = [[UIApplication sharedApplication] delegate];
+    if ([delegate performSelector:@selector(managedObjectContext)]) {
+        context = [delegate managedObjectContext];
+    }
+    return context;
+}
+
+-(void)saveAppointmentInfoToCoreData:(NSDictionary*) jsonData{
+    NSArray * appointments = [jsonData valueForKey:@"Appointments"];
+    for (int  runIndex =0; runIndex < appointments.count; runIndex++) {
+        NSDictionary *appointmentDic = [appointments objectAtIndex:runIndex];
+
+        NSString * appointmentID = [appointmentDic valueForKey:@"Id"];
+        NSString * dateCreated = [appointmentDic valueForKey:@"Created"];
+
+        NSString * daterId = [[appointmentDic valueForKey:@"Dater"]  valueForKey:@"Id"];
+        NSString * daterFirstName = [[appointmentDic valueForKey:@"Dater"] valueForKey:@"FirstName"];
+        NSString * daterLastName = [[appointmentDic valueForKey:@"Dater"] valueForKey:@"LastName"];
+
+        NSString * makerId = [[appointmentDic valueForKey:@"Maker"]  valueForKey:@"Id"];
+        NSString * makerFirstName = [[appointmentDic valueForKey:@"Maker"] valueForKey:@"FirstName"];
+        NSString * makerrLastName = [[appointmentDic valueForKey:@"Maker"] valueForKey:@"LastName"];
+
+        NSString * from = [appointmentDic valueForKey:@"From"];
+        NSString * to = [appointmentDic valueForKey:@"To"];
+        NSString * lastModified = [appointmentDic valueForKey:@"LastModified"];
+        NSString * note = [appointmentDic valueForKey:@"Note"];
+        NSString * status = [appointmentDic valueForKey:@"Status"];
+
+    }
+
+
+//    NSManagedObjectContext *context = [self managedObjectContext];
+//    //Check if there is already a doctor account in coredata
+//    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+//    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+//
+//    // Create a new managed object
+//    NSManagedObject *newDoctor;
+//    if (doctorObject.count ==0) {
+//        newDoctor = [NSEntityDescription insertNewObjectForEntityForName:@"DoctorInfo" inManagedObjectContext:context];
+//    }else{
+//        newDoctor = [doctorObject objectAtIndex:0];
+//    }
+//
+//
+//
+//
+//    NSError *error = nil;
+//    // Save the object to persistent store
+//    if (![context save:&error]) {
+//        NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
+//    }else{
+//        NSLog(@"Save success!");
+//    }
+
+}
+
+#pragma mark - Connect to API function
+
+
+
+-(void)getTotalNumberAppointment{
+    NSDictionary * responseDic = [self loadAppointmentDataFromAPIWithPage:@"0" andRecords:@"1"];
+    NSNumber *totalAppointment = [responseDic valueForKey:@"Total"];
+
+}
+
+
+
+-(NSDictionary*)loadAppointmentDataFromAPIWithPage:(NSString*)page andRecords:(NSString*)records{
+
+    // create url
+    NSURL *url = [NSURL URLWithString:APIURL];
+    //create JSON data to post to API
+    NSDictionary *account = @{
+                              @"Mode" :  [NSNull null],
+                              @"Page" : page,
+                              @"Records" : records
+                              };
+    NSError *error = nil;
+    NSData *jsondata = [NSJSONSerialization dataWithJSONObject:account options:NSJSONWritingPrettyPrinted error:&error];
+
+    // config session
+    NSURLSession *defaultSession = [NSURLSession sharedSession];
+
+    //create request
+    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
+
+    //setup header and body for request
+    [urlRequest setHTTPMethod:@"POST"];
+    [urlRequest setValue:@"doctor26@gmail.com" forHTTPHeaderField:@"Email"];
+    [urlRequest setValue:@"doctor199x" forHTTPHeaderField:@"Password"];
+    [urlRequest setValue:@"en-US" forHTTPHeaderField:@"Accept-Language"];
+    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+
+    [urlRequest setHTTPBody:jsondata];
+    dispatch_semaphore_t    sem;
+    sem = dispatch_semaphore_create(0);
+
+    NSURLSessionDataTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
+                                                       completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+                                      {
+                                          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+
+                                          if((long)[httpResponse statusCode] == 200  && error ==nil)
+                                          {
+                                              NSError *parsJSONError = nil;
+                                              self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                              //stop waiting after get response from API
+                                              dispatch_semaphore_signal(sem);
+                                          }
+                                          else{
+                                              NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+                                              NSLog(@"\n\n\nError = %@",text);
+
+                                              dispatch_semaphore_signal(sem);
+                                              return;
+                                          }
+                                      }];
+    [dataTask resume];
+    //start waiting until get response from API
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    return self.responseJSONData;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
+
     self.markedDayList = [[NSMutableArray alloc] init];
 
     //setup listAppointMentInDayTableView
