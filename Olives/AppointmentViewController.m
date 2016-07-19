@@ -99,23 +99,14 @@
 
 
 
--(void)getTotalNumberAppointment{
-    NSDictionary * responseDic = [self loadAppointmentDataFromAPIWithPage:@"0" andRecords:@"1"];
-    NSNumber *totalAppointment = [responseDic valueForKey:@"Total"];
-
-}
-
-
-
--(NSDictionary*)loadAppointmentDataFromAPIWithPage:(NSString*)page andRecords:(NSString*)records{
+-(NSDictionary*)loadAppointmentDataFromAPIFrom:(NSString *)minDate and:(NSString *) maxDate{
 
     // create url
     NSURL *url = [NSURL URLWithString:APIURL];
     //create JSON data to post to API
     NSDictionary *account = @{
-                              @"Mode" :  [NSNull null],
-                              @"Page" : page,
-                              @"Records" : records
+                              @"MinFrom" :  minDate,
+                              @"MaxTo" : maxDate
                               };
     NSError *error = nil;
     NSData *jsondata = [NSJSONSerialization dataWithJSONObject:account options:NSJSONWritingPrettyPrinted error:&error];
@@ -172,6 +163,8 @@
     [self.listAppointMentInDayTableView setShowsVerticalScrollIndicator:NO];
     [self.listAppointMentInDayTableView setSeparatorColor:[UIColor colorWithRed:0/255.0 green:153/255.0 blue:153/255.0 alpha:1.0]];
     [self.listAppointMentInDayTableView setHidden:YES];
+    self.listAppointMentInDayTableView.layer.borderColor = [UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0].CGColor;
+    self.listAppointMentInDayTableView.layer.borderWidth = 1.0f;
 
     SWRevealViewController *revealViewController = self.revealViewController;
 
@@ -182,20 +175,23 @@
     }
     //check device using is 4inch screen or not to et distance to top from calendar view
     if ( [[UIScreen mainScreen] bounds].size.height == 568) {
-        self.calendarViewToTopDistance.constant = 30;
+        self.calendarViewToTopDistance.constant = 25;
     }else{
-        self.calendarViewToTopDistance.constant = 50;
+        self.calendarViewToTopDistance.constant = 40;
     }
+    self.calendarView.layer.borderColor = [UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0].CGColor;
+    self.calendarView.layer.borderWidth = 1.0f;
+    [self.calendarView.layer setCornerRadius:5.0f];
     VRGCalendarView *calendar = [[VRGCalendarView alloc] init];
 
-    [calendar.layer setCornerRadius:5.0f];
+//    [calendar.layer setCornerRadius:5.0f];
 
     calendar.delegate = self;
     //set up layout for calendar subview
     calendar.translatesAutoresizingMaskIntoConstraints = NO;
     [self.calendarView setBackgroundColor:[UIColor clearColor]];
-    UIImage *image = [UIImage imageNamed: @"blurbackgroundIOS.jpg"];
-    [self.backgroundImageView setImage:image];
+//    UIImage *image = [UIImage imageNamed: @"blurbackgroundIOS.jpg"];
+//    [self.backgroundImageView setImage:image];
     [self.calendarView addSubview:calendar];
 
     [self.calendarView  layoutIfNeeded];
@@ -205,8 +201,6 @@
 
     //disable addnew appointment button if thereis no day selected
     [self.addNewAppointmentBarButton setEnabled:NO];
-
-
     //set add new appointment button to disable until user choose a date
     //hide listAppointMentInDayTableView if need
     CATransition *animation = [CATransition animation];
@@ -222,22 +216,76 @@
                          [self.view layoutIfNeeded]; // Called on parent view
                      }];
     //declare some example date
-    NSDateFormatter *mmddccyy = [[NSDateFormatter alloc] init];
-    mmddccyy.timeStyle = NSDateFormatterNoStyle;
-    mmddccyy.dateFormat = @"MM/dd/yyyy";
-    NSDate *d1 = [mmddccyy dateFromString:@"06/06/2016"];
-    NSDate *d2 = [mmddccyy dateFromString:@"06/07/2017"];
-    NSDate *d3 = [mmddccyy dateFromString:@"05/08/2015"];
-    NSDate *d4 = [mmddccyy dateFromString:@"07/09/2016"];
-    NSDate *d5 = [mmddccyy dateFromString:@"05/10/2016"];
-    NSDate *d6 = [mmddccyy dateFromString:@"08/13/2016"];
-    NSDate *d7 = [mmddccyy dateFromString:@"07/14/2016"];
+    NSDateFormatter *dateFormaterToUTC = [[NSDateFormatter alloc] init];
+    dateFormaterToUTC.timeStyle = NSDateFormatterNoStyle;
+    dateFormaterToUTC.dateFormat = @"MM/dd/yyyy";
+    [dateFormaterToUTC setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
+//    [mmddccyy setLocale:[NSLocale systemLocale]];
+    //get start datetime and finish datetime
+    int firstWeekDay = [self firstWeekDayInMonth:calendarView.currentMonth];
+
+    //get the unix mindate from current calendar's month
+    NSString *startDate;
+    if (firstWeekDay>1) {
+        NSDate *previousMonth = [self offsetMonth:-1 withMonth:calendarView.currentMonth];
+        int lastMonthNumDays = [self numDaysInMonth:previousMonth];
+        int std = lastMonthNumDays - firstWeekDay +2;
+        startDate = [NSString stringWithFormat:@"%d/%d/%d",[self month:previousMonth],std,[self year:previousMonth]];
+    }else{
+        startDate = [NSString stringWithFormat:@"%d/%d/%d",[self month:calendarView.currentMonth],01,[self year:calendarView.currentMonth]];
+    }
+//    NSLog(@"Start date  --------  %@",startDate);
+    NSDate *minDate = [dateFormaterToUTC dateFromString:startDate];
+    NSTimeInterval unixMinDate = [minDate timeIntervalSince1970];
+
+
+    //get the unix maxdate from current calendar's month
+    NSString *endDate;
+    int currentMonthAndLastMonthTotalDays = [self numDaysInMonth:calendarView.currentMonth] + firstWeekDay -1;
+    int lstd = (7 - currentMonthAndLastMonthTotalDays%7)%7;
+
+    if (lstd==0) {
+        endDate =[NSString stringWithFormat:@"%d/%d/%d",[self month:calendarView.currentMonth],[self numDaysInMonth:calendarView.currentMonth],[self year:calendarView.currentMonth]];
+    }else{
+        NSDate *nextMonth = [self offsetMonth:+1 withMonth:calendarView.currentMonth];
+        endDate =[NSString stringWithFormat:@"%d/%d/%d",[self month:nextMonth],lstd,[self year:nextMonth]];
+    }
+//    NSLog(@"End date  --------  %@",endDate);
+    NSDate *maxDate = [dateFormaterToUTC dateFromString:endDate];
+    NSTimeInterval unixMaxDate = [maxDate timeIntervalSince1970];
+
+
+
+    NSDictionary * responseDic = [self loadAppointmentDataFromAPIFrom:[NSString stringWithFormat:@"%f",unixMinDate*1000] and:[NSString stringWithFormat:@"%f",unixMaxDate*1000]];
+    NSArray *appointment = [responseDic valueForKey:@"Appointments"];
+
+
+    NSMutableArray *markedDatesArray = [[NSMutableArray alloc] init];
+    for (int i=0; i<appointment.count; i++) {
+        NSDictionary *currentAppointment = [appointment objectAtIndex:i];
+        NSString *startTime = [currentAppointment valueForKey:@"From"];
+        NSString *endTime = [currentAppointment valueForKey:@"To"];
+
+        NSDate *startAppointMentTime = [NSDate dateWithTimeIntervalSince1970:[startTime doubleValue]/1000];
+        NSDate *endAppointMentTime = [NSDate dateWithTimeIntervalSince1970:[endTime doubleValue]/1000];
+        //add appoint date to marked date array in calendarView
+        [markedDatesArray addObject:startAppointMentTime];
+
+        NSDateFormatter * dateFormatterToLocal = [[NSDateFormatter alloc] init];
+        [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
+        [dateFormatterToLocal setDateFormat:@"HH:mm:SS.SSS"];
+
+        NSLog(@"----------------------%@",[dateFormatterToLocal stringFromDate:startAppointMentTime]);
+        NSLog(@"----------------------%@",[dateFormatterToLocal stringFromDate:endAppointMentTime]);
+
+    }
+
 
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSDate *date = [NSDate date];
     if (month==[calendar component:NSCalendarUnitMonth fromDate:date] && self.markedDayList.count ==0) {
         
-        self.markedDayList = [NSMutableArray arrayWithObjects:d1,d2,d3,d4,d5,d6,d7,nil];
+        self.markedDayList = markedDatesArray;
         [calendarView markDates:self.markedDayList];
     }
 
@@ -316,6 +364,57 @@
     [self performSegueWithIdentifier: @"addNewAppointment" sender: self];
 }
 
+#pragma mark - Handle Calendar date time
+-(int)year:(NSDate*)date {
+    NSCalendar *gregorian = [[NSCalendar alloc]
+                             initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSDateComponents *components = [gregorian components:NSCalendarUnitYear fromDate:date];
+    return (int)[components year];
+}
+
+
+-(int)month:(NSDate*)date  {
+    NSCalendar *gregorian = [[NSCalendar alloc]
+                             initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSDateComponents *components = [gregorian components:NSCalendarUnitMonth fromDate:date];
+    return (int)[components month];
+}
+
+-(int)day:(NSDate*)date  {
+    NSCalendar *gregorian = [[NSCalendar alloc]
+                             initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSDateComponents *components = [gregorian components:NSCalendarUnitDay fromDate:date];
+    return (int)[components day];
+}
+-(int)numDaysInMonth:(NSDate *)month{
+    NSCalendar *cal = [NSCalendar currentCalendar];
+    NSRange rng = [cal rangeOfUnit:NSCalendarUnitDay inUnit:NSCalendarUnitMonth forDate:month];
+    NSUInteger numberOfDaysInMonth = rng.length;
+    return (int)numberOfDaysInMonth;
+}
+
+-(int)firstWeekDayInMonth:(NSDate*) currentDate {
+    NSCalendar *gregorian = [[NSCalendar alloc]
+                             initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    [gregorian setFirstWeekday:2]; //monday is first day
+    //[gregorian setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"nl_NL"]];
+
+    //Set date to first of month
+    NSDateComponents *comps = [gregorian components:NSCalendarUnitYear | NSCalendarUnitMonth |  NSCalendarUnitDay fromDate:currentDate];
+    [comps setDay:1];
+    NSDate *newDate = [gregorian dateFromComponents:comps];
+
+    return (int)[gregorian ordinalityOfUnit:NSCalendarUnitWeekday inUnit:NSCalendarUnitWeekOfMonth forDate:newDate];
+}
+
+-(NSDate *)offsetMonth:(int)numMonths withMonth:(NSDate*)date{
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSDateComponents *comps = [NSDateComponents new];
+    comps.month = numMonths;
+    NSDate *newDate = [calendar dateByAddingComponents:comps toDate:date options:0];
+
+    return newDate;
+}
 
 #pragma mark - Table view data source
 

@@ -518,14 +518,50 @@
     for (int i = 0; i<[self.markedDates count]; i++) {
         id markedDateObj = [self.markedDates objectAtIndex:i];
 
+        int targetBlock =0;
+        int targetColumn ;
+        int targetRow;
+
         int targetDate;
         if ([markedDateObj isKindOfClass:[NSNumber class]]) {
             targetDate = [(NSNumber *)markedDateObj intValue];
         } else if ([markedDateObj isKindOfClass:[NSDate class]]) {
             NSDate *date = (NSDate *)markedDateObj;
+
+            NSCalendar *calendar = [NSCalendar currentCalendar];
+
+            NSRange range = [calendar rangeOfUnit:NSCalendarUnitDay inUnit:NSCalendarUnitMonth forDate:date];
+            NSUInteger totalDaysInMonth = range.length;
+
             //check if current month year is equal to the marked date's year
-            if ([date year] == [self.currentMonth year] && [date month] == [self.currentMonth month]) {
-                targetDate = [date day];
+            if ([date year] == [self.currentMonth year] ) {
+
+                if ([date month] == [self.currentMonth month]) {
+                    targetDate = [date day];
+                    targetBlock = firstWeekDay + (targetDate-1);
+                    targetColumn = targetBlock%7;
+                    targetRow = targetBlock/7;
+                }else if ([date month] == [[self.currentMonth offsetMonth:-1]month] ) {
+                    if (([date day] >= totalDaysInMonth - [self.currentMonth firstWeekDayInMonth] +2) && ([date day] <= totalDaysInMonth)){
+                        targetDate = [date day];
+                        targetColumn = firstWeekDay + [date day] -  (int)totalDaysInMonth - 1;
+                        targetRow = 0;
+                    }else{
+                        continue;
+                    }
+                }else if ([date month] == [[self.currentMonth offsetMonth:+1]month] ) {
+                    if ([date day] >= 1 && [date day] <= 7-([self.currentMonth firstWeekDayInMonth] -1+[self.currentMonth numDaysInMonth])%7){
+                        targetDate = [date day];
+                        targetColumn = ([self.currentMonth firstWeekDayInMonth] +[self.currentMonth numDaysInMonth] +[date day] -2)%7;
+                        targetRow = [self numRows]-1;
+                    }else{
+                        continue;
+                    }
+
+                }else{
+                    continue;
+                }
+
             }else{
                 continue;
             }
@@ -535,10 +571,6 @@
         }
 
 
-
-        int targetBlock = firstWeekDay + (targetDate-1);
-        int targetColumn = targetBlock%7;
-        int targetRow = targetBlock/7;
 
         int targetX = (int)(targetColumn * (self.kVRGCalendarViewDayWidth+2) + 7);
         int targetY = (int)(self.kVRGCalendarViewTopBarHeight + targetRow * (self.kVRGCalendarViewDayHeight+2) + 38);

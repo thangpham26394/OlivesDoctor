@@ -69,7 +69,7 @@ static NSString * const reuseIdentifier = @"medicalRecordImage";
 #pragma mark <UICollectionViewDataSource>
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
-    return 3;
+    return 1;
 }
 
 

@@ -62,7 +62,7 @@
 
     }
     // Configure the cell...
-    cell.textLabel.text = @"Bệnh án tiểu đường";
+    cell.textLabel.text = @"20/07/2016";
     //cell.detailTextLabel.text = @"details";
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     cell.preservesSuperviewLayoutMargins = NO;

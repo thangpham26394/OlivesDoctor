@@ -28,6 +28,9 @@
 		15DCF5B61CF4A65000013F19 /* nami.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 15DCF5B01CF4A65000013F19 /* nami.jpeg */; };
 		15DCF5B71CF4A65000013F19 /* chopper.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 15DCF5B11CF4A65000013F19 /* chopper.jpeg */; };
 		15DCF5B81CF4A65000013F19 /* strawhat.png in Resources */ = {isa = PBXBuildFile; fileRef = 15DCF5B21CF4A65000013F19 /* strawhat.png */; };
+		15DDAA7F1D3D676E001D4BBB /* Charts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15DDAA781D3D6751001D4BBB /* Charts.framework */; };
+		15DDAA801D3D676E001D4BBB /* Charts.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 15DDAA781D3D6751001D4BBB /* Charts.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		15DDAA8A1D3D6924001D4BBB /* ImportantInfoChartViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15DDAA891D3D6924001D4BBB /* ImportantInfoChartViewController.m */; };
 		15E63CFA1D1E91C700706875 /* PatientDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E63CF91D1E91C700706875 /* PatientDetailsViewController.m */; };
 		15E75A311CF7345C00A985E7 /* backgroundIOS.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 15E75A301CF7345C00A985E7 /* backgroundIOS.jpeg */; };
 		15E75A341CF73C2C00A985E7 /* blurbackgroundIOS.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 15E75A321CF73C2C00A985E7 /* blurbackgroundIOS.jpg */; };
@@ -62,6 +65,7 @@
 		15E9D7041D07FE77006D5DD1 /* Sign in.png in Resources */ = {isa = PBXBuildFile; fileRef = 15E9D7031D07FE77006D5DD1 /* Sign in.png */; };
 		15E9D7071D0812DD006D5DD1 /* ForgotPasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E9D7061D0812DD006D5DD1 /* ForgotPasswordViewController.m */; };
 		15EB44BB1D34F80C00C489A2 /* TimePickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15EB44BA1D34F80C00C489A2 /* TimePickerViewController.m */; };
+		15EB73951D3E114D00C6284A /* MedicalRecordTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15EB73941D3E114D00C6284A /* MedicalRecordTableViewController.m */; };
 		15F01D3E1CF81DC700EAAF9B /* PatientTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 15F01D3D1CF81DC700EAAF9B /* PatientTableViewCell.m */; };
 		15F0A6351D1E72EB00A32848 /* homescreen.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 15F0A6341D1E72EB00A32848 /* homescreen.jpg */; };
 		15F0A6371D1E751F00A32848 /* homescreen1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 15F0A6361D1E751F00A32848 /* homescreen1.jpg */; };
@@ -86,7 +90,56 @@
 			remoteGlobalIDString = 15DCF5721CF3593800013F19;
 			remoteInfo = SLideViewDemo;
 		};
+		15DDAA771D3D6751001D4BBB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 15DDAA701D3D6751001D4BBB /* Charts.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5BA8EC401A9D14DC00CE82E1;
+			remoteInfo = "Charts-iOS";
+		};
+		15DDAA791D3D6751001D4BBB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 15DDAA701D3D6751001D4BBB /* Charts.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A52C5C371BAC5CA400594CDD;
+			remoteInfo = "Charts-TV";
+		};
+		15DDAA7B1D3D6751001D4BBB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 15DDAA701D3D6751001D4BBB /* Charts.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 65B3F5BF1C7370BE000983D0;
+			remoteInfo = "Charts-OSX";
+		};
+		15DDAA7D1D3D6751001D4BBB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 15DDAA701D3D6751001D4BBB /* Charts.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 06AEE7A21BDC3F8B009875AE;
+			remoteInfo = ChartsTests;
+		};
+		15DDAA811D3D676E001D4BBB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 15DDAA701D3D6751001D4BBB /* Charts.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BA8EC3F1A9D14DC00CE82E1;
+			remoteInfo = "Charts-iOS";
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		15DDAA831D3D676F001D4BBB /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				15DDAA801D3D676E001D4BBB /* Charts.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		1502F7B11CF5F39D00663B59 /* SWRevealViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWRevealViewController.h; sourceTree = "<group>"; };
@@ -119,6 +172,10 @@
 		15DCF5B01CF4A65000013F19 /* nami.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = nami.jpeg; sourceTree = "<group>"; };
 		15DCF5B11CF4A65000013F19 /* chopper.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = chopper.jpeg; sourceTree = "<group>"; };
 		15DCF5B21CF4A65000013F19 /* strawhat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = strawhat.png; sourceTree = "<group>"; };
+		15DDAA701D3D6751001D4BBB /* Charts.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Charts.xcodeproj; path = Charts/Charts.xcodeproj; sourceTree = SOURCE_ROOT; };
+		15DDAA841D3D67AB001D4BBB /* Olives-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Olives-Bridging-Header.h"; sourceTree = "<group>"; };
+		15DDAA881D3D6924001D4BBB /* ImportantInfoChartViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImportantInfoChartViewController.h; sourceTree = "<group>"; };
+		15DDAA891D3D6924001D4BBB /* ImportantInfoChartViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImportantInfoChartViewController.m; sourceTree = "<group>"; };
 		15E63CF81D1E91C700706875 /* PatientDetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PatientDetailsViewController.h; sourceTree = "<group>"; };
 		15E63CF91D1E91C700706875 /* PatientDetailsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PatientDetailsViewController.m; sourceTree = "<group>"; };
 		15E75A301CF7345C00A985E7 /* backgroundIOS.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = backgroundIOS.jpeg; sourceTree = "<group>"; };
@@ -174,6 +231,8 @@
 		15E9D7061D0812DD006D5DD1 /* ForgotPasswordViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ForgotPasswordViewController.m; sourceTree = "<group>"; };
 		15EB44B91D34F80C00C489A2 /* TimePickerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimePickerViewController.h; sourceTree = "<group>"; };
 		15EB44BA1D34F80C00C489A2 /* TimePickerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimePickerViewController.m; sourceTree = "<group>"; };
+		15EB73931D3E114D00C6284A /* MedicalRecordTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MedicalRecordTableViewController.h; sourceTree = "<group>"; };
+		15EB73941D3E114D00C6284A /* MedicalRecordTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MedicalRecordTableViewController.m; sourceTree = "<group>"; };
 		15F01D3C1CF81DC700EAAF9B /* PatientTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PatientTableViewCell.h; sourceTree = "<group>"; };
 		15F01D3D1CF81DC700EAAF9B /* PatientTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PatientTableViewCell.m; sourceTree = "<group>"; };
 		15F0A6341D1E72EB00A32848 /* homescreen.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = homescreen.jpg; sourceTree = "<group>"; };
@@ -196,6 +255,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				15DDAA7F1D3D676E001D4BBB /* Charts.framework in Frameworks */,
 				15E9D6FF1D06BD51006D5DD1 /* CoreData.framework in Frameworks */,
 				15DCF5A81CF385E800013F19 /* QuartzCore.framework in Frameworks */,
 			);
@@ -220,17 +280,11 @@
 			name = SWRevealViewController;
 			sourceTree = "<group>";
 		};
-		156734D91D1044F600392ADA /* workingWithAPI */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = workingWithAPI;
-			sourceTree = "<group>";
-		};
 		15DCF56A1CF3593800013F19 = {
 			isa = PBXGroup;
 			children = (
 				15DCF5751CF3593800013F19 /* Olives */,
+				15DDAA701D3D6751001D4BBB /* Charts.xcodeproj */,
 				15E9D6FE1D06BD51006D5DD1 /* CoreData.framework */,
 				15DCF5A71CF385E800013F19 /* QuartzCore.framework */,
 				15DCF5921CF3593800013F19 /* OlivesTests */,
@@ -251,7 +305,6 @@
 			isa = PBXGroup;
 			children = (
 				15F01D3F1CF81DEE00EAAF9B /* Controller */,
-				156734D91D1044F600392ADA /* workingWithAPI */,
 				15E9D6DC1D06A93C006D5DD1 /* calendarView */,
 				1502F7B01CF5F36D00663B59 /* SWRevealViewController */,
 				15F01D3B1CF81DA600EAAF9B /* TableViewCell */,
@@ -263,6 +316,7 @@
 				15DCF58A1CF3593800013F19 /* Info.plist */,
 				15DCF5821CF3593800013F19 /* Olives.xcdatamodeld */,
 				15DCF5761CF3593800013F19 /* Supporting Files */,
+				15DDAA841D3D67AB001D4BBB /* Olives-Bridging-Header.h */,
 			);
 			path = Olives;
 			sourceTree = "<group>";
@@ -326,6 +380,26 @@
 			name = image;
 			sourceTree = "<group>";
 		};
+		15DDAA711D3D6751001D4BBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				15DDAA781D3D6751001D4BBB /* Charts.framework */,
+				15DDAA7A1D3D6751001D4BBB /* Charts.framework */,
+				15DDAA7C1D3D6751001D4BBB /* Charts.framework */,
+				15DDAA7E1D3D6751001D4BBB /* ChartsTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		15DDAA871D3D68D1001D4BBB /* ImportantInfoChartView */ = {
+			isa = PBXGroup;
+			children = (
+				15DDAA881D3D6924001D4BBB /* ImportantInfoChartViewController.h */,
+				15DDAA891D3D6924001D4BBB /* ImportantInfoChartViewController.m */,
+			);
+			name = ImportantInfoChartView;
+			sourceTree = "<group>";
+		};
 		15E8C4DA1D3AE4AF0056E8AE /* DoctorNote */ = {
 			isa = PBXGroup;
 			children = (
@@ -357,6 +431,7 @@
 		15E8C4DD1D3AE5010056E8AE /* ImportantInfo */ = {
 			isa = PBXGroup;
 			children = (
+				15DDAA871D3D68D1001D4BBB /* ImportantInfoChartView */,
 				15E63CF81D1E91C700706875 /* PatientDetailsViewController.h */,
 				15E63CF91D1E91C700706875 /* PatientDetailsViewController.m */,
 			);
@@ -396,7 +471,7 @@
 		15E8C4E01D3AE5880056E8AE /* PatientDetails */ = {
 			isa = PBXGroup;
 			children = (
-				15E8C4DC1D3AE4D50056E8AE /* MedicalRecordDetails */,
+				15EB738F1D3E110500C6284A /* MedicalRecordCategory */,
 				15E8C4DD1D3AE5010056E8AE /* ImportantInfo */,
 				15E8C4DB1D3AE4CB0056E8AE /* Prescription */,
 				15E8C4DA1D3AE4AF0056E8AE /* DoctorNote */,
@@ -443,6 +518,16 @@
 			name = calendarView;
 			sourceTree = "<group>";
 		};
+		15EB738F1D3E110500C6284A /* MedicalRecordCategory */ = {
+			isa = PBXGroup;
+			children = (
+				15E8C4DC1D3AE4D50056E8AE /* MedicalRecordDetails */,
+				15EB73931D3E114D00C6284A /* MedicalRecordTableViewController.h */,
+				15EB73941D3E114D00C6284A /* MedicalRecordTableViewController.m */,
+			);
+			name = MedicalRecordCategory;
+			sourceTree = "<group>";
+		};
 		15F01D3B1CF81DA600EAAF9B /* TableViewCell */ = {
 			isa = PBXGroup;
 			children = (
@@ -479,10 +564,12 @@
 				15DCF56F1CF3593800013F19 /* Sources */,
 				15DCF5701CF3593800013F19 /* Frameworks */,
 				15DCF5711CF3593800013F19 /* Resources */,
+				15DDAA831D3D676F001D4BBB /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				15DDAA821D3D676E001D4BBB /* PBXTargetDependency */,
 			);
 			name = Olives;
 			productName = SLideViewDemo;
@@ -513,6 +600,7 @@
 		15DCF56B1CF3593800013F19 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0730;
 				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = Thang;
 				TargetAttributes = {
@@ -536,6 +624,12 @@
 			mainGroup = 15DCF56A1CF3593800013F19;
 			productRefGroup = 15DCF5741CF3593800013F19 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 15DDAA711D3D6751001D4BBB /* Products */;
+					ProjectRef = 15DDAA701D3D6751001D4BBB /* Charts.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				15DCF5721CF3593800013F19 /* Olives */,
@@ -543,6 +637,37 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		15DDAA781D3D6751001D4BBB /* Charts.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Charts.framework;
+			remoteRef = 15DDAA771D3D6751001D4BBB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		15DDAA7A1D3D6751001D4BBB /* Charts.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Charts.framework;
+			remoteRef = 15DDAA791D3D6751001D4BBB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		15DDAA7C1D3D6751001D4BBB /* Charts.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Charts.framework;
+			remoteRef = 15DDAA7B1D3D6751001D4BBB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		15DDAA7E1D3D6751001D4BBB /* ChartsTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ChartsTests.xctest;
+			remoteRef = 15DDAA7D1D3D6751001D4BBB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		15DCF5711CF3593800013F19 /* Resources */ = {
@@ -617,8 +742,10 @@
 				15EB44BB1D34F80C00C489A2 /* TimePickerViewController.m in Sources */,
 				15E8C4FE1D3B70970056E8AE /* DoctorNoteTableViewCell.m in Sources */,
 				15E9D6FD1D06B3D6006D5DD1 /* UIColor+expanded.m in Sources */,
+				15DDAA8A1D3D6924001D4BBB /* ImportantInfoChartViewController.m in Sources */,
 				15E9D6FB1D06B3D6006D5DD1 /* NSMutableArray+convenience.m in Sources */,
 				15E9D7071D0812DD006D5DD1 /* ForgotPasswordViewController.m in Sources */,
+				15EB73951D3E114D00C6284A /* MedicalRecordTableViewController.m in Sources */,
 				15DCF5A61CF3820F00013F19 /* OLTableViewController.m in Sources */,
 				15E76B7D1D2FA7EE0028EFEB /* PrescriptionTableViewController.m in Sources */,
 				15DCF5781CF3593800013F19 /* main.m in Sources */,
@@ -650,6 +777,11 @@
 			isa = PBXTargetDependency;
 			target = 15DCF5721CF3593800013F19 /* Olives */;
 			targetProxy = 15DCF5901CF3593800013F19 /* PBXContainerItemProxy */;
+		};
+		15DDAA821D3D676E001D4BBB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Charts-iOS";
+			targetProxy = 15DDAA811D3D676E001D4BBB /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -757,10 +889,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = Olives/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.SelfLearning.Olives;
 				PRODUCT_NAME = Olives;
+				SWIFT_OBJC_BRIDGING_HEADER = "Olives/Olives-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
@@ -768,10 +904,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = Olives/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.SelfLearning.Olives;
 				PRODUCT_NAME = Olives;
+				SWIFT_OBJC_BRIDGING_HEADER = "Olives/Olives-Bridging-Header.h";
 			};
 			name = Release;
 		};

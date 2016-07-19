@@ -73,6 +73,13 @@
     return cell;
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    // Do some stuff when the row is selected
+    [self performSegueWithIdentifier:@"showChartView" sender:self];
+
+    [self.importantInfoTableView deselectRowAtIndexPath:indexPath animated:YES];
+}
+
 /*
 #pragma mark - Navigation
 
