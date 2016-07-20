@@ -64,6 +64,7 @@
 		15E9D7021D07FB2D006D5DD1 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E9D7011D07FB2D006D5DD1 /* LoginViewController.m */; };
 		15E9D7041D07FE77006D5DD1 /* Sign in.png in Resources */ = {isa = PBXBuildFile; fileRef = 15E9D7031D07FE77006D5DD1 /* Sign in.png */; };
 		15E9D7071D0812DD006D5DD1 /* ForgotPasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E9D7061D0812DD006D5DD1 /* ForgotPasswordViewController.m */; };
+		15EA05DF1D3F7AF100FDB449 /* AppointmentDetailTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 15EA05DE1D3F7AF100FDB449 /* AppointmentDetailTableViewCell.m */; };
 		15EB44BB1D34F80C00C489A2 /* TimePickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15EB44BA1D34F80C00C489A2 /* TimePickerViewController.m */; };
 		15EB73951D3E114D00C6284A /* MedicalRecordTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15EB73941D3E114D00C6284A /* MedicalRecordTableViewController.m */; };
 		15F01D3E1CF81DC700EAAF9B /* PatientTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 15F01D3D1CF81DC700EAAF9B /* PatientTableViewCell.m */; };
@@ -229,6 +230,8 @@
 		15E9D7031D07FE77006D5DD1 /* Sign in.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Sign in.png"; sourceTree = "<group>"; };
 		15E9D7051D0812DD006D5DD1 /* ForgotPasswordViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForgotPasswordViewController.h; sourceTree = "<group>"; };
 		15E9D7061D0812DD006D5DD1 /* ForgotPasswordViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ForgotPasswordViewController.m; sourceTree = "<group>"; };
+		15EA05DD1D3F7AF100FDB449 /* AppointmentDetailTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppointmentDetailTableViewCell.h; sourceTree = "<group>"; };
+		15EA05DE1D3F7AF100FDB449 /* AppointmentDetailTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppointmentDetailTableViewCell.m; sourceTree = "<group>"; };
 		15EB44B91D34F80C00C489A2 /* TimePickerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimePickerViewController.h; sourceTree = "<group>"; };
 		15EB44BA1D34F80C00C489A2 /* TimePickerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimePickerViewController.m; sourceTree = "<group>"; };
 		15EB73931D3E114D00C6284A /* MedicalRecordTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MedicalRecordTableViewController.h; sourceTree = "<group>"; };
@@ -539,6 +542,8 @@
 				15E8C4FA1D3AF3A80056E8AE /* MedicalRecordListCollectionReusableView.m */,
 				15E8C4FC1D3B70970056E8AE /* DoctorNoteTableViewCell.h */,
 				15E8C4FD1D3B70970056E8AE /* DoctorNoteTableViewCell.m */,
+				15EA05DD1D3F7AF100FDB449 /* AppointmentDetailTableViewCell.h */,
+				15EA05DE1D3F7AF100FDB449 /* AppointmentDetailTableViewCell.m */,
 			);
 			name = TableViewCell;
 			sourceTree = "<group>";
@@ -728,6 +733,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				15EA05DF1D3F7AF100FDB449 /* AppointmentDetailTableViewCell.m in Sources */,
 				1502F7B31CF5F39D00663B59 /* SWRevealViewController.m in Sources */,
 				15E8C4EF1D3AE8D40056E8AE /* MedicalRecordDetailTableViewController.m in Sources */,
 				15E75A3E1CF760F200A985E7 /* LoanTableViewController.m in Sources */,

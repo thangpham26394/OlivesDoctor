@@ -8,8 +8,9 @@
 #define APIURL @"http://olive.azurewebsites.net/api/appointment/filter"
 #import "AppointmentViewController.h"
 #import "SWRevealViewController.h"
-#import "PatientsTableViewController.h"
+#import "TimePickerViewController.h"
 #import "AppointmentViewDetailViewController.h"
+#import "AppointmentDetailTableViewCell.h"
 #import <CoreData/CoreData.h>
 
 
@@ -26,7 +27,7 @@
 @property(strong,nonatomic) NSString * chosenDate;
 @property (strong,nonatomic) NSDictionary *responseJSONData ;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *addNewAppointmentBarButton;
-
+@property(strong,nonatomic) NSArray * appointmentsInMonth;
 -(IBAction)addNewAppointment:(id)sender;
 @end
 
@@ -97,8 +98,6 @@
 
 #pragma mark - Connect to API function
 
-
-
 -(NSDictionary*)loadAppointmentDataFromAPIFrom:(NSString *)minDate and:(NSString *) maxDate{
 
     // create url
@@ -153,14 +152,17 @@
     dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     return self.responseJSONData;
 }
+
+#pragma mark - View delegate
 - (void)viewDidLoad {
     [super viewDidLoad];
 
     self.markedDayList = [[NSMutableArray alloc] init];
-
+    self.appointmentsInMonth = [[NSArray alloc]init];
     //setup listAppointMentInDayTableView
     [self.listAppointMentInDayTableView.layer setCornerRadius:5.0f];
     [self.listAppointMentInDayTableView setShowsVerticalScrollIndicator:NO];
+    
     [self.listAppointMentInDayTableView setSeparatorColor:[UIColor colorWithRed:0/255.0 green:153/255.0 blue:153/255.0 alpha:1.0]];
     [self.listAppointMentInDayTableView setHidden:YES];
     self.listAppointMentInDayTableView.layer.borderColor = [UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0].CGColor;
@@ -197,11 +199,56 @@
     [self.calendarView  layoutIfNeeded];
 }
 
+
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+-(IBAction)addNewAppointment:(id)sender{
+    [self performSegueWithIdentifier: @"addNewAppointment" sender: self];
+}
+
+#pragma mark - Extract data received from API
+
+-(NSMutableArray*)markedDateInCurrentMonth{
+    NSMutableArray *markedDatesArray = [[NSMutableArray alloc] init];
+
+
+    for (int i=0; i<self.appointmentsInMonth.count; i++) {
+        //get a specific appointment
+        NSDictionary *currentAppointment = [self.appointmentsInMonth objectAtIndex:i];
+
+        //get time interval for that appointment
+        NSString *startTime = [currentAppointment valueForKey:@"From"];
+
+        NSDate *startAppointMentTime = [NSDate dateWithTimeIntervalSince1970:[startTime doubleValue]/1000];
+
+        //add appointment date to marked date array in calendarView
+        NSDateFormatter * dateFormatterToLocal = [[NSDateFormatter alloc] init];
+        [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
+        [dateFormatterToLocal setDateFormat:@"MM/dd/yyyy"];
+
+        //convert date to system date time
+        NSDate *sysDateTime = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:startAppointMentTime]];
+
+        [markedDatesArray addObject:sysDateTime];
+
+
+        
+    }
+    return markedDatesArray;
+}
+
+
+#pragma mark - Handle Calendar date time
+
 -(void)calendarView:(VRGCalendarView *)calendarView switchedToMonth:(int)month targetHeight:(float)targetHeight animated:(BOOL)animated {
 
     //disable addnew appointment button if thereis no day selected
     [self.addNewAppointmentBarButton setEnabled:NO];
-    //set add new appointment button to disable until user choose a date
+
     //hide listAppointMentInDayTableView if need
     CATransition *animation = [CATransition animation];
     animation.type = kCATransitionPush;
@@ -215,77 +262,44 @@
                      animations:^{
                          [self.view layoutIfNeeded]; // Called on parent view
                      }];
-    //declare some example date
+
+
+    // dateformater to convert to UTC time zone
     NSDateFormatter *dateFormaterToUTC = [[NSDateFormatter alloc] init];
     dateFormaterToUTC.timeStyle = NSDateFormatterNoStyle;
     dateFormaterToUTC.dateFormat = @"MM/dd/yyyy";
     [dateFormaterToUTC setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
-//    [mmddccyy setLocale:[NSLocale systemLocale]];
+
+
+
     //get start datetime and finish datetime
     int firstWeekDay = [self firstWeekDayInMonth:calendarView.currentMonth];
 
-    //get the unix mindate from current calendar's month
-    NSString *startDate;
-    if (firstWeekDay>1) {
-        NSDate *previousMonth = [self offsetMonth:-1 withMonth:calendarView.currentMonth];
-        int lastMonthNumDays = [self numDaysInMonth:previousMonth];
-        int std = lastMonthNumDays - firstWeekDay +2;
-        startDate = [NSString stringWithFormat:@"%d/%d/%d",[self month:previousMonth],std,[self year:previousMonth]];
-    }else{
-        startDate = [NSString stringWithFormat:@"%d/%d/%d",[self month:calendarView.currentMonth],01,[self year:calendarView.currentMonth]];
-    }
-//    NSLog(@"Start date  --------  %@",startDate);
+    //get the unix format mindate from current calendar's month
+    NSString *startDate = [self calendarStartDateWithFirstWeekDay:firstWeekDay andCurrentMonth:calendarView.currentMonth];
     NSDate *minDate = [dateFormaterToUTC dateFromString:startDate];
     NSTimeInterval unixMinDate = [minDate timeIntervalSince1970];
 
 
     //get the unix maxdate from current calendar's month
-    NSString *endDate;
-    int currentMonthAndLastMonthTotalDays = [self numDaysInMonth:calendarView.currentMonth] + firstWeekDay -1;
-    int lstd = (7 - currentMonthAndLastMonthTotalDays%7)%7;
-
-    if (lstd==0) {
-        endDate =[NSString stringWithFormat:@"%d/%d/%d",[self month:calendarView.currentMonth],[self numDaysInMonth:calendarView.currentMonth],[self year:calendarView.currentMonth]];
-    }else{
-        NSDate *nextMonth = [self offsetMonth:+1 withMonth:calendarView.currentMonth];
-        endDate =[NSString stringWithFormat:@"%d/%d/%d",[self month:nextMonth],lstd,[self year:nextMonth]];
-    }
-//    NSLog(@"End date  --------  %@",endDate);
+    NSString *endDate = [self calendarEndDateWithFirstWeekDay:firstWeekDay andCurrentMonth:calendarView.currentMonth];
     NSDate *maxDate = [dateFormaterToUTC dateFromString:endDate];
     NSTimeInterval unixMaxDate = [maxDate timeIntervalSince1970];
 
 
 
     NSDictionary * responseDic = [self loadAppointmentDataFromAPIFrom:[NSString stringWithFormat:@"%f",unixMinDate*1000] and:[NSString stringWithFormat:@"%f",unixMaxDate*1000]];
-    NSArray *appointment = [responseDic valueForKey:@"Appointments"];
 
+    //get the appointments in current month which were returned from API
+    self.appointmentsInMonth = [responseDic valueForKey:@"Appointments"];
 
-    NSMutableArray *markedDatesArray = [[NSMutableArray alloc] init];
-    for (int i=0; i<appointment.count; i++) {
-        NSDictionary *currentAppointment = [appointment objectAtIndex:i];
-        NSString *startTime = [currentAppointment valueForKey:@"From"];
-        NSString *endTime = [currentAppointment valueForKey:@"To"];
-
-        NSDate *startAppointMentTime = [NSDate dateWithTimeIntervalSince1970:[startTime doubleValue]/1000];
-        NSDate *endAppointMentTime = [NSDate dateWithTimeIntervalSince1970:[endTime doubleValue]/1000];
-        //add appoint date to marked date array in calendarView
-        [markedDatesArray addObject:startAppointMentTime];
-
-        NSDateFormatter * dateFormatterToLocal = [[NSDateFormatter alloc] init];
-        [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
-        [dateFormatterToLocal setDateFormat:@"HH:mm:SS.SSS"];
-
-        NSLog(@"----------------------%@",[dateFormatterToLocal stringFromDate:startAppointMentTime]);
-        NSLog(@"----------------------%@",[dateFormatterToLocal stringFromDate:endAppointMentTime]);
-
-    }
 
 
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSDate *date = [NSDate date];
     if (month==[calendar component:NSCalendarUnitMonth fromDate:date] && self.markedDayList.count ==0) {
-        
-        self.markedDayList = markedDatesArray;
+
+        self.markedDayList = [self markedDateInCurrentMonth];
         [calendarView markDates:self.markedDayList];
     }
 
@@ -295,7 +309,7 @@
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
     [dateFormatter setDateFormat:@"MM/dd/yyyy"];
-    
+
     NSString *today = [dateFormatter stringFromDate:[NSDate date]];
 
     //set enable for add new appointment bar button if the current month is showing in first time
@@ -311,12 +325,14 @@
 
     //show list appoint for today
     if (isMarkedDate && [[dateFormatter stringFromDate:calendarView.currentMonth] isEqual:today]) {
+        self.chosenDate = today;
         animation.duration = 0.35;
         [self.listAppointMentInDayTableView.layer addAnimation:animation forKey:nil];
         [self.listAppointMentInDayTableView setHidden:NO];
-
+        [self.listAppointMentInDayTableView reloadData];
     }
 }
+
 
 -(void)calendarView:(VRGCalendarView *)calendarView dateSelected:(NSDate *)date {
     [self.addNewAppointmentBarButton setEnabled:YES];
@@ -330,8 +346,8 @@
     //check if chosen date is marked date or not
     BOOL isMarkedDate = NO;
     for (int runIndex = 0; runIndex <self.markedDayList.count; runIndex ++) {
-        NSString *currentDate = [dateFormatter stringFromDate:[self.markedDayList objectAtIndex:runIndex]];
-        if ([self.chosenDate isEqual:currentDate]) {
+        NSString *currentMarkedDate = [dateFormatter stringFromDate:[self.markedDayList objectAtIndex:runIndex]];
+        if ([self.chosenDate isEqual:currentMarkedDate]) {
             isMarkedDate = YES;
         }
     }
@@ -345,26 +361,42 @@
         animation.duration = 0.35;
         [self.listAppointMentInDayTableView.layer addAnimation:animation forKey:nil];
         [self.listAppointMentInDayTableView setHidden:NO];
-        
+        [self.listAppointMentInDayTableView reloadData];
     }else{
         animation.duration = 0.25;
         [self.listAppointMentInDayTableView.layer addAnimation:animation forKey:nil];
         [self.listAppointMentInDayTableView setHidden:YES];
     }
-    
-//    [self performSegueWithIdentifier:@"showAppointment" sender:self];
+
+    //    [self performSegueWithIdentifier:@"showAppointment" sender:self];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+
+-(NSString *)calendarStartDateWithFirstWeekDay :(int)firstWeekDay andCurrentMonth:(NSDate*)currentMonth{
+    if (firstWeekDay>1) {
+        NSDate *previousMonth = [self offsetMonth:-1 withMonth:currentMonth];
+        int lastMonthNumDays = [self numDaysInMonth:previousMonth];
+        int std = lastMonthNumDays - firstWeekDay +2;
+        return  [NSString stringWithFormat:@"%d/%d/%d",[self month:previousMonth],std,[self year:previousMonth]];
+    }else{
+        return [NSString stringWithFormat:@"%d/%d/%d",[self month:currentMonth],01,[self year:currentMonth]];
+    }
+
 }
 
--(IBAction)addNewAppointment:(id)sender{
-    [self performSegueWithIdentifier: @"addNewAppointment" sender: self];
+-(NSString *)calendarEndDateWithFirstWeekDay :(int)firstWeekDay andCurrentMonth:(NSDate*)currentMonth{
+    int currentMonthAndLastMonthTotalDays = [self numDaysInMonth:currentMonth] + firstWeekDay -1;
+    int lastDay = (7 - currentMonthAndLastMonthTotalDays%7)%7;
+
+    if (lastDay==0) {
+        return [NSString stringWithFormat:@"%d/%d/%d",[self month:currentMonth],[self numDaysInMonth:currentMonth],[self year:currentMonth]];
+    }else{
+        NSDate *nextMonth = [self offsetMonth:+1 withMonth:currentMonth];
+        return [NSString stringWithFormat:@"%d/%d/%d",[self month:nextMonth],lastDay,[self year:nextMonth]];
+    }
+
 }
 
-#pragma mark - Handle Calendar date time
 -(int)year:(NSDate*)date {
     NSCalendar *gregorian = [[NSCalendar alloc]
                              initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
@@ -418,61 +450,143 @@
 
 #pragma mark - Table view data source
 
+-(NSMutableArray *)appointmentsForSelectedDate:(NSDate *)selectedDate{
+
+    //declare initital array
+    NSMutableArray *appointmentsForSelectedDateArray = [[NSMutableArray alloc]init];
+    //go throught every appointment in current month
+    for (int index = 0; index < self.appointmentsInMonth.count; index ++) {
+
+        //get a specific appointment
+        NSDictionary *currentAppointment = [self.appointmentsInMonth objectAtIndex:index];
+
+        //get time interval for that appointment from dictionary
+        NSString *startTime = [currentAppointment valueForKey:@"From"];
+        NSString *endTime = [currentAppointment valueForKey:@"To"];
+        NSString *daterId = [[currentAppointment valueForKey:@"Dater"] valueForKey:@"Id"];
+
+        //convert time interval to NSDate type
+        NSDate *startAppointMentTime = [NSDate dateWithTimeIntervalSince1970:[startTime doubleValue]/1000];
+        NSDate *endAppointMentTime = [NSDate dateWithTimeIntervalSince1970:[endTime doubleValue]/1000];
+
+        //convert to local time zone to check if the date is selected date !?
+        NSDateFormatter * dateFormatterToLocalToCheck = [[NSDateFormatter alloc] init];
+        [dateFormatterToLocalToCheck setTimeZone:[NSTimeZone systemTimeZone]];
+        [dateFormatterToLocalToCheck setDateFormat:@"MM/dd/yyyy"];
+
+        //convert date to system date time
+        NSDate *sysDateTimeToCheck = [dateFormatterToLocalToCheck dateFromString:[dateFormatterToLocalToCheck stringFromDate:startAppointMentTime]];
+
+        //check if the current date is selected date
+        if ([sysDateTimeToCheck isEqual:selectedDate]) {
+            NSString *patientID;
+            NSString *patientFirstName;
+            NSString *patientLastName;
+            //check if current doctor using app is maker or dater of appointment
+            if ([daterId  isEqual: @"27"]) {
+                // doctor is dater then maker is patient
+                patientID = [[currentAppointment valueForKey:@"Maker"] valueForKey:@"Id"];
+                patientFirstName = [[currentAppointment valueForKey:@"Maker"] valueForKey:@"FirstName"];
+                patientLastName = [[currentAppointment valueForKey:@"Maker"] valueForKey:@"LastName"];
+
+            }else{
+                //doctor is maker then dater is patient
+
+                patientID = [[currentAppointment valueForKey:@"Dater"] valueForKey:@"Id"];
+                patientFirstName = [[currentAppointment valueForKey:@"Dater"] valueForKey:@"FirstName"];
+                patientLastName = [[currentAppointment valueForKey:@"Dater"] valueForKey:@"LastName"];
+
+
+            }
+
+
+
+            //configure dateformater in time format
+            NSDateFormatter * timeFormatterToLocal = [[NSDateFormatter alloc] init];
+            [timeFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
+            [timeFormatterToLocal setDateFormat:@"HH:mm"];
+
+            //get string time from currentdate
+            NSString *startTimeForCurrentAppointment = [timeFormatterToLocal stringFromDate:startAppointMentTime];
+            NSString *endTimeForCurrentAppointment = [timeFormatterToLocal stringFromDate:endAppointMentTime];
+
+            //put both start and end time to 1 dictionary var
+            NSDictionary *startAndEndTimeForSelectedDate = [NSDictionary dictionaryWithObjectsAndKeys:
+                                                            patientID,@"patientID",
+                                                            patientFirstName,@"patientFirstName",
+                                                            patientLastName,@"patientLastName",
+                                                            startTimeForCurrentAppointment, @"startTime",
+                                                            endTimeForCurrentAppointment, @"endTime"
+                                                            , nil];
+            //append initial array with information about start and end time
+            [appointmentsForSelectedDateArray addObject:startAndEndTimeForSelectedDate];
+        }
+
+    }
+
+
+
+
+    return appointmentsForSelectedDateArray;
+}
+
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 4;
+    if (self.chosenDate ==nil || [self.chosenDate isEqualToString:@""]) {
+        return 0;
+
+    }else{
+        return 1;
+    }
+
 }
 
 
  - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"appointmentDetailCell" ];
-     if(cell == nil)
-     {
-         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1  reuseIdentifier:@"appointmentDetailCell"];
-         
-     }
+      AppointmentDetailTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"appointmentDetailCell" forIndexPath:indexPath];
+
       // Configure the cell...
-     cell.textLabel.text = @" Pham Duc Thang";
-     cell.detailTextLabel.text = @"06-June-2016";
+     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+     [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+     [dateFormatter setDateFormat:@"MM/dd/yyyy"];
+     NSDate *dateSelected = [dateFormatter dateFromString:self.chosenDate];
+     NSMutableArray*startAndEndTime =  [self appointmentsForSelectedDate:dateSelected];
+
+     if (self.chosenDate ==nil || [self.chosenDate isEqualToString:@""]){
+         cell.nameLabel.text = @"";
+         cell.timeLabel.text = @"";
+     }else{
+         cell.nameLabel.text = [NSString stringWithFormat:@"%@ %@",[[startAndEndTime objectAtIndex:indexPath.row] objectForKey:@"patientFirstName"],[[startAndEndTime objectAtIndex:indexPath.row] objectForKey:@"patientLastName"]];
+         cell.timeLabel.text = [NSString stringWithFormat:@"%@ to %@",[[startAndEndTime objectAtIndex:indexPath.row] objectForKey:@"startTime"],[[startAndEndTime objectAtIndex:indexPath.row] objectForKey:@"endTime"]];
+     }
+
+
+
+
+
 
      cell.preservesSuperviewLayoutMargins = NO;
      cell.separatorInset = UIEdgeInsetsZero;
      cell.layoutMargins = UIEdgeInsetsZero;
 
-
      return cell;
  }
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Do some stuff when the row is selected
-    [self performSegueWithIdentifier:@"showDetalAppointment" sender:self];
-    [self.listAppointMentInDayTableView deselectRowAtIndexPath:indexPath animated:YES];
-}
+
 
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-    // Make sure your segue name in storyboard is the same as this line
-    if ([[segue identifier] isEqualToString:@"showAppointmentDetail"])
-    {
-        // Get reference to the destination view controller
-        UINavigationController *nav = [segue destinationViewController];
-        AppointmentViewDetailViewController *appointmentDetailViewController = (AppointmentViewDetailViewController*)nav.topViewController;
-        // Pass any objects to the view controller here, like...
-        
-    }
+
     if ([[segue identifier] isEqualToString:@"addNewAppointment"])
     {
-        // Get reference to the destination view controller
-//        UINavigationController *nav = [segue destinationViewController];
-        PatientsTableViewController *patientTableViewController = [segue destinationViewController];
+        TimePickerViewController *timePickerController = [segue destinationViewController];
         // Pass any objects to the view controller here, like...
-        patientTableViewController.isAppointmentViewDetailPatient = @"addNewAppointment";
+        timePickerController.chosenDate = self.chosenDate;
     }
 }
 
