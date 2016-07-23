@@ -22,22 +22,30 @@
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
     self.navigationController.topViewController.title=@"Patient Details";
+    //setup barbutton
+    UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc]
+                                       initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addInfo:)];
+    self.navigationController.topViewController.navigationItem.rightBarButtonItem = rightBarButton;
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.view.backgroundColor = [UIColor colorWithRed:52/255.0 green:152/255.0 blue:219/255.0 alpha:1.0];
     self.avatarImage.layer.cornerRadius = self.avatarImage.frame.size.width / 2;
     self.avatarImage.clipsToBounds = YES;
     self.importantInfoTableView.layer.cornerRadius = 5;
     self.importantInfoTableView.clipsToBounds = YES;
     self.sendMessageButton.backgroundColor = [UIColor colorWithRed:0/255.0 green:153/255.0 blue:153/255.0 alpha:1.0];
 
+
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+-(IBAction)addInfo:(id)sender{
+    NSLog(@"important info add");
 }
 
 

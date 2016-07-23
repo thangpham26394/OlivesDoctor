@@ -20,7 +20,8 @@
 @property (weak, nonatomic) IBOutlet UIView *contentView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentViewHeight;
 @property (weak, nonatomic) IBOutlet UIButton *sendRequestButton;
-@property (weak, nonatomic) IBOutlet UITableView *chosingPatientTableView;
+
+@property (weak, nonatomic) IBOutlet UIView *chosingPatient;
 
 @end
 
@@ -93,11 +94,11 @@
 -(void) setupGestureRecognizer {
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
 
-    [self.contentView addGestureRecognizer:tapGesture];
+    [self.chosingPatient addGestureRecognizer:tapGesture];
 }
 
 - (void)handleTapGesture:(UIPanGestureRecognizer *)recognizer{
-    [self.noteLabel resignFirstResponder];
+    [self performSegueWithIdentifier:@"chosingPatient" sender:self];
 }
 
 #pragma mark - View delegate
@@ -125,7 +126,6 @@
 //    self.chosingPatientTableView.scrollEnabled = YES;
     self.scrollView.bounces = NO;
     self.navigationController.navigationBar.translucent = NO;
-    [self.chosingPatientTableView becomeFirstResponder];
 
     [self setupGestureRecognizer];
     self.contentViewHeight.constant = [[UIScreen mainScreen] bounds].size.height - [UIApplication sharedApplication].statusBarFrame.size.height - self.navigationController.navigationBar.frame.size.height;
@@ -138,6 +138,7 @@
     self.dateTimePickerTo.layer.cornerRadius = 5.0f;
     self.dateTimePickerTo.layer.masksToBounds = YES;
 
+    self.chosingPatient.layer.cornerRadius = 5.0f;
 
     self.noteLabel.layer.cornerRadius = 5.0f;
     [self.noteLabel setShowsVerticalScrollIndicator:NO];
@@ -164,7 +165,10 @@
 
     [self.dateTimePickerFrom setDate:date];
     [self.dateTimePickerTo setDate:date];
+
 }
+
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -195,36 +199,22 @@
     [self presentViewController:alert animated:YES completion:nil];
 }
 
-#pragma mark - Table view data source
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
-}
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 1;
-    
-}
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    PatientTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"chosePatientCell" forIndexPath:indexPath];
-    cell.nameLabel.text = @"PatientName";
-    cell.phoneLabel.text = @"Phone: Patientphone";
-    cell.address.text = @"Address: PatientAddress";
 
-    // Configure the cell...
-
-    return cell;
-}
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Do some stuff when the row is selected
-    [self performSegueWithIdentifier:@"showCurrentPatient" sender:self];
-
-    [self.chosingPatientTableView deselectRowAtIndexPath:indexPath animated:YES];
-}
 #pragma mark - Navigation
+- (IBAction)unwindToTimePicker:(UIStoryboardSegue *)unwindSegue
+{
+    UITableViewController* sourceViewController = unwindSegue.sourceViewController;
 
+    if ([sourceViewController isKindOfClass:[PatientsTableViewController class]])
+    {
+        NSLog(@"Coming from patient table!");
+    }
+
+}
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([[segue identifier] isEqualToString:@"showCurrentPatient"])
+    if ([[segue identifier] isEqualToString:@"chosingPatient"])
     {
         PatientsTableViewController *patientTableViewController = [segue destinationViewController];
         // Pass any objects to the view controller here, like...

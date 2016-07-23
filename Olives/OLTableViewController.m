@@ -80,9 +80,9 @@
         cell.descriptionLabel.text = @"My Loans";
     }
     else if(indexPath.row ==4){
-        cell = [tableView dequeueReusableCellWithIdentifier:@"settingCell" forIndexPath:indexPath];
+        cell = [tableView dequeueReusableCellWithIdentifier:@"editCell" forIndexPath:indexPath];
         cell.image.image = [UIImage imageNamed: @"settingicon.png"];
-        cell.descriptionLabel.text = @"Setting";
+        cell.descriptionLabel.text = @"Edit Profile";
     }else {
         cell = [tableView dequeueReusableCellWithIdentifier:@"outCell" forIndexPath:indexPath];
         cell.image.image = [UIImage imageNamed: @"logouticon.png"];

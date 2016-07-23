@@ -17,6 +17,10 @@
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
     self.navigationController.topViewController.title=@"Medical Category";
+    //setup barbutton
+    UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc]
+                                       initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addInfo:)];
+    self.navigationController.topViewController.navigationItem.rightBarButtonItem = rightBarButton;
 }
 
 - (void)viewDidLoad {
@@ -32,6 +36,10 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+-(IBAction)addInfo:(id)sender{
+    NSLog(@"add medical");
 }
 
 #pragma mark - Table view data source

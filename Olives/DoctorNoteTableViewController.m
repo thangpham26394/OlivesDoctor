@@ -14,6 +14,14 @@
 
 @implementation DoctorNoteTableViewController
 
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:YES];
+    self.navigationController.topViewController.title=@"Diary";
+    //setup barbutton
+    UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc]
+                                       initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addInfo:)];
+    self.navigationController.topViewController.navigationItem.rightBarButtonItem = rightBarButton;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -27,6 +35,10 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+-(IBAction)addInfo:(id)sender{
+    NSLog(@"add diary");
 }
 
 #pragma mark - Table view data source
@@ -74,14 +86,14 @@
 
     self.noteLabelHeight = [doctorNote boundingRectWithSize:CGSizeMake(self.view.bounds.size.width - 40, CGFLOAT_MAX)
                                               options:NSStringDrawingUsesLineFragmentOrigin
-                                           attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:20]}
+                                           attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:16]}
                                               context:nil].size.height;
 
     return cell;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return self.noteLabelHeight + 20;
+    return self.noteLabelHeight + 50;
 }
 
 /*

@@ -62,8 +62,8 @@
     NSURL *url = [NSURL URLWithString:APIURL];
     //create JSON data to post to API
     NSDictionary *account = @{
-                              @"Email" :  @"doctor26@gmail.com", //self.emailTextField.text,
-                              @"Password" : @"doctor199x" // self.passwordTextField.text
+                              @"Email" :  self.emailTextField.text,
+                              @"Password" :self.passwordTextField.text
                               };
     NSError *error = nil;
     NSData *jsondata = [NSJSONSerialization dataWithJSONObject:account options:NSJSONWritingPrettyPrinted error:&error];

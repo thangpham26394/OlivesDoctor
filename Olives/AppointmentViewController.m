@@ -15,20 +15,24 @@
 
 
 @interface AppointmentViewController ()
+@property (weak, nonatomic) IBOutlet UITableView *pendingListTableView;
 @property (weak, nonatomic) IBOutlet UIView *calendarView;
 @property (weak, nonatomic) IBOutlet UIImageView *backgroundImageView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *calendarViewToTopDistance;
-
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentViewHeight;
 @property (weak, nonatomic) IBOutlet UITableView *listAppointMentInDayTableView;
-
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *menuButton;
 @property(strong,nonatomic) NSMutableArray * markedDayList;
 @property(strong,nonatomic) NSString * chosenDate;
 @property (strong,nonatomic) NSDictionary *responseJSONData ;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *addNewAppointmentBarButton;
+@property(assign,nonatomic)BOOL addNewAppointmentBarButtonStatus;
 @property(strong,nonatomic) NSArray * appointmentsInMonth;
 -(IBAction)addNewAppointment:(id)sender;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *segmentControlView;
+- (IBAction)segmentController:(id)sender;
+@property(assign,nonatomic) BOOL isShowingPendingFromPatient;
+@property(assign,nonatomic) BOOL isShowingPendingFromDoctor;
 @end
 
 
@@ -111,15 +115,32 @@
     NSData *jsondata = [NSJSONSerialization dataWithJSONObject:account options:NSJSONWritingPrettyPrinted error:&error];
 
     // config session
-    NSURLSession *defaultSession = [NSURLSession sharedSession];
+    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+
+
+    sessionConfig.timeoutIntervalForRequest = 5.0;
+    sessionConfig.timeoutIntervalForResource = 5.0;
+    // config session
+    //NSURLSession *defaultSession = [NSURLSession sharedSession];
+    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:sessionConfig];
+
 
     //create request
     NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
 
+    //get the current doctor data
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+
+    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+    NSString *email = [doctor valueForKey:@"email"];
+    NSString *password = [doctor valueForKey:@"password"];
+
     //setup header and body for request
     [urlRequest setHTTPMethod:@"POST"];
-    [urlRequest setValue:@"doctor26@gmail.com" forHTTPHeaderField:@"Email"];
-    [urlRequest setValue:@"doctor199x" forHTTPHeaderField:@"Password"];
+    [urlRequest setValue:email forHTTPHeaderField:@"Email"];
+    [urlRequest setValue:password forHTTPHeaderField:@"Password"];
     [urlRequest setValue:@"en-US" forHTTPHeaderField:@"Accept-Language"];
     [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
 
@@ -156,7 +177,9 @@
 #pragma mark - View delegate
 - (void)viewDidLoad {
     [super viewDidLoad];
-
+    self.isShowingPendingFromDoctor = NO;
+    self.isShowingPendingFromPatient = NO;
+    [self.pendingListTableView setHidden:YES];
     self.markedDayList = [[NSMutableArray alloc] init];
     self.appointmentsInMonth = [[NSArray alloc]init];
     //setup listAppointMentInDayTableView
@@ -177,9 +200,9 @@
     }
     //check device using is 4inch screen or not to et distance to top from calendar view
     if ( [[UIScreen mainScreen] bounds].size.height == 568) {
-        self.calendarViewToTopDistance.constant = 25;
+        self.calendarViewToTopDistance.constant = 30;
     }else{
-        self.calendarViewToTopDistance.constant = 40;
+        self.calendarViewToTopDistance.constant = 45;
     }
     self.calendarView.layer.borderColor = [UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0].CGColor;
     self.calendarView.layer.borderWidth = 1.0f;
@@ -248,7 +271,7 @@
 
     //disable addnew appointment button if thereis no day selected
     [self.addNewAppointmentBarButton setEnabled:NO];
-
+    self.addNewAppointmentBarButtonStatus = NO;
     //hide listAppointMentInDayTableView if need
     CATransition *animation = [CATransition animation];
     animation.type = kCATransitionPush;
@@ -311,10 +334,11 @@
     [dateFormatter setDateFormat:@"MM/dd/yyyy"];
 
     NSString *today = [dateFormatter stringFromDate:[NSDate date]];
-
+    self.chosenDate = today;
     //set enable for add new appointment bar button if the current month is showing in first time
     if ([[dateFormatter stringFromDate:calendarView.currentMonth] isEqual:today]) {
         [self.addNewAppointmentBarButton setEnabled:YES];
+        self.addNewAppointmentBarButtonStatus = YES;
     }
     for (int runIndex = 0; runIndex <self.markedDayList.count; runIndex ++) {
         NSString *currentDate = [dateFormatter stringFromDate:[self.markedDayList objectAtIndex:runIndex]];
@@ -325,7 +349,7 @@
 
     //show list appoint for today
     if (isMarkedDate && [[dateFormatter stringFromDate:calendarView.currentMonth] isEqual:today]) {
-        self.chosenDate = today;
+
         animation.duration = 0.35;
         [self.listAppointMentInDayTableView.layer addAnimation:animation forKey:nil];
         [self.listAppointMentInDayTableView setHidden:NO];
@@ -336,6 +360,7 @@
 
 -(void)calendarView:(VRGCalendarView *)calendarView dateSelected:(NSDate *)date {
     [self.addNewAppointmentBarButton setEnabled:YES];
+    self.addNewAppointmentBarButtonStatus = YES;
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
     [dateFormatter setDateFormat:@"MM/dd/yyyy"];
@@ -532,48 +557,93 @@
 
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
+    if (self.segmentControlView.selectedSegmentIndex ==0) {
+        return 1;
+    }else{
+        return 2;
+    }
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (self.chosenDate ==nil || [self.chosenDate isEqualToString:@""]) {
-        return 0;
+    if (self.segmentControlView.selectedSegmentIndex ==0) {
+        if (self.chosenDate ==nil || [self.chosenDate isEqualToString:@""]) {
+            return 0;
 
+        }else{
+            return 1;
+        }
     }else{
-        return 1;
-    }
+        // number of pending appointment
+        if (section ==0) {
+            return 3;
+        }else{
+            return 5;
+        }
 
+    }
 }
 
+- (nullable NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
+{
+    NSString *sectionName;
+    if (self.segmentControlView.selectedSegmentIndex ==1) {
+        switch (section)
+        {
+            case 0:
+                sectionName = @"Pending from Patient";
+                break;
+            case 1:
+                sectionName = @"Waiting patient approve";
+                break;
+            default:
+                sectionName = @"";
+                break;
+        }
+    }
+    return sectionName;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+    if (self.segmentControlView.selectedSegmentIndex ==1) {
+        return 40;
+    }else{
+        return 0;
+    }
+}
 
  - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-      AppointmentDetailTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"appointmentDetailCell" forIndexPath:indexPath];
+     if (self.segmentControlView.selectedSegmentIndex ==0) {
+         AppointmentDetailTableViewCell *cell = [self.listAppointMentInDayTableView dequeueReusableCellWithIdentifier:@"appointmentDetailCell" forIndexPath:indexPath];
 
-      // Configure the cell...
-     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-     [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
-     [dateFormatter setDateFormat:@"MM/dd/yyyy"];
-     NSDate *dateSelected = [dateFormatter dateFromString:self.chosenDate];
-     NSMutableArray*startAndEndTime =  [self appointmentsForSelectedDate:dateSelected];
+         // Configure the cell...
+         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+         [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+         [dateFormatter setDateFormat:@"MM/dd/yyyy"];
+         NSDate *dateSelected = [dateFormatter dateFromString:self.chosenDate];
+         NSMutableArray*startAndEndTime =  [self appointmentsForSelectedDate:dateSelected];
 
-     if (self.chosenDate ==nil || [self.chosenDate isEqualToString:@""]){
-         cell.nameLabel.text = @"";
-         cell.timeLabel.text = @"";
+         if (self.chosenDate ==nil || [self.chosenDate isEqualToString:@""]){
+             cell.nameLabel.text = @"";
+             cell.timeLabel.text = @"";
+         }else{
+             cell.nameLabel.text = [NSString stringWithFormat:@"%@ %@",[[startAndEndTime objectAtIndex:indexPath.row] objectForKey:@"patientFirstName"],[[startAndEndTime objectAtIndex:indexPath.row] objectForKey:@"patientLastName"]];
+             cell.timeLabel.text = [NSString stringWithFormat:@"%@ to %@",[[startAndEndTime objectAtIndex:indexPath.row] objectForKey:@"startTime"],[[startAndEndTime objectAtIndex:indexPath.row] objectForKey:@"endTime"]];
+         }
+         cell.preservesSuperviewLayoutMargins = NO;
+         cell.separatorInset = UIEdgeInsetsZero;
+         cell.layoutMargins = UIEdgeInsetsZero;
+
+         return cell;
      }else{
-         cell.nameLabel.text = [NSString stringWithFormat:@"%@ %@",[[startAndEndTime objectAtIndex:indexPath.row] objectForKey:@"patientFirstName"],[[startAndEndTime objectAtIndex:indexPath.row] objectForKey:@"patientLastName"]];
-         cell.timeLabel.text = [NSString stringWithFormat:@"%@ to %@",[[startAndEndTime objectAtIndex:indexPath.row] objectForKey:@"startTime"],[[startAndEndTime objectAtIndex:indexPath.row] objectForKey:@"endTime"]];
+         UITableViewCell *cell = [self.pendingListTableView dequeueReusableCellWithIdentifier:@"pendingAppointmentCell" forIndexPath:indexPath];
+         if (indexPath.section ==0) {
+             cell.textLabel.text = @"pending From Patients";
+         }else{
+             cell.textLabel.text = @"pending From Doctor";
+         }
+
+         return cell;
      }
 
-
-
-
-
-
-     cell.preservesSuperviewLayoutMargins = NO;
-     cell.separatorInset = UIEdgeInsetsZero;
-     cell.layoutMargins = UIEdgeInsetsZero;
-
-     return cell;
  }
 
 
@@ -591,4 +661,25 @@
 }
 
 
+- (IBAction)segmentController:(id)sender {
+    switch (self.segmentControlView.selectedSegmentIndex)
+    {
+        case 0:
+            [self.pendingListTableView setHidden:YES];
+            if (self.addNewAppointmentBarButtonStatus) {
+                [self.addNewAppointmentBarButton setEnabled:YES];
+            }
+            //[self.pendingListTableView reloadData];
+            //[self.listAppointMentInDayTableView reloadData];
+            break;
+        case 1:
+            [self.addNewAppointmentBarButton setEnabled:NO];
+            [self.pendingListTableView setHidden:NO];
+            [self.pendingListTableView reloadData];
+            //[self.listAppointMentInDayTableView reloadData];
+            break;
+        default:
+            break;
+    }
+}
 @end

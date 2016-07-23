@@ -23,7 +23,7 @@
     self.avatar.layer.borderWidth = 1.0f;
     self.avatar.layer.borderColor = [UIColor blackColor].CGColor;
 
-
+    self.nameLabel.adjustsFontSizeToFitWidth = YES;
     self.contentView.backgroundColor = [UIColor clearColor];
     [self setBackgroundColor:[UIColor clearColor]];
    // set up for selected cell

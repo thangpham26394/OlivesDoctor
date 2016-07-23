@@ -37,7 +37,6 @@
 		15E75A351CF73C2C00A985E7 /* blurbackground.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 15E75A331CF73C2C00A985E7 /* blurbackground.jpg */; };
 		15E75A381CF756EB00A985E7 /* PatientsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E75A371CF756EB00A985E7 /* PatientsTableViewController.m */; };
 		15E75A3E1CF760F200A985E7 /* LoanTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E75A3D1CF760F200A985E7 /* LoanTableViewController.m */; };
-		15E75A411CF7610100A985E7 /* SettingTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E75A401CF7610100A985E7 /* SettingTableViewController.m */; };
 		15E75A431CF7633600A985E7 /* homeimage.JPG in Resources */ = {isa = PBXBuildFile; fileRef = 15E75A421CF7633600A985E7 /* homeimage.JPG */; };
 		15E75A471CF764BF00A985E7 /* avatar.png in Resources */ = {isa = PBXBuildFile; fileRef = 15E75A461CF764BF00A985E7 /* avatar.png */; };
 		15E75A491CF767F900A985E7 /* barimage.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 15E75A481CF767F900A985E7 /* barimage.jpeg */; };
@@ -45,7 +44,6 @@
 		15E76B761D2F973D0028EFEB /* typeicon.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 15E76B731D2F973D0028EFEB /* typeicon.jpeg */; };
 		15E76B771D2F973D0028EFEB /* timeicon.png in Resources */ = {isa = PBXBuildFile; fileRef = 15E76B741D2F973D0028EFEB /* timeicon.png */; };
 		15E76B7A1D2F9BA80028EFEB /* AppointmentViewDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E76B791D2F9BA80028EFEB /* AppointmentViewDetailViewController.m */; };
-		15E76B7D1D2FA7EE0028EFEB /* PrescriptionTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E76B7C1D2FA7EE0028EFEB /* PrescriptionTableViewController.m */; };
 		15E8C4D91D3ADE020056E8AE /* mypatient2.png in Resources */ = {isa = PBXBuildFile; fileRef = 15E8C4D81D3ADE020056E8AE /* mypatient2.png */; };
 		15E8C4E81D3AE7150056E8AE /* DoctorNoteTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8C4E71D3AE7150056E8AE /* DoctorNoteTableViewController.m */; };
 		15E8C4EF1D3AE8D40056E8AE /* MedicalRecordDetailTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8C4EE1D3AE8D40056E8AE /* MedicalRecordDetailTableViewController.m */; };
@@ -81,6 +79,11 @@
 		15F0A64B1D1E7B2900A32848 /* appointmenticon.png in Resources */ = {isa = PBXBuildFile; fileRef = 15F0A6451D1E7B2900A32848 /* appointmenticon.png */; };
 		15F0A64C1D1E7B2900A32848 /* patienticon.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 15F0A6461D1E7B2900A32848 /* patienticon.jpg */; };
 		15F0A64D1D1E7B2900A32848 /* homeicon.png in Resources */ = {isa = PBXBuildFile; fileRef = 15F0A6471D1E7B2900A32848 /* homeicon.png */; };
+		15F542BB1D40BCE1003A61F0 /* PrescriptionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15F542BA1D40BCE1003A61F0 /* PrescriptionViewController.m */; };
+		15F542C21D40C8C8003A61F0 /* MedicinesCollectionReusableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 15F542C11D40C8C8003A61F0 /* MedicinesCollectionReusableView.m */; };
+		15F542C51D40D51D003A61F0 /* MedicineTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15F542C41D40D51D003A61F0 /* MedicineTableViewController.m */; };
+		15F542CC1D410A2D003A61F0 /* MedicineImagesCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15F542CB1D410A2D003A61F0 /* MedicineImagesCollectionViewController.m */; };
+		15F542CF1D4219FD003A61F0 /* EditProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15F542CE1D4219FD003A61F0 /* EditProfileViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -186,8 +189,6 @@
 		15E75A371CF756EB00A985E7 /* PatientsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PatientsTableViewController.m; sourceTree = "<group>"; };
 		15E75A3C1CF760F200A985E7 /* LoanTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoanTableViewController.h; sourceTree = "<group>"; };
 		15E75A3D1CF760F200A985E7 /* LoanTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoanTableViewController.m; sourceTree = "<group>"; };
-		15E75A3F1CF7610100A985E7 /* SettingTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingTableViewController.h; sourceTree = "<group>"; };
-		15E75A401CF7610100A985E7 /* SettingTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingTableViewController.m; sourceTree = "<group>"; };
 		15E75A421CF7633600A985E7 /* homeimage.JPG */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = homeimage.JPG; sourceTree = "<group>"; };
 		15E75A461CF764BF00A985E7 /* avatar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = avatar.png; sourceTree = "<group>"; };
 		15E75A481CF767F900A985E7 /* barimage.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = barimage.jpeg; sourceTree = "<group>"; };
@@ -196,8 +197,6 @@
 		15E76B741D2F973D0028EFEB /* timeicon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = timeicon.png; sourceTree = "<group>"; };
 		15E76B781D2F9BA80028EFEB /* AppointmentViewDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppointmentViewDetailViewController.h; sourceTree = "<group>"; };
 		15E76B791D2F9BA80028EFEB /* AppointmentViewDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppointmentViewDetailViewController.m; sourceTree = "<group>"; };
-		15E76B7B1D2FA7EE0028EFEB /* PrescriptionTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrescriptionTableViewController.h; sourceTree = "<group>"; };
-		15E76B7C1D2FA7EE0028EFEB /* PrescriptionTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrescriptionTableViewController.m; sourceTree = "<group>"; };
 		15E8C4D81D3ADE020056E8AE /* mypatient2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mypatient2.png; sourceTree = "<group>"; };
 		15E8C4E61D3AE7150056E8AE /* DoctorNoteTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoctorNoteTableViewController.h; sourceTree = "<group>"; };
 		15E8C4E71D3AE7150056E8AE /* DoctorNoteTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DoctorNoteTableViewController.m; sourceTree = "<group>"; };
@@ -251,6 +250,16 @@
 		15F0A6451D1E7B2900A32848 /* appointmenticon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = appointmenticon.png; sourceTree = "<group>"; };
 		15F0A6461D1E7B2900A32848 /* patienticon.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = patienticon.jpg; sourceTree = "<group>"; };
 		15F0A6471D1E7B2900A32848 /* homeicon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = homeicon.png; sourceTree = "<group>"; };
+		15F542B91D40BCE1003A61F0 /* PrescriptionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrescriptionViewController.h; sourceTree = "<group>"; };
+		15F542BA1D40BCE1003A61F0 /* PrescriptionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrescriptionViewController.m; sourceTree = "<group>"; };
+		15F542C01D40C8C8003A61F0 /* MedicinesCollectionReusableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MedicinesCollectionReusableView.h; sourceTree = "<group>"; };
+		15F542C11D40C8C8003A61F0 /* MedicinesCollectionReusableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MedicinesCollectionReusableView.m; sourceTree = "<group>"; };
+		15F542C31D40D51D003A61F0 /* MedicineTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MedicineTableViewController.h; sourceTree = "<group>"; };
+		15F542C41D40D51D003A61F0 /* MedicineTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MedicineTableViewController.m; sourceTree = "<group>"; };
+		15F542CA1D410A2D003A61F0 /* MedicineImagesCollectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MedicineImagesCollectionViewController.h; sourceTree = "<group>"; };
+		15F542CB1D410A2D003A61F0 /* MedicineImagesCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MedicineImagesCollectionViewController.m; sourceTree = "<group>"; };
+		15F542CD1D4219FD003A61F0 /* EditProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditProfileViewController.h; sourceTree = "<group>"; };
+		15F542CE1D4219FD003A61F0 /* EditProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditProfileViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -415,8 +424,9 @@
 		15E8C4DB1D3AE4CB0056E8AE /* Prescription */ = {
 			isa = PBXGroup;
 			children = (
-				15E76B7B1D2FA7EE0028EFEB /* PrescriptionTableViewController.h */,
-				15E76B7C1D2FA7EE0028EFEB /* PrescriptionTableViewController.m */,
+				15F542BC1D40C603003A61F0 /* Medicine */,
+				15F542B91D40BCE1003A61F0 /* PrescriptionViewController.h */,
+				15F542BA1D40BCE1003A61F0 /* PrescriptionViewController.m */,
 			);
 			name = Prescription;
 			sourceTree = "<group>";
@@ -448,14 +458,14 @@
 				15E75A371CF756EB00A985E7 /* PatientsTableViewController.m */,
 				15E75A3C1CF760F200A985E7 /* LoanTableViewController.h */,
 				15E75A3D1CF760F200A985E7 /* LoanTableViewController.m */,
-				15E75A3F1CF7610100A985E7 /* SettingTableViewController.h */,
-				15E75A401CF7610100A985E7 /* SettingTableViewController.m */,
 				15DCF5A41CF3820F00013F19 /* OLTableViewController.h */,
 				15DCF5A51CF3820F00013F19 /* OLTableViewController.m */,
 				15E9D6EC1D06A99C006D5DD1 /* AppointmentViewController.h */,
 				15E9D6ED1D06A99C006D5DD1 /* AppointmentViewController.m */,
 				1567353C1D19522A00392ADA /* HomeViewController.h */,
 				1567353D1D19522A00392ADA /* HomeViewController.m */,
+				15F542CD1D4219FD003A61F0 /* EditProfileViewController.h */,
+				15F542CE1D4219FD003A61F0 /* EditProfileViewController.m */,
 			);
 			name = MainMenu;
 			sourceTree = "<group>";
@@ -544,6 +554,8 @@
 				15E8C4FD1D3B70970056E8AE /* DoctorNoteTableViewCell.m */,
 				15EA05DD1D3F7AF100FDB449 /* AppointmentDetailTableViewCell.h */,
 				15EA05DE1D3F7AF100FDB449 /* AppointmentDetailTableViewCell.m */,
+				15F542C01D40C8C8003A61F0 /* MedicinesCollectionReusableView.h */,
+				15F542C11D40C8C8003A61F0 /* MedicinesCollectionReusableView.m */,
 			);
 			name = TableViewCell;
 			sourceTree = "<group>";
@@ -557,6 +569,25 @@
 				15E8C4DE1D3AE5260056E8AE /* MainMenu */,
 			);
 			name = Controller;
+			sourceTree = "<group>";
+		};
+		15F542BC1D40C603003A61F0 /* Medicine */ = {
+			isa = PBXGroup;
+			children = (
+				15F542C91D410A12003A61F0 /* ShowImages */,
+				15F542C31D40D51D003A61F0 /* MedicineTableViewController.h */,
+				15F542C41D40D51D003A61F0 /* MedicineTableViewController.m */,
+			);
+			name = Medicine;
+			sourceTree = "<group>";
+		};
+		15F542C91D410A12003A61F0 /* ShowImages */ = {
+			isa = PBXGroup;
+			children = (
+				15F542CA1D410A2D003A61F0 /* MedicineImagesCollectionViewController.h */,
+				15F542CB1D410A2D003A61F0 /* MedicineImagesCollectionViewController.m */,
+			);
+			name = ShowImages;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -742,26 +773,29 @@
 				15E9D6F91D06B3D6006D5DD1 /* VRGCalendarView.m in Sources */,
 				15E9D6EE1D06A99C006D5DD1 /* AppointmentViewController.m in Sources */,
 				15E9D6FC1D06B3D6006D5DD1 /* NSDate+convenience.m in Sources */,
+				15F542C21D40C8C8003A61F0 /* MedicinesCollectionReusableView.m in Sources */,
 				15E8C4F31D3AEB290056E8AE /* MedicalRecordImagesCollectionViewController.m in Sources */,
-				15E75A411CF7610100A985E7 /* SettingTableViewController.m in Sources */,
 				15DCF5AB1CF3870F00013F19 /* OLTableViewCell.m in Sources */,
 				15EB44BB1D34F80C00C489A2 /* TimePickerViewController.m in Sources */,
 				15E8C4FE1D3B70970056E8AE /* DoctorNoteTableViewCell.m in Sources */,
 				15E9D6FD1D06B3D6006D5DD1 /* UIColor+expanded.m in Sources */,
 				15DDAA8A1D3D6924001D4BBB /* ImportantInfoChartViewController.m in Sources */,
+				15F542CC1D410A2D003A61F0 /* MedicineImagesCollectionViewController.m in Sources */,
 				15E9D6FB1D06B3D6006D5DD1 /* NSMutableArray+convenience.m in Sources */,
 				15E9D7071D0812DD006D5DD1 /* ForgotPasswordViewController.m in Sources */,
 				15EB73951D3E114D00C6284A /* MedicalRecordTableViewController.m in Sources */,
 				15DCF5A61CF3820F00013F19 /* OLTableViewController.m in Sources */,
-				15E76B7D1D2FA7EE0028EFEB /* PrescriptionTableViewController.m in Sources */,
 				15DCF5781CF3593800013F19 /* main.m in Sources */,
 				15E8C4F81D3AEE460056E8AE /* MedicalRecordImageShowViewController.m in Sources */,
+				15F542C51D40D51D003A61F0 /* MedicineTableViewController.m in Sources */,
 				15F01D3E1CF81DC700EAAF9B /* PatientTableViewCell.m in Sources */,
 				15E76B7A1D2F9BA80028EFEB /* AppointmentViewDetailViewController.m in Sources */,
+				15F542BB1D40BCE1003A61F0 /* PrescriptionViewController.m in Sources */,
 				15E8C4E81D3AE7150056E8AE /* DoctorNoteTableViewController.m in Sources */,
 				15E9D7021D07FB2D006D5DD1 /* LoginViewController.m in Sources */,
 				15DCF5841CF3593800013F19 /* Olives.xcdatamodeld in Sources */,
 				15E9D6FA1D06B3D6006D5DD1 /* UIView+convenience.m in Sources */,
+				15F542CF1D4219FD003A61F0 /* EditProfileViewController.m in Sources */,
 				15E75A381CF756EB00A985E7 /* PatientsTableViewController.m in Sources */,
 				15E8C4FB1D3AF3A80056E8AE /* MedicalRecordListCollectionReusableView.m in Sources */,
 				15E63CFA1D1E91C700706875 /* PatientDetailsViewController.m in Sources */,
