@@ -9,13 +9,15 @@
 #import "PatientsTableViewController.h"
 #import "SWRevealViewController.h"
 #import "PatientTableViewCell.h"
+#import "TimePickerViewController.h"
 #import <CoreData/CoreData.h>
 @interface PatientsTableViewController ()
 //@property (weak, nonatomic) IBOutlet UIBarButtonItem *menuButton;
 @property (strong,nonatomic) NSArray *patientArray;
 @property (assign,nonatomic) BOOL isAddNewAppointment;
 @property (strong,nonatomic) NSDictionary *responseJSONData ;
-
+@property(assign,nonatomic) BOOL connectToAPISuccess;
+@property(strong,nonatomic) NSDictionary *selectedPatientToTimePicker;
 -(IBAction)cancel:(id)sender;
 @end
 
@@ -78,13 +80,23 @@
                                           {
                                               NSError *parsJSONError = nil;
                                               self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                              if (self.responseJSONData != nil) {
+                                                  [self savePatientToCoreData];
+                                                  self.connectToAPISuccess =YES;
+                                              }else{
+                                                  self.patientArray = [self loadPatientFromCoreDataWhenAPIFail];
+                                                  self.connectToAPISuccess =NO;
+                                              }
+
+
                                               //stop waiting after get response from API
                                               dispatch_semaphore_signal(sem);
                                           }
                                           else{
                                               NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
                                               NSLog(@"\n\n\nError = %@",text);
-
+                                              self.patientArray = [self loadPatientFromCoreDataWhenAPIFail];
+                                              self.connectToAPISuccess = NO;
                                               dispatch_semaphore_signal(sem);
                                               return;
                                           }
@@ -94,10 +106,89 @@
     dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
 
 }
+
+-(void)savePatientToCoreData{
+    self.patientArray = [self.responseJSONData objectForKey:@"Users"];
+    //delete all the current patients in coredata
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"PatientInfo"];
+    NSMutableArray *patientObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *patient;
+    if (patientObject.count >0) {
+
+        for (int index=0; index < patientObject.count; index++) {
+            patient = [patientObject objectAtIndex:index];
+            [context deleteObject:patient];
+        }
+    }
+
+    // insert new patients that gotten from API
+    for (int index = 0; index < self.patientArray.count; index++) {
+        NSDictionary *patient = self.patientArray[index];
+        NSString *patientID = [patient objectForKey:@"Id"];
+        NSString *firstName = [patient objectForKey:@"FirstName"];
+        NSString *lastName = [patient objectForKey:@"LastName"];
+        NSString *birthday = [patient objectForKey:@"Birthday"];
+        NSString *phone = [patient objectForKey:@"Phone"];
+        NSString *photo = [patient objectForKey:@"Photo"];
+        NSString *address = [patient objectForKey:@"Address"];
+        NSString *email = [patient objectForKey:@"Email"];
+
+        //create new patient object
+        NSManagedObject *newPatient  = [NSEntityDescription insertNewObjectForEntityForName:@"PatientInfo" inManagedObjectContext:context];
+        //set value for each attribute of new patient before save to core data
+        [newPatient setValue: [NSString stringWithFormat:@"%@", patientID] forKey:@"patientId"];
+        [newPatient setValue:firstName forKey:@"firstName"];
+        [newPatient setValue:lastName forKey:@"lastName"];
+        [newPatient setValue: [NSString stringWithFormat:@"%@", birthday] forKey:@"birthday"];
+        [newPatient setValue: [NSString stringWithFormat:@"%@", phone] forKey:@"phone"];
+        //get avatar from receive url
+        NSURL *url = [NSURL URLWithString:photo];
+        NSData *patientPhotoData = [NSData dataWithContentsOfURL:url];
+        [newPatient setValue:patientPhotoData  forKey:@"photo"];
+        [newPatient setValue: [NSString stringWithFormat:@"%@", address] forKey:@"address"];
+        [newPatient setValue: [NSString stringWithFormat:@"%@", email] forKey:@"email"];
+        NSError *error = nil;
+        // Save the object to persistent store
+        if (![context save:&error]) {
+            NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
+        }else{
+            NSLog(@"Save Patient success!");
+        }
+    }
+}
+
+-(NSArray *)loadPatientFromCoreDataWhenAPIFail{
+
+    NSMutableArray *patientArrayForFailAPI = [[NSMutableArray alloc]init];
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"PatientInfo"];
+    NSMutableArray *patientObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *patient;
+    for (int index =0; index<patientObject.count; index++) {
+        //get each patient in coredata
+        patient = [patientObject objectAtIndex:index];
+        NSDictionary *patientDic = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    [patient valueForKey:@"patientId" ],@"Id",
+                                    [patient valueForKey:@"firstName" ],@"FirstName",
+                                    [patient valueForKey:@"lastName" ],@"LastName",
+                                    [patient valueForKey:@"birthday" ],@"Birthday",
+                                    [patient valueForKey:@"phone" ],@"Phone",
+                                    [patient valueForKey:@"photo" ],@"Photo",
+                                    [patient valueForKey:@"address" ],@"Address",
+                                    [patient valueForKey:@"email" ],@"Email",
+                                    nil];
+        [patientArrayForFailAPI addObject:patientDic];
+    }
+
+    return (NSArray*)patientArrayForFailAPI;
+}
+
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
+    self.patientArray = [[NSArray alloc]init];
     [self loadPatienttDataFromAPI];
-    self.patientArray = [self.responseJSONData objectForKey:@"Users"];
+
     [self.tableView reloadData];
 }
 
@@ -175,11 +266,18 @@
     cell.phoneLabel.text = [NSString stringWithFormat:@"Phone:%@",[self.patientArray[indexPath.row] objectForKey:@"Phone"]];
     cell.address.text = [NSString stringWithFormat:@"Address:%@",[self.patientArray[indexPath.row] objectForKey:@"Address"]];
     cell.emailLabel.text  = [NSString stringWithFormat:@"Email:%@",[self.patientArray[indexPath.row] objectForKey:@"Email"]];
-    NSURL *url = [NSURL URLWithString:[self.patientArray[indexPath.row] objectForKey:@"Photo"]];
-    NSData *data = [NSData dataWithContentsOfURL:url];
+
+    NSData *data;
+    if (self.connectToAPISuccess) {
+        NSURL *url = [NSURL URLWithString:[self.patientArray[indexPath.row] objectForKey:@"Photo"]];
+        data  = [NSData dataWithContentsOfURL:url];
+
+    }else{
+        data = [self.patientArray[indexPath.row] objectForKey:@"Photo"];
+    }
     UIImage *img = [[UIImage alloc] initWithData:data];
     cell.avatar.image = img;
-    // Configure the cell...
+
     
     return cell;
 }
@@ -189,6 +287,10 @@
     if (!self.isAddNewAppointment) {
         // if the view current state is not for add new appointment
         [self performSegueWithIdentifier:@"showDetailPatient" sender:self];
+    }else{
+
+        self.selectedPatientToTimePicker = self.patientArray[indexPath.row];
+        [self performSegueWithIdentifier:@"unwindToTimePicker" sender:self];
     }
 
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -242,6 +344,13 @@
         UITabBarController *tabBar = [segue destinationViewController];
         tabBar.selectedIndex = 1;
     }
+
+    if ([[segue identifier] isEqualToString:@"unwindToTimePicker"])
+    {
+        TimePickerViewController *timePicker = [segue destinationViewController];
+       timePicker.selectedPatient = self.selectedPatientToTimePicker;
+    }
+
 }
 
 

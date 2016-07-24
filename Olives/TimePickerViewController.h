@@ -10,4 +10,5 @@
 
 @interface TimePickerViewController : UIViewController
 @property(strong,nonatomic) NSString *chosenDate;
+@property(strong,nonatomic) NSDictionary *selectedPatient;
 @end

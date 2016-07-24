@@ -17,7 +17,6 @@
 @interface AppointmentViewController ()
 @property (weak, nonatomic) IBOutlet UITableView *pendingListTableView;
 @property (weak, nonatomic) IBOutlet UIView *calendarView;
-@property (weak, nonatomic) IBOutlet UIImageView *backgroundImageView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *calendarViewToTopDistance;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentViewHeight;
 @property (weak, nonatomic) IBOutlet UITableView *listAppointMentInDayTableView;
@@ -33,6 +32,7 @@
 - (IBAction)segmentController:(id)sender;
 @property(assign,nonatomic) BOOL isShowingPendingFromPatient;
 @property(assign,nonatomic) BOOL isShowingPendingFromDoctor;
+@property(strong,nonatomic) NSString *idOfSelectedAppointmentToviewDetail;
 @end
 
 
@@ -49,28 +49,110 @@
     return context;
 }
 
--(void)saveAppointmentInfoToCoreData:(NSDictionary*) jsonData{
-    NSArray * appointments = [jsonData valueForKey:@"Appointments"];
-    for (int  runIndex =0; runIndex < appointments.count; runIndex++) {
-        NSDictionary *appointmentDic = [appointments objectAtIndex:runIndex];
+-(void)loadAppointmentFromCoreDataWhenAPIFailFrom:(NSString *)fromDate To:(NSString*)toDate{
+    NSMutableArray *appointmentArrayForFailAPI = [[NSMutableArray alloc]init];
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Appointment"];
+    NSMutableArray *appointmentObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *appointment;
+    for (int index =0; index<appointmentObject.count; index++) {
+        //get each patient in coredata
+        appointment = [appointmentObject objectAtIndex:index];
+
+        //only get from core data dates that inside range of fromDate to toDate
+        if ([[appointment valueForKey:@"from"] doubleValue] >= [fromDate doubleValue]   &&   [[appointment valueForKey:@"to"] doubleValue] <= [toDate doubleValue] ) {
+            NSDictionary *dater = [NSDictionary dictionaryWithObjectsAndKeys:
+                                   [appointment valueForKey:@"daterID" ],@"Id",
+                                   [appointment valueForKey:@"daterFirstName" ],@"FirstName",
+                                   [appointment valueForKey:@"daterLastName" ],@"LastName",
+                                    nil];
+            NSDictionary *maker = [NSDictionary dictionaryWithObjectsAndKeys:
+                                   [appointment valueForKey:@"makerID" ],@"Id",
+                                   [appointment valueForKey:@"makerFirstName" ],@"FirstName",
+                                   [appointment valueForKey:@"makerLastName" ],@"LastName",
+                                   nil];
+
+            NSDictionary *appointmentDic = [NSDictionary dictionaryWithObjectsAndKeys:
+                                        [appointment valueForKey:@"appointmentID" ],@"Id",
+                                        [appointment valueForKey:@"dateCreated" ],@"Created",
+                                        dater,@"Dater",
+                                        maker,@"Maker",
+                                        [appointment valueForKey:@"from" ],@"From",
+                                        [appointment valueForKey:@"to" ],@"To",
+                                        [appointment valueForKey:@"lastModified" ],@"LastModified",
+                                        [appointment valueForKey:@"note" ],@"Note",
+                                        [appointment valueForKey:@"status" ],@"Status",
+                                        nil];
+            [appointmentArrayForFailAPI addObject:appointmentDic];
+        }
+
+    }
+    self.appointmentsInMonth = (NSArray*)appointmentArrayForFailAPI;
+}
+
+-(void)saveAppointmentInfoToCoreDataFrom:(NSString *)fromDate To:(NSString*)toDate{
+    //get the appointments in current month which were returned from API
+    self.appointmentsInMonth = [self.responseJSONData valueForKey:@"Appointments"];
+
+    //delete all the current appointment in coredata for the selected month
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Appointment"];
+    NSMutableArray *appointmentObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *appointment;
+    if (appointmentObject.count >0) {
+
+        for (int index=0; index < appointmentObject.count; index++) {
+            appointment = [appointmentObject objectAtIndex:index];
+            //check if current date is in range of from to date to delete
+            if ([[appointment valueForKey:@"from"] doubleValue] >= [fromDate doubleValue]   &&   [[appointment valueForKey:@"to"] doubleValue] <= [toDate doubleValue] ) {
+                [context deleteObject:appointment];//only delete the date that inside of selected month view in calendar
+            }
+
+        }
+    }
+    //insert each appointment that gotten from API before !
+    for (int  runIndex =0; runIndex < self.appointmentsInMonth.count; runIndex++) {
+        NSDictionary *appointmentDic = [self.appointmentsInMonth objectAtIndex:runIndex];
 
         NSString * appointmentID = [appointmentDic valueForKey:@"Id"];
         NSString * dateCreated = [appointmentDic valueForKey:@"Created"];
-
         NSString * daterId = [[appointmentDic valueForKey:@"Dater"]  valueForKey:@"Id"];
         NSString * daterFirstName = [[appointmentDic valueForKey:@"Dater"] valueForKey:@"FirstName"];
         NSString * daterLastName = [[appointmentDic valueForKey:@"Dater"] valueForKey:@"LastName"];
-
         NSString * makerId = [[appointmentDic valueForKey:@"Maker"]  valueForKey:@"Id"];
         NSString * makerFirstName = [[appointmentDic valueForKey:@"Maker"] valueForKey:@"FirstName"];
-        NSString * makerrLastName = [[appointmentDic valueForKey:@"Maker"] valueForKey:@"LastName"];
-
+        NSString * makerLastName = [[appointmentDic valueForKey:@"Maker"] valueForKey:@"LastName"];
         NSString * from = [appointmentDic valueForKey:@"From"];
         NSString * to = [appointmentDic valueForKey:@"To"];
         NSString * lastModified = [appointmentDic valueForKey:@"LastModified"];
         NSString * note = [appointmentDic valueForKey:@"Note"];
         NSString * status = [appointmentDic valueForKey:@"Status"];
 
+        //create new appointment object
+        NSManagedObject *newAppointment  = [NSEntityDescription insertNewObjectForEntityForName:@"Appointment" inManagedObjectContext:context];
+        //set value for each attribute of new patient before save to core data
+        [newAppointment setValue: [NSString stringWithFormat:@"%@", appointmentID] forKey:@"appointmentID"];
+        [newAppointment setValue: [NSString stringWithFormat:@"%@", dateCreated] forKey:@"dateCreated"];
+        [newAppointment setValue:[NSString stringWithFormat:@"%@", daterId] forKey:@"daterID"];
+        [newAppointment setValue:daterFirstName forKey:@"daterFirstName"];
+        [newAppointment setValue:daterLastName forKey:@"daterLastName"];
+
+        [newAppointment setValue:[NSString stringWithFormat:@"%@", makerId]  forKey:@"makerID"];
+        [newAppointment setValue:makerFirstName forKey:@"makerFirstName"];
+        [newAppointment setValue:makerLastName forKey:@"makerLastName"];
+        [newAppointment setValue: [NSString stringWithFormat:@"%@", from] forKey:@"from"];
+        [newAppointment setValue: [NSString stringWithFormat:@"%@", to] forKey:@"to"];
+        [newAppointment setValue: [NSString stringWithFormat:@"%@", lastModified] forKey:@"lastModified"];
+        [newAppointment setValue:note forKey:@"note"];
+        [newAppointment setValue: [NSString stringWithFormat:@"%@", status] forKey:@"status"];
+
+        NSError *error = nil;
+        // Save the object to persistent store
+        if (![context save:&error]) {
+            NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
+        }else{
+            NSLog(@"Save Appointment success!");
+        }
     }
 
 
@@ -157,13 +239,21 @@
                                           {
                                               NSError *parsJSONError = nil;
                                               self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+
+                                              if (self.responseJSONData != nil) {
+                                                  [self saveAppointmentInfoToCoreDataFrom:minDate To:maxDate];
+                                              }else{
+                                                  [self loadAppointmentFromCoreDataWhenAPIFailFrom:minDate To:maxDate];
+                                              }
+
+
                                               //stop waiting after get response from API
                                               dispatch_semaphore_signal(sem);
                                           }
                                           else{
                                               NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
                                               NSLog(@"\n\n\nError = %@",text);
-
+                                              [self loadAppointmentFromCoreDataWhenAPIFailFrom:minDate To:maxDate];
                                               dispatch_semaphore_signal(sem);
                                               return;
                                           }
@@ -175,13 +265,23 @@
 }
 
 #pragma mark - View delegate
+
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    if (self.segmentControlView.selectedSegmentIndex ==0) {
+        self.appointmentsInMonth = [[NSArray alloc]init];
+        [self loadAppointmentFromCoreDataWhenAPIFailFrom:[NSString stringWithFormat:@"%f",[[NSUserDefaults standardUserDefaults] doubleForKey:@"selectedMonthMinDate"]] To:[NSString stringWithFormat:@"%f",[[NSUserDefaults standardUserDefaults] doubleForKey:@"selectedMonthMaxDate"]]];
+    }
+}
+
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.isShowingPendingFromDoctor = NO;
     self.isShowingPendingFromPatient = NO;
     [self.pendingListTableView setHidden:YES];
     self.markedDayList = [[NSMutableArray alloc] init];
-    self.appointmentsInMonth = [[NSArray alloc]init];
+
     //setup listAppointMentInDayTableView
     [self.listAppointMentInDayTableView.layer setCornerRadius:5.0f];
     [self.listAppointMentInDayTableView setShowsVerticalScrollIndicator:NO];
@@ -209,14 +309,10 @@
     [self.calendarView.layer setCornerRadius:5.0f];
     VRGCalendarView *calendar = [[VRGCalendarView alloc] init];
 
-//    [calendar.layer setCornerRadius:5.0f];
-
     calendar.delegate = self;
     //set up layout for calendar subview
     calendar.translatesAutoresizingMaskIntoConstraints = NO;
     [self.calendarView setBackgroundColor:[UIColor clearColor]];
-//    UIImage *image = [UIImage imageNamed: @"blurbackgroundIOS.jpg"];
-//    [self.backgroundImageView setImage:image];
     [self.calendarView addSubview:calendar];
 
     [self.calendarView  layoutIfNeeded];
@@ -311,11 +407,11 @@
 
 
 
-    NSDictionary * responseDic = [self loadAppointmentDataFromAPIFrom:[NSString stringWithFormat:@"%f",unixMinDate*1000] and:[NSString stringWithFormat:@"%f",unixMaxDate*1000]];
+    [self loadAppointmentDataFromAPIFrom:[NSString stringWithFormat:@"%f",unixMinDate*1000] and:[NSString stringWithFormat:@"%f",unixMaxDate*1000]];
 
-    //get the appointments in current month which were returned from API
-    self.appointmentsInMonth = [responseDic valueForKey:@"Appointments"];
-
+    [[NSUserDefaults standardUserDefaults] setDouble:unixMinDate*1000 forKey:@"selectedMonthMinDate"];
+    [[NSUserDefaults standardUserDefaults] setDouble:unixMaxDate*1000 forKey:@"selectedMonthMaxDate"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 
 
     NSCalendar *calendar = [NSCalendar currentCalendar];
@@ -488,7 +584,9 @@
         //get time interval for that appointment from dictionary
         NSString *startTime = [currentAppointment valueForKey:@"From"];
         NSString *endTime = [currentAppointment valueForKey:@"To"];
-        NSString *daterId = [[currentAppointment valueForKey:@"Dater"] valueForKey:@"Id"];
+        //get other informations about current appointment
+        NSString *daterId = [NSString stringWithFormat:@"%@",[[currentAppointment valueForKey:@"Dater"] valueForKey:@"Id"]];
+        NSString *appointmentID = [currentAppointment valueForKey:@"Id"];
 
         //convert time interval to NSDate type
         NSDate *startAppointMentTime = [NSDate dateWithTimeIntervalSince1970:[startTime doubleValue]/1000];
@@ -508,7 +606,13 @@
             NSString *patientFirstName;
             NSString *patientLastName;
             //check if current doctor using app is maker or dater of appointment
-            if ([daterId  isEqual: @"27"]) {
+            //get the current doctor data
+            NSManagedObjectContext *context = [self managedObjectContext];
+            NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+            NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+
+            NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+            if ([daterId  isEqual: [doctor valueForKey:@"doctorID"]]) {
                 // doctor is dater then maker is patient
                 patientID = [[currentAppointment valueForKey:@"Maker"] valueForKey:@"Id"];
                 patientFirstName = [[currentAppointment valueForKey:@"Maker"] valueForKey:@"FirstName"];
@@ -516,7 +620,6 @@
 
             }else{
                 //doctor is maker then dater is patient
-
                 patientID = [[currentAppointment valueForKey:@"Dater"] valueForKey:@"Id"];
                 patientFirstName = [[currentAppointment valueForKey:@"Dater"] valueForKey:@"FirstName"];
                 patientLastName = [[currentAppointment valueForKey:@"Dater"] valueForKey:@"LastName"];
@@ -537,6 +640,7 @@
 
             //put both start and end time to 1 dictionary var
             NSDictionary *startAndEndTimeForSelectedDate = [NSDictionary dictionaryWithObjectsAndKeys:
+                                                            appointmentID,@"appointmentID",
                                                             patientID,@"patientID",
                                                             patientFirstName,@"patientFirstName",
                                                             patientLastName,@"patientLastName",
@@ -570,7 +674,12 @@
             return 0;
 
         }else{
-            return 1;
+            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+            [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+            [dateFormatter setDateFormat:@"MM/dd/yyyy"];
+            NSDate *dateSelected = [dateFormatter dateFromString:self.chosenDate];
+            NSMutableArray*startAndEndTime =  [self appointmentsForSelectedDate:dateSelected];
+            return startAndEndTime.count;
         }
     }else{
         // number of pending appointment
@@ -646,6 +755,22 @@
 
  }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    // Do some stuff when the row is selected
+
+    if (self.segmentControlView.selectedSegmentIndex ==0) {
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+        [dateFormatter setDateFormat:@"MM/dd/yyyy"];
+        NSDate *dateSelected = [dateFormatter dateFromString:self.chosenDate];
+        NSMutableArray*appointmentsInSelectedDate =  [self appointmentsForSelectedDate:dateSelected];
+        self.idOfSelectedAppointmentToviewDetail = [NSString stringWithFormat:@"%@",[appointmentsInSelectedDate[indexPath.row] objectForKey:@"appointmentID"]];
+        [self performSegueWithIdentifier:@"showDetalAppointment" sender:self];
+        [self.listAppointMentInDayTableView deselectRowAtIndexPath:indexPath animated:YES];
+    }
+
+}
+
 
 #pragma mark - Navigation
 
@@ -657,6 +782,15 @@
         TimePickerViewController *timePickerController = [segue destinationViewController];
         // Pass any objects to the view controller here, like...
         timePickerController.chosenDate = self.chosenDate;
+    }
+    if ([[segue identifier] isEqualToString:@"showDetalAppointment"])
+    {
+        AppointmentViewDetailViewController *appointmentViewDetailController = [segue destinationViewController];
+        // Pass any objects to the view controller here, like...
+
+
+        
+        appointmentViewDetailController.appointmentID = self.idOfSelectedAppointmentToviewDetail;
     }
 }
 

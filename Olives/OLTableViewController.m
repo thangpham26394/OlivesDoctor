@@ -19,9 +19,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"blurbackgroundIOS.jpg"]];
-
-    self.tableView.backgroundView = imageView;
+//    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"blurbackgroundIOS.jpg"]];
+//
+//    self.tableView.backgroundView = imageView;
+    self.tableView.backgroundColor = [UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0];
+    
     SWRevealViewController *revealController = [self revealViewController];
     [revealController panGestureRecognizer];
     [revealController tapGestureRecognizer];

@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface AppointmentViewDetailViewController : UIViewController
-
+@property(strong,nonatomic) NSString *appointmentID;
 @end

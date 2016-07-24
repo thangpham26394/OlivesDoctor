@@ -9,6 +9,7 @@
 #import "TimePickerViewController.h"
 #import "PatientTableViewCell.h"
 #import "PatientsTableViewController.h"
+#import <CoreData/CoreData.h>
 @interface TimePickerViewController ()
 @property (weak, nonatomic) IBOutlet UIDatePicker *dateTimePickerFrom;
 @property (weak, nonatomic) IBOutlet UIDatePicker *dateTimePickerTo;
@@ -19,13 +20,29 @@
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIView *contentView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentViewHeight;
-@property (weak, nonatomic) IBOutlet UIButton *sendRequestButton;
+@property (weak, nonatomic) IBOutlet UIButton *sendButton;
 
 @property (weak, nonatomic) IBOutlet UIView *chosingPatient;
+@property (weak, nonatomic) IBOutlet UIImageView *selectedPatientAvatar;
+@property (weak, nonatomic) IBOutlet UILabel *selectedPatientName;
+@property (weak, nonatomic) IBOutlet UILabel *selectedPatientAddress;
+@property (weak, nonatomic) IBOutlet UILabel *selectedPatientEmail;
+@property (weak, nonatomic) IBOutlet UILabel *selectedPatientPhone;
 
 @end
 
 @implementation TimePickerViewController
+
+#pragma mark - Handle Coredata
+- (NSManagedObjectContext *)managedObjectContext {
+    NSManagedObjectContext *context = nil;
+    id delegate = [[UIApplication sharedApplication] delegate];
+    if ([delegate performSelector:@selector(managedObjectContext)]) {
+        context = [delegate managedObjectContext];
+    }
+    return context;
+}
+
 
 #pragma mark - Configure scroll view
 
@@ -79,8 +96,8 @@
 
     CGRect aRect = self.view.frame;
     aRect.size.height -= kbRect.size.height;
-    if (!CGRectContainsPoint(aRect, self.sendRequestButton.frame.origin) ) {
-        [self.scrollView scrollRectToVisible:self.sendRequestButton.frame animated:YES];
+    if (!CGRectContainsPoint(aRect, self.sendButton.frame.origin) ) {
+        [self.scrollView scrollRectToVisible:self.sendButton.frame animated:YES];
     }
 }
 
@@ -126,7 +143,8 @@
 //    self.chosingPatientTableView.scrollEnabled = YES;
     self.scrollView.bounces = NO;
     self.navigationController.navigationBar.translucent = NO;
-
+    self.sendButton.backgroundColor = [UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0];
+    [self.sendButton.layer setCornerRadius:self.sendButton.frame.size.height/2+1];
     [self setupGestureRecognizer];
     self.contentViewHeight.constant = [[UIScreen mainScreen] bounds].size.height - [UIApplication sharedApplication].statusBarFrame.size.height - self.navigationController.navigationBar.frame.size.height;
 
@@ -208,7 +226,24 @@
 
     if ([sourceViewController isKindOfClass:[PatientsTableViewController class]])
     {
-        NSLog(@"Coming from patient table!");
+        //get doctor email and password from coredata
+        NSManagedObjectContext *context = [self managedObjectContext];
+        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"PatientInfo"];
+        NSMutableArray *patientObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+        for (int index=0; index <patientObject.count; index++) {
+            NSManagedObject *patient = [patientObject objectAtIndex:index];
+            if ([ [NSString stringWithFormat:@"%@",[self.selectedPatient objectForKey:@"Id"]] isEqual:[patient valueForKey:@"patientId"]]) {
+                self.selectedPatientAvatar.image = [UIImage imageWithData:[patient valueForKey:@"photo"]];
+                self.selectedPatientName.text = [NSString stringWithFormat:@"%@ %@",[patient valueForKey:@"firstName"],[patient valueForKey:@"lastName"]];
+                self.selectedPatientEmail.text = [patient valueForKey:@"email"];
+                self.selectedPatientPhone.text = [patient valueForKey:@"phone"];
+                self.selectedPatientAddress.text = [patient valueForKey:@"address"];
+            }
+
+
+        }
+
+
     }
 
 }
