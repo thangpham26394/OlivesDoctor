@@ -14,6 +14,7 @@
     [super awakeFromNib];
     // Initialization code
     self.nameLabel.adjustsFontSizeToFitWidth = YES;
+    self.timeLabel.adjustsFontSizeToFitWidth = YES;
     
 }
 

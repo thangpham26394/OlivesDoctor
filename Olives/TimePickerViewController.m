@@ -5,7 +5,7 @@
 //  Created by Tony Tony Chopper on 7/12/16.
 //  Copyright © 2016 Thang. All rights reserved.
 //
-
+#define APIURL @"http://olive.azurewebsites.net/api/appointment"
 #import "TimePickerViewController.h"
 #import "PatientTableViewCell.h"
 #import "PatientsTableViewController.h"
@@ -161,24 +161,24 @@
     self.noteLabel.layer.cornerRadius = 5.0f;
     [self.noteLabel setShowsVerticalScrollIndicator:NO];
 
-    //set time zone for date time picker to GMT
-    [self.dateTimePickerFrom setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
-    [self.dateTimePickerTo setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+//    //set time zone for date time picker to UTC
+//    [self.dateTimePickerFrom setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
+//    [self.dateTimePickerTo setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
     //format initial date time
     NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
-    [formatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+    [formatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
     [formatter setLocale:[NSLocale systemLocale]];
-    [formatter setDateFormat:@"dd/MM/yyyy HH:mm:ss:SSS"];
+    [formatter setDateFormat:@"MM/dd/yyyy HH:mm:ss:SSS"];
 
     //formt initial date
     NSDateFormatter * dateFormat = [[NSDateFormatter alloc] init];
-    [dateFormat setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+    [dateFormat setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
     [dateFormat setLocale:[NSLocale systemLocale]];
-    [dateFormat setDateFormat:@"dd/MM/yyyy"];
-    NSString *initialDate = [dateFormat stringFromDate:[NSDate date]];
+    [dateFormat setDateFormat:@"MM/dd/yyyy"];
+    NSString *initialDate = [dateFormat stringFromDate:[dateFormat dateFromString:self.chosenDate]];
 
     //set up initial date time for dateTimePicker
-    NSString *initialTime = [NSString stringWithFormat:@"%@  00:00:00:000",initialDate];
+    NSString *initialTime = [NSString stringWithFormat:@"%@ 00:00:00:000",initialDate];
     NSDate * date = [formatter dateFromString:initialTime];
 
     [self.dateTimePickerFrom setDate:date];
@@ -194,6 +194,75 @@
 }
 
 #pragma mark - Send request
+
+-(void)sendRequestCreateAppointmentToAPI{
+    // create url
+    NSURL *url = [NSURL URLWithString:APIURL];
+    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+
+
+    sessionConfig.timeoutIntervalForRequest = 5.0;
+    sessionConfig.timeoutIntervalForResource = 5.0;
+    // config session
+    //NSURLSession *defaultSession = [NSURLSession sharedSession];
+    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:sessionConfig];
+    //create request
+    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
+    //get doctor email and password from coredata
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+
+    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+
+
+    //setup header and body for request
+    [urlRequest setHTTPMethod:@"POST"];
+    [urlRequest setValue:[doctor valueForKey:@"email"] forHTTPHeaderField:@"Email"];
+    [urlRequest setValue:[doctor valueForKey:@"password"]  forHTTPHeaderField:@"Password"];
+    [urlRequest setValue:@"en-US" forHTTPHeaderField:@"Accept-Language"];
+    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+
+
+
+    NSTimeInterval fromDateTimeUNIX = [self.dateTimePickerFrom.date timeIntervalSince1970];
+    NSTimeInterval toDateTimeUNIX = [self.dateTimePickerTo.date timeIntervalSince1970];
+
+
+    //create JSON data to post to API
+    NSDictionary *body = @{
+                              @"Dater" :  [NSString stringWithFormat:@"%@",[self.selectedPatient objectForKey:@"Id"]],
+                              @"From" :[NSString stringWithFormat:@"%f",fromDateTimeUNIX*1000],
+                              @"To" :  [NSString stringWithFormat:@"%f",toDateTimeUNIX*1000],
+                              @"Note" :self.noteLabel.text
+                              };
+    NSError *error = nil;
+    NSData *jsondata = [NSJSONSerialization dataWithJSONObject:body options:NSJSONWritingPrettyPrinted error:&error];
+    [urlRequest setHTTPBody:jsondata];
+
+//    dispatch_semaphore_t    sem;
+//    sem = dispatch_semaphore_create(0);
+
+    NSURLSessionDataTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
+                                                       completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+                                      {
+                                          //dispatch_semaphore_signal(sem);
+
+                                      }];
+    [dataTask resume];
+    //start waiting until get response from API
+    //dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+
+
+
+
+
+
+
+
+
+}
+
 -(IBAction)sendRequestButton:(id)sender{
     [self.noteLabel resignFirstResponder];
     [self showAlertView];
@@ -209,11 +278,21 @@
                                                           handler:^(UIAlertAction * action) {
                                                               //sent request to API here
                                                               NSLog(@"OK Action!");
+                                                              [self sendRequestCreateAppointmentToAPI];
                                                               [self.navigationController popViewControllerAnimated:YES];
+                                                              
                                                           }];
+    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
+                                                     handler:^(UIAlertAction * action) {
+                                                         //sent request to API here
+                                                         NSLog(@"cancel Action!");
+                                                         NSLog(@"%@",self.dateTimePickerFrom.date);
+                                                         NSLog(@"%@",self.dateTimePickerTo.date);
+                                                     }];
 
 
     [alert addAction:OKAction];
+    [alert addAction:cancelAction];
     [self presentViewController:alert animated:YES completion:nil];
 }
 

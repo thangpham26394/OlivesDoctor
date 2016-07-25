@@ -33,6 +33,7 @@
 @property(assign,nonatomic) BOOL isShowingPendingFromPatient;
 @property(assign,nonatomic) BOOL isShowingPendingFromDoctor;
 @property(strong,nonatomic) NSString *idOfSelectedAppointmentToviewDetail;
+@property(strong,nonatomic) VRGCalendarView *calendar;
 @end
 
 
@@ -268,10 +269,12 @@
 
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
-    if (self.segmentControlView.selectedSegmentIndex ==0) {
-        self.appointmentsInMonth = [[NSArray alloc]init];
-        [self loadAppointmentFromCoreDataWhenAPIFailFrom:[NSString stringWithFormat:@"%f",[[NSUserDefaults standardUserDefaults] doubleForKey:@"selectedMonthMinDate"]] To:[NSString stringWithFormat:@"%f",[[NSUserDefaults standardUserDefaults] doubleForKey:@"selectedMonthMaxDate"]]];
-    }
+    [self.view reloadInputViews];
+    self.appointmentsInMonth = [[NSArray alloc]init];
+    int month = [[NSUserDefaults standardUserDefaults] doubleForKey:@"currentMonth"];
+    double targetHeight = [[NSUserDefaults standardUserDefaults] doubleForKey:@"targetHeight"];
+    [self calendarView:self.calendar switchedToMonth:month targetHeight:targetHeight animated:YES];
+
 }
 
 
@@ -307,13 +310,13 @@
     self.calendarView.layer.borderColor = [UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0].CGColor;
     self.calendarView.layer.borderWidth = 1.0f;
     [self.calendarView.layer setCornerRadius:5.0f];
-    VRGCalendarView *calendar = [[VRGCalendarView alloc] init];
+    self.calendar = [[VRGCalendarView alloc] init];
 
-    calendar.delegate = self;
+    self.calendar.delegate = self;
     //set up layout for calendar subview
-    calendar.translatesAutoresizingMaskIntoConstraints = NO;
+    self.calendar.translatesAutoresizingMaskIntoConstraints = NO;
     [self.calendarView setBackgroundColor:[UIColor clearColor]];
-    [self.calendarView addSubview:calendar];
+    [self.calendarView addSubview:self.calendar];
 
     [self.calendarView  layoutIfNeeded];
 }
@@ -355,7 +358,7 @@
         [markedDatesArray addObject:sysDateTime];
 
 
-        
+
     }
     return markedDatesArray;
 }
@@ -386,7 +389,7 @@
     // dateformater to convert to UTC time zone
     NSDateFormatter *dateFormaterToUTC = [[NSDateFormatter alloc] init];
     dateFormaterToUTC.timeStyle = NSDateFormatterNoStyle;
-    dateFormaterToUTC.dateFormat = @"MM/dd/yyyy";
+    dateFormaterToUTC.dateFormat = @"MM/dd/yyyy HH:mm:ss:SSS";
     [dateFormaterToUTC setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
 
 
@@ -403,20 +406,23 @@
     //get the unix maxdate from current calendar's month
     NSString *endDate = [self calendarEndDateWithFirstWeekDay:firstWeekDay andCurrentMonth:calendarView.currentMonth];
     NSDate *maxDate = [dateFormaterToUTC dateFromString:endDate];
+    //set time to the end of the day to max date
+
+
     NSTimeInterval unixMaxDate = [maxDate timeIntervalSince1970];
 
 
 
     [self loadAppointmentDataFromAPIFrom:[NSString stringWithFormat:@"%f",unixMinDate*1000] and:[NSString stringWithFormat:@"%f",unixMaxDate*1000]];
 
-    [[NSUserDefaults standardUserDefaults] setDouble:unixMinDate*1000 forKey:@"selectedMonthMinDate"];
-    [[NSUserDefaults standardUserDefaults] setDouble:unixMaxDate*1000 forKey:@"selectedMonthMaxDate"];
+    [[NSUserDefaults standardUserDefaults] setInteger:month forKey:@"currentMonth"];
+    [[NSUserDefaults standardUserDefaults] setDouble:targetHeight forKey:@"targetHeight"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 
 
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSDate *date = [NSDate date];
-    if (month==[calendar component:NSCalendarUnitMonth fromDate:date] && self.markedDayList.count ==0) {
+    if (month==[calendar component:NSCalendarUnitMonth fromDate:date]) {
 
         self.markedDayList = [self markedDateInCurrentMonth];
         [calendarView markDates:self.markedDayList];
@@ -498,9 +504,9 @@
         NSDate *previousMonth = [self offsetMonth:-1 withMonth:currentMonth];
         int lastMonthNumDays = [self numDaysInMonth:previousMonth];
         int std = lastMonthNumDays - firstWeekDay +2;
-        return  [NSString stringWithFormat:@"%d/%d/%d",[self month:previousMonth],std,[self year:previousMonth]];
+        return  [NSString stringWithFormat:@"%d/%d/%d 00:00:00:000",[self month:previousMonth],std,[self year:previousMonth]];
     }else{
-        return [NSString stringWithFormat:@"%d/%d/%d",[self month:currentMonth],01,[self year:currentMonth]];
+        return [NSString stringWithFormat:@"%d/%d/%d 00:00:00:000",[self month:currentMonth],01,[self year:currentMonth]];
     }
 
 }
@@ -510,10 +516,10 @@
     int lastDay = (7 - currentMonthAndLastMonthTotalDays%7)%7;
 
     if (lastDay==0) {
-        return [NSString stringWithFormat:@"%d/%d/%d",[self month:currentMonth],[self numDaysInMonth:currentMonth],[self year:currentMonth]];
+        return [NSString stringWithFormat:@"%d/%d/%d 23:59:59:999",[self month:currentMonth],[self numDaysInMonth:currentMonth],[self year:currentMonth]];
     }else{
         NSDate *nextMonth = [self offsetMonth:+1 withMonth:currentMonth];
-        return [NSString stringWithFormat:@"%d/%d/%d",[self month:nextMonth],lastDay,[self year:nextMonth]];
+        return [NSString stringWithFormat:@"%d/%d/%d 23:59:59:999",[self month:nextMonth],lastDay,[self year:nextMonth]];
     }
 
 }
@@ -587,7 +593,7 @@
         //get other informations about current appointment
         NSString *daterId = [NSString stringWithFormat:@"%@",[[currentAppointment valueForKey:@"Dater"] valueForKey:@"Id"]];
         NSString *appointmentID = [currentAppointment valueForKey:@"Id"];
-
+        NSString *status = [currentAppointment valueForKey:@"Status"];
         //convert time interval to NSDate type
         NSDate *startAppointMentTime = [NSDate dateWithTimeIntervalSince1970:[startTime doubleValue]/1000];
         NSDate *endAppointMentTime = [NSDate dateWithTimeIntervalSince1970:[endTime doubleValue]/1000];
@@ -641,6 +647,7 @@
             //put both start and end time to 1 dictionary var
             NSDictionary *startAndEndTimeForSelectedDate = [NSDictionary dictionaryWithObjectsAndKeys:
                                                             appointmentID,@"appointmentID",
+                                                            status,@"status",
                                                             patientID,@"patientID",
                                                             patientFirstName,@"patientFirstName",
                                                             patientLastName,@"patientLastName",
@@ -684,9 +691,9 @@
     }else{
         // number of pending appointment
         if (section ==0) {
-            return 3;
+            return [self pendingAppointmentFromPatient].count;
         }else{
-            return 5;
+            return [self pendingAppointmentFromDoctor].count;
         }
 
     }
@@ -721,6 +728,7 @@
 
  - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
      if (self.segmentControlView.selectedSegmentIndex ==0) {
+         //when select first segment
          AppointmentDetailTableViewCell *cell = [self.listAppointMentInDayTableView dequeueReusableCellWithIdentifier:@"appointmentDetailCell" forIndexPath:indexPath];
 
          // Configure the cell...
@@ -737,18 +745,44 @@
              cell.nameLabel.text = [NSString stringWithFormat:@"%@ %@",[[startAndEndTime objectAtIndex:indexPath.row] objectForKey:@"patientFirstName"],[[startAndEndTime objectAtIndex:indexPath.row] objectForKey:@"patientLastName"]];
              cell.timeLabel.text = [NSString stringWithFormat:@"%@ to %@",[[startAndEndTime objectAtIndex:indexPath.row] objectForKey:@"startTime"],[[startAndEndTime objectAtIndex:indexPath.row] objectForKey:@"endTime"]];
          }
+         //if appoint in cell is avtive then change background color to white color, else change to gray color
+         if ([[NSString stringWithFormat:@"%@",[[startAndEndTime objectAtIndex:indexPath.row]  objectForKey:@"status"]] isEqual:@"2"]) {
+             cell.backgroundColor = [UIColor whiteColor];
+         }else{
+             cell.backgroundColor = [UIColor grayColor];
+         }
+
          cell.preservesSuperviewLayoutMargins = NO;
          cell.separatorInset = UIEdgeInsetsZero;
          cell.layoutMargins = UIEdgeInsetsZero;
 
          return cell;
      }else{
-         UITableViewCell *cell = [self.pendingListTableView dequeueReusableCellWithIdentifier:@"pendingAppointmentCell" forIndexPath:indexPath];
+         //when select second segment control
+         NSDateFormatter * dateFormatterToLocal= [[NSDateFormatter alloc] init];
+         [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
+         [dateFormatterToLocal setDateFormat:@"MM/dd/yyyy"];
+         AppointmentDetailTableViewCell *cell = [self.pendingListTableView dequeueReusableCellWithIdentifier:@"pendingAppointmentCell" forIndexPath:indexPath];
+         NSDictionary *appointmentDic = [[NSDictionary alloc]init];
          if (indexPath.section ==0) {
-             cell.textLabel.text = @"pending From Patients";
+             //pending from patient
+             appointmentDic = [self pendingAppointmentFromPatient][indexPath.row];
+             NSString *firstName = [[appointmentDic objectForKey:@"Maker"]objectForKey:@"FirstName"];
+             NSString *lastName = [[appointmentDic objectForKey:@"Maker"]objectForKey:@"LastName"];
+             cell.nameLabel.text = [NSString stringWithFormat:@"%@ %@",firstName,lastName];
+
+
          }else{
-             cell.textLabel.text = @"pending From Doctor";
+             //pending from doctor
+             appointmentDic = [self pendingAppointmentFromDoctor][indexPath.row];
+             NSString *firstName = [[appointmentDic objectForKey:@"Dater"]objectForKey:@"FirstName"];
+             NSString *lastName = [[appointmentDic objectForKey:@"Dater"]objectForKey:@"LastName"];
+             cell.nameLabel.text = [NSString stringWithFormat:@"%@ %@",firstName,lastName];
          }
+
+         NSDate *from = [NSDate dateWithTimeIntervalSince1970:[[appointmentDic objectForKey:@"From"] doubleValue]/1000];
+         NSDate *fromDateLocal = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:from]];
+         cell.timeLabel.text = [NSString stringWithFormat:@"%@",[dateFormatterToLocal stringFromDate:fromDateLocal]];
 
          return cell;
      }
@@ -757,14 +791,26 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // Do some stuff when the row is selected
-
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+    [dateFormatter setDateFormat:@"MM/dd/yyyy"];
     if (self.segmentControlView.selectedSegmentIndex ==0) {
-        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
-        [dateFormatter setDateFormat:@"MM/dd/yyyy"];
         NSDate *dateSelected = [dateFormatter dateFromString:self.chosenDate];
         NSMutableArray*appointmentsInSelectedDate =  [self appointmentsForSelectedDate:dateSelected];
         self.idOfSelectedAppointmentToviewDetail = [NSString stringWithFormat:@"%@",[appointmentsInSelectedDate[indexPath.row] objectForKey:@"appointmentID"]];
+        [self performSegueWithIdentifier:@"showDetalAppointment" sender:self];
+        [self.listAppointMentInDayTableView deselectRowAtIndexPath:indexPath animated:YES];
+    }else{
+        NSDictionary *appointmentDic = [[NSDictionary alloc]init];
+        if (indexPath.section ==0) {
+            //pending from patient
+            appointmentDic = [self pendingAppointmentFromPatient][indexPath.row];
+        }else{
+            //pending from doctor
+            appointmentDic = [self pendingAppointmentFromDoctor][indexPath.row];
+        }
+
+        self.idOfSelectedAppointmentToviewDetail = [NSString stringWithFormat:@"%@",[appointmentDic objectForKey:@"Id"]];
         [self performSegueWithIdentifier:@"showDetalAppointment" sender:self];
         [self.listAppointMentInDayTableView deselectRowAtIndexPath:indexPath animated:YES];
     }
@@ -816,4 +862,46 @@
             break;
     }
 }
+
+
+#pragma mark - Table view data source
+-(NSArray*)pendingAppointmentFromPatient{
+    NSMutableArray *pendingArray =  [[NSMutableArray alloc] init];;
+    //get the current doctor data
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+
+    for (int index =0; index < self.appointmentsInMonth.count; index ++) {
+        //get the current appointment
+        NSDictionary *appointment = self.appointmentsInMonth[index];
+        if ([[NSString stringWithFormat:@"%@",[[appointment objectForKey:@"Dater"] objectForKey:@"Id"]] isEqual:[doctor valueForKey:@"doctorID"]]) {
+            [pendingArray addObject:appointment];
+        }
+    }
+
+    return (NSArray*)pendingArray;
+}
+
+
+-(NSArray*)pendingAppointmentFromDoctor{
+    NSMutableArray *pendingArray =  [[NSMutableArray alloc] init];;
+    //get the current doctor data
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+
+    for (int index =0; index < self.appointmentsInMonth.count; index ++) {
+        //get the current appointment
+        NSDictionary *appointment = self.appointmentsInMonth[index];
+        if ([[NSString stringWithFormat:@"%@",[[appointment objectForKey:@"Maker"] objectForKey:@"Id"]] isEqual:[doctor valueForKey:@"doctorID"]]) {
+            [pendingArray addObject:appointment];
+        }
+    }
+
+    return (NSArray*)pendingArray;
+}
+
 @end

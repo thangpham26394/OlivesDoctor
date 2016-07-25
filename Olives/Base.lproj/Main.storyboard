@@ -1100,7 +1100,6 @@
                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="7dJ-uK-cXe">
                                                 <rect key="frame" x="10" y="402" width="580" height="98"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                 <connections>
@@ -2367,13 +2366,41 @@
                                 <rect key="frame" x="10" y="114" width="580" height="476"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="pendingAppointmentCell" id="psd-ZM-JPp">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="pendingAppointmentCell" id="psd-ZM-JPp" customClass="AppointmentDetailTableViewCell">
                                         <rect key="frame" x="0.0" y="28" width="580" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="psd-ZM-JPp" id="oMS-Fi-O1Q">
                                             <rect key="frame" x="0.0" y="0.0" width="580" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pham Duc Thang" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="P4n-Ti-As6">
+                                                    <rect key="frame" x="10" y="12.5" width="413" height="19.5"/>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10.00 to 20.00" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wvK-IF-e91">
+                                                    <rect key="frame" x="425" y="12" width="150" height="19.5"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="150" id="9Dl-WY-OLg"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
+                                                    <color key="textColor" red="0.47214496073298429" green="0.47214496073298429" blue="0.47214496073298429" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="wvK-IF-e91" firstAttribute="centerY" secondItem="oMS-Fi-O1Q" secondAttribute="centerY" id="6F6-XL-0Kg"/>
+                                                <constraint firstItem="P4n-Ti-As6" firstAttribute="centerY" secondItem="oMS-Fi-O1Q" secondAttribute="centerY" id="MO3-ve-7we"/>
+                                                <constraint firstItem="P4n-Ti-As6" firstAttribute="leading" secondItem="oMS-Fi-O1Q" secondAttribute="leading" constant="10" id="a6O-uF-JaI"/>
+                                                <constraint firstItem="wvK-IF-e91" firstAttribute="leading" secondItem="P4n-Ti-As6" secondAttribute="trailing" constant="2" id="cpB-yy-QWo"/>
+                                                <constraint firstAttribute="trailing" secondItem="wvK-IF-e91" secondAttribute="trailing" constant="5" id="oIh-c0-VNo"/>
+                                            </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="nameLabel" destination="P4n-Ti-As6" id="j65-TS-wGx"/>
+                                            <outlet property="timeLabel" destination="wvK-IF-e91" id="mi4-YH-gXW"/>
+                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
                                 <connections>
