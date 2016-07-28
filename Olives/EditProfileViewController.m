@@ -8,24 +8,21 @@
 #define APIURL @"http://olive.azurewebsites.net/api/doctor/profile"
 #import "EditProfileViewController.h"
 #import "SWRevealViewController.h"
+#import "ChangePasswordViewController.h"
 #import <CoreData/CoreData.h>
 @interface EditProfileViewController ()
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *menuButton;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentViewHeight;
 @property (weak, nonatomic) IBOutlet UIButton *saveButton;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (weak, nonatomic) IBOutlet UIView *contentView;
+@property (weak, nonatomic) IBOutlet UIDatePicker *birthdayDateTime;
 
 //edit informations
 @property (weak, nonatomic) UITextField *activeField;
 @property (weak, nonatomic) IBOutlet UITextField *firstNameTextField;
 @property (weak, nonatomic) IBOutlet UITextField *lastNameTextField;
-@property (weak, nonatomic) IBOutlet UITextField *oldPasswordTextField;
-@property (weak, nonatomic) IBOutlet UITextField *brandnewPasswordTextField;
-@property (weak, nonatomic) IBOutlet UITextField *confirmNewPasswordTextField;
 
-@property (weak, nonatomic) IBOutlet UITextField *birthdayTextFieldDay;
-@property (weak, nonatomic) IBOutlet UITextField *birthdayTextFieldMonth;
-@property (weak, nonatomic) IBOutlet UITextField *birthdayTextFieldYear;
 
 
 
@@ -80,6 +77,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.scrollView.bounces = NO;
+    [self setupGestureRecognizer];
     self.navigationController.navigationBar.translucent = NO;
     self.avatar.layer.cornerRadius = self.avatar.frame.size.width / 2;
     
@@ -113,15 +111,11 @@
     //convert to system datetime
     NSDateFormatter * dateFormatterToLocal = [[NSDateFormatter alloc] init];
     [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
-    [dateFormatterToLocal setDateFormat:@"MM/dd/yyyy"];
+    [dateFormatterToLocal setDateFormat:@"MM/dd/yyyy HH:mm:ss"];
     //convert date to system date time
     NSDate *birthdaySystemDate = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:birthdayUNIXDate]];
     // Extract the day number (14)
-    NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:birthdaySystemDate];
-
-    self.birthdayTextFieldDay.text = [NSString stringWithFormat:@"%ld",(long)[components day]];
-    self.birthdayTextFieldMonth.text = [NSString stringWithFormat:@"%ld",(long)[components month]];
-    self.birthdayTextFieldYear.text = [NSString stringWithFormat:@"%ld",(long)[components year]];
+    self.birthdayDateTime.date = birthdaySystemDate;
     self.phoneTextField.text = [doctor valueForKey:@"phone"];
     NSString *gender = [doctor valueForKey:@"gender"];
     if ([gender  isEqual:@"0"]) {
@@ -144,7 +138,7 @@
 
     [super viewWillAppear:animated];
     [self registerForKeyboardNotifications];
-
+    self.mistakeLabel.text = @"";
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -205,6 +199,15 @@
     self.scrollView.contentInset = contentInsets;
     self.scrollView.scrollIndicatorInsets = contentInsets;
 }
+-(void) setupGestureRecognizer {
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
+    tapGesture.cancelsTouchesInView = NO;
+    [self.contentView addGestureRecognizer:tapGesture];
+}
+
+- (void)handleTapGesture:(UIPanGestureRecognizer *)recognizer{
+    [self.activeField resignFirstResponder];
+}
 
 /*
 #pragma mark - Navigation
@@ -215,6 +218,17 @@
     // Pass the selected object to the new view controller.
 }
 */
+
+- (IBAction)unwindToEditProfiler:(UIStoryboardSegue *)unwindSegue
+{
+//    UIViewController* sourceViewController = unwindSegue.sourceViewController;
+//
+//    if ([sourceViewController isKindOfClass:[ChangePasswordViewController class]])
+//    {
+//
+//    }
+
+}
 
 -(void)updateDoctorProfileToAPIWith:(NSString*)email and :(NSString*)password{
     // create url
@@ -237,20 +251,25 @@
     [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
 
 
-    //get birthday string UNIX time from user input
-    NSString *userInputBirthday = [NSString stringWithFormat:@"%@/%@/%@",self.birthdayTextFieldMonth.text,self.birthdayTextFieldDay.text,self.birthdayTextFieldYear.text];
+
     // dateformater to convert to UTC time zone
     NSDateFormatter *dateFormaterToUTC = [[NSDateFormatter alloc] init];
     dateFormaterToUTC.timeStyle = NSDateFormatterNoStyle;
-    dateFormaterToUTC.dateFormat = @"MM/dd/yyyy";
+    dateFormaterToUTC.dateFormat = @"MM/dd/yyyy HH:mm:ss";
     [dateFormaterToUTC setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
 
-    NSDate *userInputDate = [dateFormaterToUTC dateFromString:userInputBirthday];
+    NSDate *userInputDate = [dateFormaterToUTC dateFromString:[dateFormaterToUTC stringFromDate:self.birthdayDateTime.date]];
     NSTimeInterval birthdayUNIXTime = [userInputDate timeIntervalSince1970];
 
 
 
     //create JSON data to post to API
+    NSString *doctorPassword;
+    if (self.doctorNewPassword != nil && ![self.doctorNewPassword isEqual:@""]) {
+        doctorPassword = self.doctorNewPassword;
+    }else{
+        doctorPassword = password;
+    }
     NSDictionary *account = @{
                               @"FirstName" :  self.firstNameTextField.text,
                               @"LastName" :self.lastNameTextField.text,
@@ -258,7 +277,7 @@
                               @"Phone" :self.phoneTextField.text,
                               @"Gender" :  [NSString stringWithFormat:@"%ld",(long)self.genderSegment.selectedSegmentIndex],
                               @"Address" :self.addressTextField.text,
-                              @"Password" :  self.brandnewPasswordTextField.text
+                              @"Password" :  doctorPassword
                               };
     NSError *error = nil;
     NSData *jsondata = [NSJSONSerialization dataWithJSONObject:account options:NSJSONWritingPrettyPrinted error:&error];
@@ -327,35 +346,25 @@
     [self.activeField resignFirstResponder];
     self.mistakeLabel.textColor = [UIColor redColor];
     self.mistakeLabel.text = @"";
+    
     //get the current doctor data
     NSManagedObjectContext *context = [self managedObjectContext];
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
     NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
-
     NSManagedObject *doctor = [doctorObject objectAtIndex:0];
-    NSString *oldPassword = [doctor valueForKey:@"password"];
-    if (![self.oldPasswordTextField.text isEqual: oldPassword]) {
-        self.mistakeLabel.text = @"Your old password is invalid!";
-    }else if (![self.brandnewPasswordTextField.text isEqual:self.confirmNewPasswordTextField.text]){
-        self.mistakeLabel.text = @"Confirm password invalid!";
-    }else{
-        [self updateDoctorProfileToAPIWith:[doctor valueForKey:@"email"] and:[doctor valueForKey:@"password"]];
-        NSArray *mistakeArray = [self.mistake objectForKey:@"Errors"];
-        if (mistakeArray == nil) {
-//            self.mistakeLabel.text = @"";
-        }else{
-            self.mistakeLabel.text = @"";
-            //display mistake to user
-            for (int index =0; index < mistakeArray.count; index ++) {
-                if (index ==0) {
-                    self.mistakeLabel.text = [NSString stringWithFormat:@"%@",mistakeArray[index]];
-                }else{
-                    self.mistakeLabel.text = [NSString stringWithFormat:@"%@, %@",self.mistakeLabel.text,mistakeArray[index]];
-                }
 
+    [self updateDoctorProfileToAPIWith:[doctor valueForKey:@"email"] and:[doctor valueForKey:@"password"]];
+    NSArray *mistakeArray = [self.mistake objectForKey:@"Errors"];
+    if (mistakeArray != nil) {
+        self.mistakeLabel.text = @"";
+        //display mistake to user
+        for (int index =0; index < mistakeArray.count; index ++) {
+            if (index ==0) {
+                self.mistakeLabel.text = [NSString stringWithFormat:@"%@",mistakeArray[index]];
+            }else{
+                self.mistakeLabel.text = [NSString stringWithFormat:@"%@, %@",self.mistakeLabel.text,mistakeArray[index]];
             }
         }
-
     }
     
 }

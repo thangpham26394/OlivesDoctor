@@ -8,6 +8,7 @@
         <attribute name="daterLastName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="from" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="lastModified" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="lastModifiedNote" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="makerFirstName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="makerID" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="makerLastName" optional="YES" attributeType="String" syncable="YES"/>
@@ -39,9 +40,21 @@
         <attribute name="phone" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="photo" optional="YES" attributeType="Binary" syncable="YES"/>
     </entity>
+    <entity name="Prescriptions" syncable="YES">
+        <attribute name="createdDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="from" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="lastModified" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="medicalRecord" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="medicine" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="note" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="prescriptionID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="to" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <elements>
-        <element name="Appointment" positionX="-306" positionY="63" width="128" height="240"/>
+        <element name="Appointment" positionX="-306" positionY="63" width="128" height="255"/>
         <element name="DoctorInfo" positionX="-315" positionY="-36" width="128" height="225"/>
         <element name="PatientInfo" positionX="-306" positionY="108" width="128" height="165"/>
+        <element name="Prescriptions" positionX="-306" positionY="108" width="128" height="180"/>
     </elements>
 </model>

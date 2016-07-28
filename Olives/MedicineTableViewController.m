@@ -25,6 +25,8 @@
 //}
 - (void)viewDidLoad {
     [super viewDidLoad];
+    NSLog(@"-------------------------%@",self.prescriptionID);
+    [self setupGestureRecognizer];
     NSString *prescriptionNote = @"phát hiện triệu chứng ung thư máu, mỡ máu rất cao, mức độ đường huyết không ổn định can som phat hien va dieu tri de tranh nhung bien chung sau nay khong mong muon phát hiện triệu chứng ung thư máu, mỡ máu rất cao, mức độ đường huyết không ổn định can som phat hien va dieu tri de tranh nhung bien chung sau nay khong mong muon";
     self.noteView.text=prescriptionNote;
     [self.noteView sizeToFit];
@@ -34,7 +36,15 @@
                                                  attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15]}
                                                     context:nil].size.height;
 }
+-(void) setupGestureRecognizer {
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
+    tapGesture.cancelsTouchesInView = NO;
+    [self.tableView addGestureRecognizer:tapGesture];
+}
 
+- (void)handleTapGesture:(UIPanGestureRecognizer *)recognizer{
+    [self.noteView resignFirstResponder];
+}
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

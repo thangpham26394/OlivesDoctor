@@ -6,6 +6,7 @@
 //  Copyright © 2016 Thang. All rights reserved.
 //
 #define APIURL @"http://olive.azurewebsites.net/api/appointment"
+#define APIURLEDIT @"http://olive.azurewebsites.net/api/appointment?id="
 #import "TimePickerViewController.h"
 #import "PatientTableViewCell.h"
 #import "PatientsTableViewController.h"
@@ -28,6 +29,13 @@
 @property (weak, nonatomic) IBOutlet UILabel *selectedPatientAddress;
 @property (weak, nonatomic) IBOutlet UILabel *selectedPatientEmail;
 @property (weak, nonatomic) IBOutlet UILabel *selectedPatientPhone;
+@property (weak, nonatomic) IBOutlet UIButton *cancelButton;
+@property (weak, nonatomic) IBOutlet UIButton *editOrAceptAppointment;
+- (IBAction)cancelPendingAppointment:(id)sender;
+- (IBAction)editOrAcceptAppointmentButton:(id)sender;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *heightForDisplayMakerNote;
+@property (weak, nonatomic) IBOutlet UITextView *makerNoteTextView;
+
 
 @end
 
@@ -118,13 +126,22 @@
     [self performSegueWithIdentifier:@"chosingPatient" sender:self];
 }
 
+-(void) setupGestureRecognizerToDisMissKeyBoard {
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGestureToDisMissKeyBoard:)];
+    [self.contentView addGestureRecognizer:tapGesture];
+}
+
+- (void)handleTapGestureToDisMissKeyBoard:(UIPanGestureRecognizer *)recognizer{
+    [self.noteLabel resignFirstResponder];
+}
+
 #pragma mark - View delegate
 - (void)viewWillAppear:(BOOL)animated {
 
     [super viewWillAppear:animated];
     self.navigationController.topViewController.title = self.chosenDate;
     [self registerForKeyboardNotifications];
-
+    [self setupGestureRecognizerToDisMissKeyBoard];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -135,17 +152,59 @@
     
 }
 
+-(NSDictionary *)getAppointmentFromID:(NSString *)appointmentID{
+    NSDictionary *appointmentDic;
+    //get all appointment from coredata
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Appointment"];
+    NSMutableArray *appointmentObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *appointment;
+
+    for (int index=0; index < appointmentObject.count; index++) {
+        appointment = [appointmentObject objectAtIndex:index];
+        //check if current appointment is appointment with gotten ID
+        if ([[appointment valueForKey:@"appointmentID"] isEqual:self.appointmentID]) {
+            //pass the appoinment from coredata to appointmentDic
+            NSDictionary *dater = [NSDictionary dictionaryWithObjectsAndKeys:
+                                   [appointment valueForKey:@"daterID" ],@"Id",
+                                   [appointment valueForKey:@"daterFirstName" ],@"FirstName",
+                                   [appointment valueForKey:@"daterLastName" ],@"LastName",
+                                   nil];
+            NSDictionary *maker = [NSDictionary dictionaryWithObjectsAndKeys:
+                                   [appointment valueForKey:@"makerID" ],@"Id",
+                                   [appointment valueForKey:@"makerFirstName" ],@"FirstName",
+                                   [appointment valueForKey:@"makerLastName" ],@"LastName",
+                                   nil];
+
+            appointmentDic = [NSDictionary dictionaryWithObjectsAndKeys:
+                              [appointment valueForKey:@"appointmentID" ],@"Id",
+                              [appointment valueForKey:@"dateCreated" ],@"Created",
+                              dater,@"Dater",
+                              maker,@"Maker",
+                              [appointment valueForKey:@"from" ],@"From",
+                              [appointment valueForKey:@"to" ],@"To",
+                              [appointment valueForKey:@"lastModified" ],@"LastModified",
+                              [appointment valueForKey:@"note" ],@"Note",
+                              [appointment valueForKey:@"status" ],@"Status",
+                              [appointment valueForKey:@"lastModifiedNote" ],@"LastModifiedNote",
+                              nil];
+        }
+
+
+    }
+    return  appointmentDic;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-//    self.chosingPatientTableView.alwaysBounceVertical = NO;
-//    self.chosingPatientTableView.scrollEnabled = YES;
+    NSLog(@"TTTTT          %@",self.appointmentID);
+    [self.makerNoteTextView setEditable:NO];
     self.scrollView.bounces = NO;
     self.navigationController.navigationBar.translucent = NO;
     self.sendButton.backgroundColor = [UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0];
     [self.sendButton.layer setCornerRadius:self.sendButton.frame.size.height/2+1];
-    [self setupGestureRecognizer];
+
     self.contentViewHeight.constant = [[UIScreen mainScreen] bounds].size.height - [UIApplication sharedApplication].statusBarFrame.size.height - self.navigationController.navigationBar.frame.size.height;
 
     self.dateTimePickerFrom.backgroundColor = [UIColor whiteColor];
@@ -157,13 +216,12 @@
     self.dateTimePickerTo.layer.masksToBounds = YES;
 
     self.chosingPatient.layer.cornerRadius = 5.0f;
-
+    self.selectedPatientAvatar.layer.cornerRadius = self.selectedPatientAvatar.frame.size.width / 2;
+    self.selectedPatientAvatar.layer.masksToBounds = YES;
     self.noteLabel.layer.cornerRadius = 5.0f;
     [self.noteLabel setShowsVerticalScrollIndicator:NO];
-
-//    //set time zone for date time picker to UTC
-//    [self.dateTimePickerFrom setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
-//    [self.dateTimePickerTo setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
+    self.makerNoteTextView.layer.cornerRadius = 5.0f;
+    
     //format initial date time
     NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
     [formatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
@@ -177,12 +235,96 @@
     [dateFormat setDateFormat:@"MM/dd/yyyy"];
     NSString *initialDate = [dateFormat stringFromDate:[dateFormat dateFromString:self.chosenDate]];
 
-    //set up initial date time for dateTimePicker
-    NSString *initialTime = [NSString stringWithFormat:@"%@ 00:00:00:000",initialDate];
-    NSDate * date = [formatter dateFromString:initialTime];
+    //check if current view is for add new an appointment or edit an appointment
+    if (self.appointmentID == nil) {
+        //add new
+        self.heightForDisplayMakerNote.constant = 0; //hide the textview display maker note
+        [self.editOrAceptAppointment setHidden:YES];
+        [self.cancelButton setHidden:YES];
+        [self setupGestureRecognizer];
+        //set up initial date time for dateTimePicker
+        NSString *initialTime = [NSString stringWithFormat:@"%@ 00:00:00:000",initialDate];
+        NSDate * date = [formatter dateFromString:initialTime];
 
-    [self.dateTimePickerFrom setDate:date];
-    [self.dateTimePickerTo setDate:date];
+        [self.dateTimePickerFrom setDate:date];
+        [self.dateTimePickerTo setDate:date];
+    }else{
+        //edit an appointment
+        //check if appointment selected is from patient or doctor
+        if ([self.segmentUsing isEqual:@"PendingFromPatient"]) {
+            [self.editOrAceptAppointment setTitle:@"Accept" forState:UIControlStateNormal];
+            self.dateTimePickerFrom.userInteractionEnabled = NO;
+            self.dateTimePickerTo.userInteractionEnabled = NO;
+        }
+        [self.editOrAceptAppointment setHidden:NO];
+        [self.cancelButton setHidden:NO];
+        //check if appointment selected is active or note
+        if (self.isActiveAppointment) {
+            //appointment is still active
+            [self.editOrAceptAppointment setHidden:NO];
+            [self.cancelButton setHidden:NO];
+        }else{
+            //appointment is note active anymore
+            [self.editOrAceptAppointment setHidden:YES];
+            [self.cancelButton setHidden:YES];
+            [self.sendButton setHidden:YES];
+            [self.noteLabel setEditable:NO];
+            self.dateTimePickerFrom.userInteractionEnabled = NO;
+            self.dateTimePickerTo.userInteractionEnabled = NO;
+        }
+        NSDictionary *selectedAppointment = [self getAppointmentFromID:self.appointmentID];
+        NSString *patientId;
+        //check if dater or maker is doctor
+        NSManagedObjectContext *context = [self managedObjectContext];
+        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+        NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+        NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+
+        if ([[doctor valueForKey:@"doctorID"] isEqual:[NSString stringWithFormat:@"%@",[[selectedAppointment objectForKey:@"Dater"] objectForKey:@"Id"]]]) {
+            //if doctor is dater then patient is maker
+            self.selectedPatientName.text = [NSString stringWithFormat:@"%@ %@",[[selectedAppointment objectForKey:@"Maker"] objectForKey:@"FirstName"],[[selectedAppointment objectForKey:@"Maker"] objectForKey:@"LastName"]];
+            patientId = [[selectedAppointment objectForKey:@"Maker"] objectForKey:@"Id"];
+        }else{
+            //patient is dater
+            self.selectedPatientName.text = [NSString stringWithFormat:@"%@ %@",[[selectedAppointment objectForKey:@"Dater"] objectForKey:@"FirstName"],[[selectedAppointment objectForKey:@"Dater"] objectForKey:@"LastName"]];
+            patientId = [[selectedAppointment objectForKey:@"Dater"] objectForKey:@"Id"];
+        }
+        self.makerNoteTextView.text = [selectedAppointment objectForKey:@"Note"];
+        self.noteLabel.text =   [selectedAppointment objectForKey:@"LastModifiedNote"];
+        //set up dateformater to local time
+        NSDateFormatter * dateFormatToLocal = [[NSDateFormatter alloc] init];
+        [dateFormatToLocal setTimeZone:[NSTimeZone systemTimeZone]];
+        [dateFormatToLocal setLocale:[NSLocale systemLocale]];
+        [dateFormatToLocal setDateFormat:@"MM/dd/yyyy HH:mm:ss:SSS"];
+
+
+        NSDate *fromDate = [NSDate dateWithTimeIntervalSince1970:[[selectedAppointment objectForKey:@"From"] doubleValue] /1000];
+        NSDate *toDate = [NSDate dateWithTimeIntervalSince1970:[[selectedAppointment objectForKey:@"To"] doubleValue] /1000];
+
+        fromDate = [dateFormatToLocal dateFromString:[dateFormatToLocal stringFromDate:fromDate]];
+        toDate = [dateFormatToLocal dateFromString:[dateFormatToLocal stringFromDate:toDate]];
+        self.dateTimePickerFrom.date = fromDate;
+        self.dateTimePickerTo.date = toDate;
+
+        //get patient infor from coredata
+        fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"PatientInfo"];
+        NSMutableArray *patientObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+        NSManagedObject *patient;
+
+        for (int index = 0; index<patientObject.count; index++) {
+            patient = [patientObject objectAtIndex:index];
+            //check if current patient is patient in appointment
+            if ([[patient valueForKey:@"patientId"] isEqual:patientId]) {
+                self.selectedPatientAvatar.image = [UIImage imageWithData:[patient valueForKey:@"photo"]];
+                self.selectedPatientPhone.text  = [patient valueForKey:@"phone"];
+                self.selectedPatientAddress.text = [patient valueForKey:@"address"];
+                self.selectedPatientEmail.text= [patient valueForKey:@"email"];
+                //self.customerAddressLabel.text = [patient valueForKey:@"email"];
+            }
+        }
+
+    }
+
 
 }
 
@@ -195,13 +337,113 @@
 
 #pragma mark - Send request
 
+-(void)sendRequestChangeAppointmentStatusToAPI:(NSInteger )status{
+    // create url
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",APIURLEDIT,self.appointmentID]];
+    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+    //    sessionConfig.timeoutIntervalForRequest = 5.0;
+    sessionConfig.timeoutIntervalForResource = 5.0;
+    // config session
+    //NSURLSession *defaultSession = [NSURLSession sharedSession];
+    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:sessionConfig];
+    //create request
+    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
+    //get doctor email and password from coredata
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+
+
+    //setup header and body for request
+    [urlRequest setHTTPMethod:@"PUT"];
+    [urlRequest setValue:[doctor valueForKey:@"email"] forHTTPHeaderField:@"Email"];
+    [urlRequest setValue:[doctor valueForKey:@"password"]  forHTTPHeaderField:@"Password"];
+    [urlRequest setValue:@"en-US" forHTTPHeaderField:@"Accept-Language"];
+    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+
+    //create JSON data to post to API
+    NSDictionary *body = @{
+                           @"Status" :[NSString stringWithFormat:@"%ld",(long)status], //set status to cancel status
+                           @"Note" : self.noteLabel.text
+                           };
+    NSError *error = nil;
+    NSData *jsondata = [NSJSONSerialization dataWithJSONObject:body options:NSJSONWritingPrettyPrinted error:&error];
+    [urlRequest setHTTPBody:jsondata];
+    NSURLSessionDataTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
+                                                       completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+                                      {
+                                      }];
+    [dataTask resume];
+
+}
+
+-(void)sendRequestEditAppointmentToAPI{
+    // create url
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",APIURLEDIT,self.appointmentID]];
+    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+    //    sessionConfig.timeoutIntervalForRequest = 5.0;
+    sessionConfig.timeoutIntervalForResource = 5.0;
+    // config session
+    //NSURLSession *defaultSession = [NSURLSession sharedSession];
+    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:sessionConfig];
+    //create request
+    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
+    //get doctor email and password from coredata
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+
+
+    //setup header and body for request
+    [urlRequest setHTTPMethod:@"PUT"];
+    [urlRequest setValue:[doctor valueForKey:@"email"] forHTTPHeaderField:@"Email"];
+    [urlRequest setValue:[doctor valueForKey:@"password"]  forHTTPHeaderField:@"Password"];
+    [urlRequest setValue:@"en-US" forHTTPHeaderField:@"Accept-Language"];
+    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+
+    //convert selected from to time to UTC
+    NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
+    [formatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
+    [formatter setLocale:[NSLocale systemLocale]];
+    [formatter setDateFormat:@"MM/dd/yyyy HH:mm:ss:SSS"];
+
+    NSDate *convertFromDateTime = [formatter dateFromString:[formatter stringFromDate:self.dateTimePickerFrom.date]];
+    NSDate *convertToDateTime = [formatter dateFromString:[formatter stringFromDate:self.dateTimePickerTo.date]];
+    NSTimeInterval fromDateTimeUNIX = [convertFromDateTime timeIntervalSince1970];
+    NSTimeInterval toDateTimeUNIX = [convertToDateTime timeIntervalSince1970];
+
+
+    //create JSON data to post to API
+    NSDictionary *body = @{
+                           @"From" :[NSString stringWithFormat:@"%f",fromDateTimeUNIX*1000],
+                           @"To" :  [NSString stringWithFormat:@"%f",toDateTimeUNIX*1000],
+                           @"Note" :self.noteLabel.text
+                           };
+    NSError *error = nil;
+    NSData *jsondata = [NSJSONSerialization dataWithJSONObject:body options:NSJSONWritingPrettyPrinted error:&error];
+    [urlRequest setHTTPBody:jsondata];
+
+    NSURLSessionDataTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
+                                                       completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+                                      {
+
+                                      }];
+    [dataTask resume];
+
+}
+
+
+
+
 -(void)sendRequestCreateAppointmentToAPI{
     // create url
     NSURL *url = [NSURL URLWithString:APIURL];
     NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
 
 
-    sessionConfig.timeoutIntervalForRequest = 5.0;
+//    sessionConfig.timeoutIntervalForRequest = 5.0;
     sessionConfig.timeoutIntervalForResource = 5.0;
     // config session
     //NSURLSession *defaultSession = [NSURLSession sharedSession];
@@ -265,12 +507,37 @@
 
 -(IBAction)sendRequestButton:(id)sender{
     [self.noteLabel resignFirstResponder];
-    [self showAlertView];
+    //don't select patient yet
+    if ([self.selectedPatient objectForKey:@"Id"] == nil) {
+        [self showAlertViewForError:@"You must select a patient first!"];
+    }else{
+        //time start later than time end
+        if ([self.dateTimePickerFrom.date timeIntervalSince1970] > [self.dateTimePickerTo.date timeIntervalSince1970]) {
+            [self showAlertViewForError:@"Time start should be sooner than time end!"];
+        }else{
+            [self showAlertViewWhenSendRequest];
+        }
+    }
 }
 
 
+#pragma mark - alert view for action
 
--(void)showAlertView{
+-(void)showAlertViewForError:(NSString*)errorString{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                   message:errorString
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {
+
+                                                     }];
+
+    [alert addAction:OKAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+
+-(void)showAlertViewWhenSendRequest{
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Request Sent"
                                                                message:@"Your Request will be sent to your patient soon"
                                                                preferredStyle:UIAlertControllerStyleAlert];
@@ -284,7 +551,6 @@
                                                           }];
     UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
                                                      handler:^(UIAlertAction * action) {
-                                                         //sent request to API here
                                                          NSLog(@"cancel Action!");
                                                          NSLog(@"%@",self.dateTimePickerFrom.date);
                                                          NSLog(@"%@",self.dateTimePickerTo.date);
@@ -296,6 +562,76 @@
     [self presentViewController:alert animated:YES completion:nil];
 }
 
+-(void)showAlertViewWhenSendCancel{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Are you sure"
+                                                                   message:@"This appointment will be canceled"
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {
+                                                         //sent request to API here
+                                                         NSLog(@"OK Action!");
+                                                         [self sendRequestChangeAppointmentStatusToAPI:0];
+                                                         [self.navigationController popViewControllerAnimated:YES];
+
+                                                     }];
+    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
+                                                         handler:^(UIAlertAction * action) {
+                                                             NSLog(@"cancel Action!");
+                                                         }];
+
+
+    [alert addAction:OKAction];
+    [alert addAction:cancelAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+-(void)showAlertViewWhenSendAccept{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Confirm"
+                                                                   message:@"Are you sure to accept this appointment"
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {
+                                                         //sent request to API here
+                                                         NSLog(@"OK Action!");
+                                                         [self sendRequestChangeAppointmentStatusToAPI:2];
+                                                         [self.navigationController popViewControllerAnimated:YES];
+
+                                                     }];
+    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
+                                                         handler:^(UIAlertAction * action) {
+                                                             NSLog(@"cancel Action!");
+                                                         }];
+
+
+    [alert addAction:OKAction];
+    [alert addAction:cancelAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+
+
+-(void)showAlertViewWhenSendEdit{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Are you sure"
+                                                                   message:@"This appointment will be edited"
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {
+                                                         //sent request to API here
+                                                         NSLog(@"OK Action!");
+                                                         [self sendRequestEditAppointmentToAPI];
+                                                         [self.navigationController popViewControllerAnimated:YES];
+
+                                                     }];
+    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
+                                                         handler:^(UIAlertAction * action) {
+                                                             NSLog(@"cancel Action!");
+                                                         }];
+
+
+    [alert addAction:OKAction];
+    [alert addAction:cancelAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
 
 
 #pragma mark - Navigation
@@ -337,4 +673,23 @@
 }
 
 
+- (IBAction)cancelPendingAppointment:(id)sender {
+    [self showAlertViewWhenSendCancel];
+}
+
+- (IBAction)editOrAcceptAppointmentButton:(id)sender {
+    //time start later than time end
+    if ([self.dateTimePickerFrom.date timeIntervalSince1970] > [self.dateTimePickerTo.date timeIntervalSince1970]) {
+        [self showAlertViewForError:@"Time start should be sooner than time end!"];
+    }else{
+        if ([self.segmentUsing isEqual:@"PendingFromPatient"]) {
+            [self showAlertViewWhenSendAccept];
+        }else{
+            [self showAlertViewWhenSendEdit];
+        }
+
+    }
+
+
+}
 @end

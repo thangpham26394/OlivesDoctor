@@ -7,17 +7,31 @@
 //
 
 #import "PatientDetailsViewController.h"
-
+#import <CoreData/CoreData.h>
 @interface PatientDetailsViewController ()
 
 @property (weak, nonatomic) IBOutlet UIImageView *avatarImage;
 @property (weak, nonatomic) IBOutlet UIButton *sendMessageButton;
 @property (weak, nonatomic) IBOutlet UITableView *importantInfoTableView;
+@property (weak, nonatomic) IBOutlet UILabel *patientName;
+@property (weak, nonatomic) IBOutlet UILabel *patientPhone;
+@property (weak, nonatomic) IBOutlet UILabel *patientAddress;
+@property (weak, nonatomic) IBOutlet UILabel *patientEmail;
 
 
 @end
 
 @implementation PatientDetailsViewController
+
+#pragma mark - Handle Coredata
+- (NSManagedObjectContext *)managedObjectContext {
+    NSManagedObjectContext *context = nil;
+    id delegate = [[UIApplication sharedApplication] delegate];
+    if ([delegate performSelector:@selector(managedObjectContext)]) {
+        context = [delegate managedObjectContext];
+    }
+    return context;
+}
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
@@ -30,6 +44,24 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    NSLog(@"TTTTTTTTTTTTTTTTTTTTTT        %@",self.selectedPatientID);
+    //get patient infor from coredata with sent id
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"PatientInfo"];
+    NSMutableArray *patientObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *patient;
+    for (int index = 0; index<patientObject.count; index++) {
+        patient = [patientObject objectAtIndex:index];
+        if ([[patient valueForKey:@"patientId"] isEqual:self.selectedPatientID]) {
+            break;
+        }
+    }
+    self.avatarImage.image = [UIImage imageWithData:[patient valueForKey:@"photo"]];
+    self.patientName.text = [NSString stringWithFormat:@"%@ %@",[patient valueForKey:@"firstName"],[patient valueForKey:@"lastName"]];
+    self.patientPhone.text = [patient valueForKey:@"phone"];
+    self.patientAddress.text = [patient valueForKey:@"address"];
+    self.patientEmail.text = [patient valueForKey:@"email"];
+
     self.avatarImage.layer.cornerRadius = self.avatarImage.frame.size.width / 2;
     self.avatarImage.clipsToBounds = YES;
     self.importantInfoTableView.layer.cornerRadius = 5;

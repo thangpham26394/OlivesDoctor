@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface EditProfileViewController : UIViewController
-
+@property (nonatomic,strong) NSString *doctorNewPassword;
 @end

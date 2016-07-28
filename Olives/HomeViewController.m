@@ -14,6 +14,17 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *menuButton;
 @property (weak, nonatomic) IBOutlet UIImageView *avatar;
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
+@property (weak, nonatomic) IBOutlet UIView *messageNotiView;
+@property (weak, nonatomic) IBOutlet UIView *patientRequestNotiView;
+@property (weak, nonatomic) IBOutlet UIView *appointmentNotiView;
+@property (weak, nonatomic) IBOutlet UIView *serviceNotiView;
+@property (weak, nonatomic) IBOutlet UIImageView *messageImage;
+@property (weak, nonatomic) IBOutlet UIImageView *patientRequestImage;
+@property (weak, nonatomic) IBOutlet UIImageView *appointmentImage;
+@property (weak, nonatomic) IBOutlet UIImageView *serviceImage;
+
+
+
 @end
 
 @implementation HomeViewController
@@ -31,6 +42,16 @@
     // Do any additional setup after loading the view, typically from a nib.
     self.title = @"Home";
     self.avatar.layer.cornerRadius = self.avatar.frame.size.width / 2;
+    self.messageNotiView.layer.cornerRadius = 5.0f;
+    self.patientRequestNotiView.layer.cornerRadius = 5.0f;
+    self.appointmentNotiView.layer.cornerRadius = 5.0f;
+    self.serviceNotiView.layer.cornerRadius = 5.0f;
+
+    //self.messageNotiView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.5];
+    self.messageImage.image = [UIImage imageNamed:@"messageicon.png"];
+    self.patientRequestImage.image = [UIImage imageNamed:@"requesticon.png"];
+    self.appointmentImage.image = [UIImage imageNamed:@"newAppointmentIcon.png"];
+    self.serviceImage.image = [UIImage imageNamed:@"serviceicon.png"];
 
     SWRevealViewController *revealViewController = self.revealViewController;
     if (revealViewController) {

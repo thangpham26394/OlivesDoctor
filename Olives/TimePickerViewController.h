@@ -11,4 +11,7 @@
 @interface TimePickerViewController : UIViewController
 @property(strong,nonatomic) NSString *chosenDate;
 @property(strong,nonatomic) NSDictionary *selectedPatient;
+@property(strong,nonatomic) NSString *appointmentID;
+@property(strong,nonatomic) NSString *segmentUsing;
+@property(assign,nonatomic) BOOL isActiveAppointment;
 @end

@@ -5,18 +5,194 @@
 //  Created by Tony Tony Chopper on 7/21/16.
 //  Copyright © 2016 Thang. All rights reserved.
 //
-
+#define APIURL @"http://olive.azurewebsites.net/api/medical/prescription/filter"
 #import "PrescriptionViewController.h"
-
+#import "MedicineTableViewController.h"
+#import <CoreData/CoreData.h>
 @interface PrescriptionViewController ()
 @property (weak, nonatomic) IBOutlet UITableView *currentTableView;
 @property (weak, nonatomic) IBOutlet UITableView *historyTableView;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segmentController;
+@property (strong,nonatomic) NSDictionary *responseJSONData;
+@property (strong,nonatomic) NSArray *prescriptionArray;
+@property (strong,nonatomic) NSString *prescriptionID;
 - (IBAction)changeSegment:(id)sender;
 
 @end
 
 @implementation PrescriptionViewController
+
+#pragma mark - Handle Coredata
+- (NSManagedObjectContext *)managedObjectContext {
+    NSManagedObjectContext *context = nil;
+    id delegate = [[UIApplication sharedApplication] delegate];
+    if ([delegate performSelector:@selector(managedObjectContext)]) {
+        context = [delegate managedObjectContext];
+    }
+    return context;
+}
+
+-(void)loadPrescriptionsFromCoreDataWhenAPIFail{
+    NSMutableArray *prescriptionArrayForFailAPI = [[NSMutableArray alloc]init];
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Prescriptions"];
+    NSMutableArray *prescriptionObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *prescription;
+    for (int index =0; index<prescriptionObject.count; index++) {
+        //get each patient in coredata
+        prescription = [prescriptionObject objectAtIndex:index];
+        NSDictionary *appointmentDic = [NSDictionary dictionaryWithObjectsAndKeys:
+                                        [prescription valueForKey:@"prescriptionID" ],@"Id",
+                                        [prescription valueForKey:@"medicalRecord" ],@"MedicalRecord",
+                                        [prescription valueForKey:@"from" ],@"From",
+                                        [prescription valueForKey:@"to" ],@"To",
+                                        [prescription valueForKey:@"name" ],@"Name",
+                                        [prescription valueForKey:@"medicine" ],@"Medicine",
+                                        [prescription valueForKey:@"note" ],@"Note",
+                                        [prescription valueForKey:@"createdDate" ],@"Created",
+                                        [prescription valueForKey:@"lastModified" ],@"LastModified",
+                                        nil];
+        [prescriptionArrayForFailAPI addObject:appointmentDic];
+    }
+    self.prescriptionArray = (NSArray*)prescriptionArrayForFailAPI;
+
+}
+
+-(void)savePrescriptionToCoreData{
+    self.prescriptionArray = [self.responseJSONData objectForKey:@"Prescriptions"];
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Prescriptions"];
+    NSMutableArray *prescriptionObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *prescription;
+    //delete previous prescription
+    if (prescriptionObject.count >0) {
+
+        for (int index=0; index < prescriptionObject.count; index++) {
+            prescription = [prescriptionObject objectAtIndex:index];
+            [context deleteObject:prescription];
+        }
+    }
+
+    // insert new patients that gotten from API
+    for (int index = 0; index < self.prescriptionArray.count; index++) {
+        NSDictionary *prescriptionDic = self.prescriptionArray[index];
+
+        NSString *prescriptionID = [prescriptionDic objectForKey:@"Id"];
+        NSString *medicalRecord = [prescriptionDic objectForKey:@"MedicalRecord"];
+        NSString *from = [prescriptionDic objectForKey:@"From"];
+        NSString *to = [prescriptionDic objectForKey:@"To"];
+        NSString *name = [prescriptionDic objectForKey:@"Name"];
+        NSString *medicine = [prescriptionDic objectForKey:@"Medicine"];
+        NSString *note = [prescriptionDic objectForKey:@"Note"];
+        NSString *createdDate = [prescriptionDic objectForKey:@"Created"];
+        NSString *lastModified = [prescriptionDic objectForKey:@"LastModified"];
+
+
+        //create new patient object
+        NSManagedObject *newPrescription  = [NSEntityDescription insertNewObjectForEntityForName:@"Prescriptions" inManagedObjectContext:context];
+        //set value for each attribute of new patient before save to core data
+        [newPrescription setValue: [NSString stringWithFormat:@"%@", prescriptionID] forKey:@"prescriptionID"];
+        [newPrescription setValue: [NSString stringWithFormat:@"%@", medicalRecord] forKey:@"medicalRecord"];
+        [newPrescription setValue: [NSString stringWithFormat:@"%@", from] forKey:@"from"];
+        [newPrescription setValue: [NSString stringWithFormat:@"%@", to] forKey:@"to"];
+        [newPrescription setValue: [NSString stringWithFormat:@"%@", name] forKey:@"name"];
+        [newPrescription setValue: [NSString stringWithFormat:@"%@", medicine] forKey:@"medicine"];
+        [newPrescription setValue: [NSString stringWithFormat:@"%@", note] forKey:@"note"];
+        [newPrescription setValue: [NSString stringWithFormat:@"%@", createdDate] forKey:@"createdDate"];
+        [newPrescription setValue: [NSString stringWithFormat:@"%@", lastModified] forKey:@"lastModified"];
+
+
+        NSError *error = nil;
+        // Save the object to persistent store
+        if (![context save:&error]) {
+            NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
+        }else{
+            NSLog(@"Save Prescription success!");
+        }
+    }
+}
+
+#pragma mark - Connect to API function
+
+-(void)loadPatienttDataFromAPI{
+
+    // create url
+    NSURL *url = [NSURL URLWithString:APIURL];
+    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+    //create JSON data to post to API
+    NSDictionary *account = @{
+                              @"Mode" :  @"0",
+                              @"Sort" : @"1",
+                              @"Direction":@"0"
+                              };
+    NSError *error = nil;
+    NSData *jsondata = [NSJSONSerialization dataWithJSONObject:account options:NSJSONWritingPrettyPrinted error:&error];
+
+    sessionConfig.timeoutIntervalForRequest = 5.0;
+    sessionConfig.timeoutIntervalForResource = 5.0;
+    // config session
+    //NSURLSession *defaultSession = [NSURLSession sharedSession];
+    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:sessionConfig];
+    //create request
+    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
+
+    //get doctor email and password from coredata
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+
+    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+
+
+    //setup header and body for request
+    [urlRequest setHTTPMethod:@"POST"];
+    [urlRequest setValue:[doctor valueForKey:@"email"] forHTTPHeaderField:@"Email"];
+    [urlRequest setValue:[doctor valueForKey:@"password"]  forHTTPHeaderField:@"Password"];
+    [urlRequest setValue:@"en-US" forHTTPHeaderField:@"Accept-Language"];
+    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    
+    [urlRequest setHTTPBody:jsondata];
+    dispatch_semaphore_t    sem;
+    sem = dispatch_semaphore_create(0);
+
+    NSURLSessionDataTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
+                                                       completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+                                      {
+                                          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+
+                                          if((long)[httpResponse statusCode] == 200  && error ==nil)
+                                          {
+                                              NSError *parsJSONError = nil;
+                                              self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                              if (self.responseJSONData != nil) {
+                                                  [self savePrescriptionToCoreData];
+                                              }else{
+                                                  [self loadPrescriptionsFromCoreDataWhenAPIFail];
+                                              }
+
+
+                                              //stop waiting after get response from API
+                                              dispatch_semaphore_signal(sem);
+                                          }
+                                          else{
+                                              NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+                                              NSLog(@"\n\n\nError = %@",text);
+                                              //self.patientArray = [self loadPatientFromCoreDataWhenAPIFail];
+                                              [self loadPrescriptionsFromCoreDataWhenAPIFail];
+                                              dispatch_semaphore_signal(sem);
+                                              return;
+                                          }
+                                      }];
+    [dataTask resume];
+    //start waiting until get response from API
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    
+}
+
+
+
+
+
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
     self.navigationController.topViewController.title=@"Prescription";
@@ -24,6 +200,8 @@
     UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc]
                                        initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addInfo:)];
     self.navigationController.topViewController.navigationItem.rightBarButtonItem = rightBarButton;
+
+    [self loadPatienttDataFromAPI];
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -32,6 +210,7 @@
     [self.historyTableView setHidden:YES];
     self.currentTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     self.historyTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+
 }
 
 - (void)didReceiveMemoryWarning {
@@ -58,7 +237,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 3;
+    return self.prescriptionArray.count;
 }
 
 
@@ -66,7 +245,18 @@
     UITableViewCell *cell;
     if (self.segmentController.selectedSegmentIndex ==0) {
         cell = [self.currentTableView dequeueReusableCellWithIdentifier:@"currentCell" forIndexPath:indexPath];
-        cell.textLabel.text = @"Current prescription";
+
+        NSDateFormatter * dateFormatterToLocal= [[NSDateFormatter alloc] init];
+        [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
+        [dateFormatterToLocal setDateFormat:@"MM/dd/yyyy"];
+        NSString *fromString = [self.prescriptionArray[indexPath.row] objectForKey:@"From"];
+        NSString *toString = [self.prescriptionArray[indexPath.row] objectForKey:@"To"];
+        NSDate *fromDate = [NSDate dateWithTimeIntervalSince1970:[fromString doubleValue]/1000];
+        NSDate *toDate = [NSDate dateWithTimeIntervalSince1970:[toString doubleValue]/1000];
+        NSDate *fromDateLocal = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:fromDate]];
+        NSDate *toDateLocal = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:toDate]];
+        cell.textLabel.text =[NSString stringWithFormat:@"%@ to %@",[dateFormatterToLocal stringFromDate:fromDateLocal],[dateFormatterToLocal stringFromDate:toDateLocal]];
+        cell.detailTextLabel.text = @"hihi";
     }else{
         cell = [self.historyTableView dequeueReusableCellWithIdentifier:@"historyCell" forIndexPath:indexPath];
         cell.textLabel.text = @"History prescription";
@@ -81,6 +271,7 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    self.prescriptionID = [self.prescriptionArray[indexPath.row] objectForKey:@"Id"];
     [self performSegueWithIdentifier:@"prescriptionShowDetail" sender:self];
     if (self.segmentController.selectedSegmentIndex ==0) {
         [self.currentTableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -107,4 +298,19 @@
             break;
     }
 }
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+    if ([[segue identifier] isEqualToString:@"prescriptionShowDetail"])
+    {
+        MedicineTableViewController * medicineTableViewcontroller = [segue destinationViewController];
+        medicineTableViewcontroller.prescriptionID = self.prescriptionID;
+    }
+
+    
+}
+
 @end

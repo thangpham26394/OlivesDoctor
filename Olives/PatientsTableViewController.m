@@ -10,14 +10,16 @@
 #import "SWRevealViewController.h"
 #import "PatientTableViewCell.h"
 #import "TimePickerViewController.h"
+#import "PatientDetailsViewController.h"
 #import <CoreData/CoreData.h>
 @interface PatientsTableViewController ()
 //@property (weak, nonatomic) IBOutlet UIBarButtonItem *menuButton;
 @property (strong,nonatomic) NSArray *patientArray;
 @property (assign,nonatomic) BOOL isAddNewAppointment;
-@property (strong,nonatomic) NSDictionary *responseJSONData ;
+@property (strong,nonatomic) NSDictionary *responseJSONData;
 @property(assign,nonatomic) BOOL connectToAPISuccess;
-@property(strong,nonatomic) NSDictionary *selectedPatientToTimePicker;
+@property(strong,nonatomic) NSDictionary *selectedPatient;
+
 -(IBAction)cancel:(id)sender;
 @end
 
@@ -284,12 +286,11 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // Do some stuff when the row is selected
+    self.selectedPatient = self.patientArray[indexPath.row];
     if (!self.isAddNewAppointment) {
         // if the view current state is not for add new appointment
         [self performSegueWithIdentifier:@"showDetailPatient" sender:self];
     }else{
-
-        self.selectedPatientToTimePicker = self.patientArray[indexPath.row];
         [self performSegueWithIdentifier:@"unwindToTimePicker" sender:self];
     }
 
@@ -342,13 +343,16 @@
     if ([[segue identifier] isEqualToString:@"showDetailPatient"])
     {
         UITabBarController *tabBar = [segue destinationViewController];
+
+        PatientDetailsViewController * desViewTest = [tabBar.viewControllers objectAtIndex:1];
+        desViewTest.selectedPatientID = [NSString stringWithFormat:@"%@",[self.selectedPatient objectForKey:@"Id"]];
         tabBar.selectedIndex = 1;
     }
 
     if ([[segue identifier] isEqualToString:@"unwindToTimePicker"])
     {
         TimePickerViewController *timePicker = [segue destinationViewController];
-       timePicker.selectedPatient = self.selectedPatientToTimePicker;
+       timePicker.selectedPatient = self.selectedPatient;
     }
 
 }
