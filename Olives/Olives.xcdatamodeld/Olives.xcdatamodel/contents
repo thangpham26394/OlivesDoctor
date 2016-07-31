@@ -30,6 +30,20 @@
         <attribute name="photoURL" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="MedicalCategories" syncable="YES">
+        <attribute name="medicalCategoryID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="MedicalRecord" syncable="YES">
+        <attribute name="categoryID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="createdDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="creatorID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="info" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="lastModified" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="medicalRecordID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="ownerID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="time" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="PatientInfo" syncable="YES">
         <attribute name="address" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="birthday" optional="YES" attributeType="String" syncable="YES"/>
@@ -56,5 +70,7 @@
         <element name="DoctorInfo" positionX="-315" positionY="-36" width="128" height="225"/>
         <element name="PatientInfo" positionX="-306" positionY="108" width="128" height="165"/>
         <element name="Prescriptions" positionX="-306" positionY="108" width="128" height="180"/>
+        <element name="MedicalCategories" positionX="-297" positionY="99" width="128" height="75"/>
+        <element name="MedicalRecord" positionX="-288" positionY="135" width="128" height="165"/>
     </elements>
 </model>

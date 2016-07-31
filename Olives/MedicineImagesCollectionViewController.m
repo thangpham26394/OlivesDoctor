@@ -8,6 +8,7 @@
 
 #import "MedicineImagesCollectionViewController.h"
 #import "MedicinesCollectionReusableView.h"
+#import "MedicalRecordImageShowViewController.h"
 @interface MedicineImagesCollectionViewController ()
 
 @end
@@ -33,15 +34,22 @@ static NSString * const reuseIdentifier = @"medicineImageCell";
     // Dispose of any resources that can be recreated.
 }
 
-/*
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+    if ([segue.identifier isEqualToString:@"showMedicinePhoto"]) {
+        NSArray *indexPaths = [self.collectionView indexPathsForSelectedItems];
+        MedicalRecordImageShowViewController *destViewController = segue.destinationViewController;
+        NSIndexPath *indexPath = [indexPaths objectAtIndex:0];
+        destViewController.imageName = @"menuBG.jpg";//[self.recipeImages[indexPath.section] objectAtIndex:indexPath.row];
+        [self.collectionView deselectItemAtIndexPath:indexPath animated:NO];
+    }
 }
-*/
+
 
 #pragma mark <UICollectionViewDataSource>
 
@@ -84,7 +92,7 @@ static NSString * const reuseIdentifier = @"medicineImageCell";
 }
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath  {
-    //[self performSegueWithIdentifier:@"showMedicalRecordPhoto" sender:self];
+    [self performSegueWithIdentifier:@"showMedicinePhoto" sender:self];
 }
 
 -(CGSize) collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath

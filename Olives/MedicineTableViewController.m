@@ -7,6 +7,7 @@
 //
 
 #import "MedicineTableViewController.h"
+#import "MedicineDetailsTableViewController.h"
 
 @interface MedicineTableViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
@@ -25,13 +26,26 @@
 //}
 - (void)viewDidLoad {
     [super viewDidLoad];
-    NSLog(@"-------------------------%@",self.prescriptionID);
+    NSLog(@"-------------------------%@",self.selectedPrescription);
     [self setupGestureRecognizer];
-    NSString *prescriptionNote = @"phát hiện triệu chứng ung thư máu, mỡ máu rất cao, mức độ đường huyết không ổn định can som phat hien va dieu tri de tranh nhung bien chung sau nay khong mong muon phát hiện triệu chứng ung thư máu, mỡ máu rất cao, mức độ đường huyết không ổn định can som phat hien va dieu tri de tranh nhung bien chung sau nay khong mong muon";
-    self.noteView.text=prescriptionNote;
+
+    NSDateFormatter * dateFormatterToLocal= [[NSDateFormatter alloc] init];
+    [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
+    [dateFormatterToLocal setDateFormat:@"MM/dd/yyyy"];
+
+    NSDate *from = [NSDate dateWithTimeIntervalSince1970:[[self.selectedPrescription objectForKey:@"From"] doubleValue]/1000];
+    NSDate *to = [NSDate dateWithTimeIntervalSince1970:[[self.selectedPrescription objectForKey:@"To"] doubleValue]/1000];
+    NSDate *fromDateLocal = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:from]];
+    NSDate *toDateLocal = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:to]];
+
+
+
+
+    self.timeLabel.text = [NSString stringWithFormat:@"From:%@ to:%@",[dateFormatterToLocal stringFromDate:fromDateLocal],[dateFormatterToLocal stringFromDate:toDateLocal]];
+    self.noteView.text=[self.selectedPrescription objectForKey:@"Note"];
     [self.noteView sizeToFit];
 
-    self.noteViewHeight = [prescriptionNote boundingRectWithSize:CGSizeMake(self.view.bounds.size.width - 20, CGFLOAT_MAX)
+    self.noteViewHeight = [[self.selectedPrescription objectForKey:@"Note"] boundingRectWithSize:CGSizeMake(self.view.bounds.size.width - 20, CGFLOAT_MAX)
                                                     options:NSStringDrawingUsesLineFragmentOrigin
                                                  attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15]}
                                                     context:nil].size.height;
@@ -59,7 +73,7 @@
         return 45;
     }
 }
-//
+
 //- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 //    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"medicineImagesCell" forIndexPath:indexPath];
 //    
@@ -103,14 +117,19 @@
 }
 */
 
-/*
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+    if ([[segue identifier] isEqualToString:@"showListMedicines"])
+    {
+        MedicineDetailsTableViewController * medicineDetailTableViewcontroller = [segue destinationViewController];
+        medicineDetailTableViewcontroller.medicineString = [self.selectedPrescription objectForKey:@"Medicine"];
+    }
 }
-*/
+
 
 @end

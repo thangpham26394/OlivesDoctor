@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface MedicineTableViewController : UITableViewController
-@property(strong,nonatomic) NSString *prescriptionID;
+@property(strong,nonatomic) NSDictionary *selectedPrescription;
 @end

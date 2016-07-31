@@ -9,7 +9,7 @@
 #import "MedicineDetailsTableViewController.h"
 #import "MedicineTableViewCell.h"
 @interface MedicineDetailsTableViewController ()
-
+@property(strong,nonatomic) NSDictionary *medicinedic;
 @end
 
 @implementation MedicineDetailsTableViewController
@@ -18,7 +18,13 @@
     [super viewDidLoad];
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     //back ground for tableview view
-    
+
+    NSError *jsonError;
+    NSData *objectData = [self.medicineString dataUsingEncoding:NSUTF8StringEncoding];
+    self.medicinedic = [NSJSONSerialization JSONObjectWithData:objectData
+                                                         options:NSJSONReadingMutableContainers
+                                                           error:&jsonError];
+
 }
 
 - (void)didReceiveMemoryWarning {
@@ -34,7 +40,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 3;
+    return self.medicinedic.count;
 }
 
 
@@ -42,10 +48,14 @@
     MedicineTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"medicineDetailCell" forIndexPath:indexPath];
     
     // Configure the cell...
-    cell.medicineName.text = @"panadol";
-    cell.quantity.text = @"1000";
-    cell.unit.text = @"vien nen";
-    cell.note.text = @"ngay uong 2 lan moi lan 1 vien vao truoc bua an, khong dung kem voi cac loai thuoc cam khac, chong chi dinh vs di ung bat cu thanh phan nao cua thuoc, doc ki huong dan su dung truoc khi dung";
+    NSString *medicineName  = [[self.medicinedic allKeys] objectAtIndex:indexPath.row];
+    cell.medicineName.text = medicineName;
+    NSDictionary *medicineDic = [self.medicinedic objectForKey:medicineName];
+
+    cell.quantity.text =[NSString stringWithFormat:@"%@", [medicineDic objectForKey:@"Quantity"]];
+    cell.unit.text = [medicineDic objectForKey:@"Unit"];
+    cell.note.text = [medicineDic objectForKey:@"Note"];
+
     return cell;
 }
 

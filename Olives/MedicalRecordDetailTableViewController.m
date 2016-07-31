@@ -7,9 +7,9 @@
 //
 
 #import "MedicalRecordDetailTableViewController.h"
-
+#import "MedicalNoteTableViewController.h"
 @interface MedicalRecordDetailTableViewController ()
-
+@property(strong,nonatomic) NSDictionary *selectedMedicalRecord;
 @end
 
 @implementation MedicalRecordDetailTableViewController
@@ -27,7 +27,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
     
@@ -49,7 +48,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 5;
+    return self.medicalRecordArray.count;
 }
 
 
@@ -62,7 +61,19 @@
 
     }
     // Configure the cell...
-    cell.textLabel.text = @"20/07/2016";
+    NSDictionary *dic = [self.medicalRecordArray objectAtIndex:indexPath.row];
+    NSString *time = [dic objectForKey:@"Time"];
+
+
+    NSDateFormatter * dateFormatterToLocal= [[NSDateFormatter alloc] init];
+    [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
+    [dateFormatterToLocal setDateFormat:@"MM/dd/yyyy"];
+
+    NSDate *timeDate = [NSDate dateWithTimeIntervalSince1970:[time doubleValue]/1000];
+
+    NSDate *timeDateLocal = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:timeDate]];
+
+    cell.textLabel.text = [NSString stringWithFormat:@"%@",[dateFormatterToLocal stringFromDate:timeDateLocal]];
     //cell.detailTextLabel.text = @"details";
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     cell.preservesSuperviewLayoutMargins = NO;
@@ -73,7 +84,8 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // Do some stuff when the row is selected
-    [self performSegueWithIdentifier:@"showTotalImage" sender:self];
+    self.selectedMedicalRecord = [self.medicalRecordArray objectAtIndex:indexPath.row];
+    [self performSegueWithIdentifier:@"medicalNoteAndDetailInfo" sender:self];
 
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
@@ -112,14 +124,19 @@
 }
 */
 
-/*
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+    if ([[segue identifier] isEqualToString:@"medicalNoteAndDetailInfo"])
+    {
+        MedicalNoteTableViewController *medicalRecordDetail = [segue destinationViewController];
+        medicalRecordDetail.medicalRecordDic = self.selectedMedicalRecord;
+    }
 }
-*/
+
 
 @end

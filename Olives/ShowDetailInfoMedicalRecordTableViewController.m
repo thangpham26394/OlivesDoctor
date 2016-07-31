@@ -1,30 +1,27 @@
 //
-//  LoanTableViewController.m
+//  ShowDetailInfoMedicalRecordTableViewController.m
 //  Olives
 //
-//  Created by Tony Tony Chopper on 5/26/16.
+//  Created by Tony Tony Chopper on 7/31/16.
 //  Copyright © 2016 Thang. All rights reserved.
 //
 
-#import "LoanTableViewController.h"
-#import "SWRevealViewController.h"
+#import "ShowDetailInfoMedicalRecordTableViewController.h"
 
-@interface LoanTableViewController ()
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *menuButton;
-
+@interface ShowDetailInfoMedicalRecordTableViewController ()
+@property(strong,nonatomic) NSDictionary *info;
 @end
 
-@implementation LoanTableViewController
+@implementation ShowDetailInfoMedicalRecordTableViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    SWRevealViewController *revealViewController = self.revealViewController;
-    if (revealViewController) {
-        [self.menuButton setTarget:self.revealViewController];
-        [self.menuButton setAction:@selector(revealToggle:)];
-        [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
-    }
+    NSLog(@"thangthangthang %@",self.infoString);
+    NSError *jsonError;
+    NSData *objectData = [self.infoString dataUsingEncoding:NSUTF8StringEncoding];
+    self.info = [NSJSONSerialization JSONObjectWithData:objectData
+                                                       options:NSJSONReadingMutableContainers
+                                                         error:&jsonError];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -35,24 +32,24 @@
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-#warning Incomplete implementation, return the number of sections
-    return 0;
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-#warning Incomplete implementation, return the number of rows
-    return 0;
+    return self.info.count;
 }
 
-/*
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"infoCell" forIndexPath:indexPath];
     
     // Configure the cell...
-    
+    NSString *key = [[self.info allKeys] objectAtIndex:indexPath.row];
+    cell.textLabel.text = key;
+    cell.detailTextLabel.text = [self.info objectForKey:key];
     return cell;
 }
-*/
+
 
 /*
 // Override to support conditional editing of the table view.

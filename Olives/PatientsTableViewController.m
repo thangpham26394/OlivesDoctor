@@ -11,6 +11,7 @@
 #import "PatientTableViewCell.h"
 #import "TimePickerViewController.h"
 #import "PatientDetailsViewController.h"
+#import "MedicalRecordTableViewController.h"
 #import <CoreData/CoreData.h>
 @interface PatientsTableViewController ()
 //@property (weak, nonatomic) IBOutlet UIBarButtonItem *menuButton;
@@ -344,8 +345,10 @@
     {
         UITabBarController *tabBar = [segue destinationViewController];
 
-        PatientDetailsViewController * desViewTest = [tabBar.viewControllers objectAtIndex:1];
-        desViewTest.selectedPatientID = [NSString stringWithFormat:@"%@",[self.selectedPatient objectForKey:@"Id"]];
+        PatientDetailsViewController * patientDetail = [tabBar.viewControllers objectAtIndex:1];
+        MedicalRecordTableViewController *medicalRecord = [tabBar.viewControllers objectAtIndex:2];
+        patientDetail.selectedPatientID = [NSString stringWithFormat:@"%@",[self.selectedPatient objectForKey:@"Id"]];
+        medicalRecord.selectedPatientID= [NSString stringWithFormat:@"%@",[self.selectedPatient objectForKey:@"Id"]];
         tabBar.selectedIndex = 1;
     }
 

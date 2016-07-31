@@ -1,26 +1,22 @@
 //
-//  PrescriptionViewController.m
+//  MedicalRecordPresctiptionTableViewController.m
 //  Olives
 //
-//  Created by Tony Tony Chopper on 7/21/16.
+//  Created by Tony Tony Chopper on 7/31/16.
 //  Copyright © 2016 Thang. All rights reserved.
 //
 #define APIURL @"http://olive.azurewebsites.net/api/medical/prescription/filter"
-#import "PrescriptionViewController.h"
+#import "MedicalRecordPresctiptionTableViewController.h"
 #import "MedicineTableViewController.h"
 #import <CoreData/CoreData.h>
-@interface PrescriptionViewController ()
-@property (weak, nonatomic) IBOutlet UITableView *currentTableView;
-@property (weak, nonatomic) IBOutlet UITableView *historyTableView;
-@property (weak, nonatomic) IBOutlet UISegmentedControl *segmentController;
+
+@interface MedicalRecordPresctiptionTableViewController ()
 @property (strong,nonatomic) NSDictionary *responseJSONData;
 @property (strong,nonatomic) NSArray *prescriptionArray;
 @property (strong,nonatomic) NSDictionary *selectedPrescription;
-- (IBAction)changeSegment:(id)sender;
-
 @end
 
-@implementation PrescriptionViewController
+@implementation MedicalRecordPresctiptionTableViewController
 
 #pragma mark - Handle Coredata
 - (NSManagedObjectContext *)managedObjectContext {
@@ -41,18 +37,22 @@
     for (int index =0; index<prescriptionObject.count; index++) {
         //get each patient in coredata
         prescription = [prescriptionObject objectAtIndex:index];
-        NSDictionary *appointmentDic = [NSDictionary dictionaryWithObjectsAndKeys:
-                                        [prescription valueForKey:@"prescriptionID" ],@"Id",
-                                        [prescription valueForKey:@"medicalRecord" ],@"MedicalRecord",
-                                        [prescription valueForKey:@"from" ],@"From",
-                                        [prescription valueForKey:@"to" ],@"To",
-                                        [prescription valueForKey:@"name" ],@"Name",
-                                        [prescription valueForKey:@"medicine" ],@"Medicine",
-                                        [prescription valueForKey:@"note" ],@"Note",
-                                        [prescription valueForKey:@"createdDate" ],@"Created",
-                                        [prescription valueForKey:@"lastModified" ],@"LastModified",
-                                        nil];
-        [prescriptionArrayForFailAPI addObject:appointmentDic];
+        //only load the prescription that have same medicalrecord id with selected medicalrecord
+        if ([[prescription valueForKey:@"medicalRecord"] isEqual:self.medicalRecordID]) {
+            NSDictionary *appointmentDic = [NSDictionary dictionaryWithObjectsAndKeys:
+                                            [prescription valueForKey:@"prescriptionID" ],@"Id",
+                                            [prescription valueForKey:@"medicalRecord" ],@"MedicalRecord",
+                                            [prescription valueForKey:@"from" ],@"From",
+                                            [prescription valueForKey:@"to" ],@"To",
+                                            [prescription valueForKey:@"name" ],@"Name",
+                                            [prescription valueForKey:@"medicine" ],@"Medicine",
+                                            [prescription valueForKey:@"note" ],@"Note",
+                                            [prescription valueForKey:@"createdDate" ],@"Created",
+                                            [prescription valueForKey:@"lastModified" ],@"LastModified",
+                                            nil];
+            [prescriptionArrayForFailAPI addObject:appointmentDic];
+        }
+
     }
     self.prescriptionArray = (NSArray*)prescriptionArrayForFailAPI;
 
@@ -69,11 +69,14 @@
 
         for (int index=0; index < prescriptionObject.count; index++) {
             prescription = [prescriptionObject objectAtIndex:index];
-            [context deleteObject:prescription];
+            if ([[NSString stringWithFormat:@"%@",[prescription valueForKey:@"medicalRecord"] ] isEqual: [NSString stringWithFormat:@"%@",self.medicalRecordID]]) {
+                [context deleteObject:prescription]; //only delete prescription of current medical record
+            }
+
         }
     }
 
-    // insert new patients that gotten from API
+    // insert new prescription of selected medicalrecord that gotten from API
     for (int index = 0; index < self.prescriptionArray.count; index++) {
         NSDictionary *prescriptionDic = self.prescriptionArray[index];
 
@@ -111,7 +114,6 @@
         }
     }
 }
-
 #pragma mark - Connect to API function
 
 -(void)loadPatienttDataFromAPI{
@@ -123,7 +125,8 @@
     NSDictionary *account = @{
                               @"Mode" :  @"0",
                               @"Sort" : @"1",
-                              @"Direction":@"0"
+                              @"Direction":@"0",
+                              @"MedicalRecord":self.medicalRecordID,
                               };
     NSError *error = nil;
     NSData *jsondata = [NSJSONSerialization dataWithJSONObject:account options:NSJSONWritingPrettyPrinted error:&error];
@@ -150,7 +153,7 @@
     [urlRequest setValue:[doctor valueForKey:@"password"]  forHTTPHeaderField:@"Password"];
     [urlRequest setValue:@"en-US" forHTTPHeaderField:@"Accept-Language"];
     [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    
+
     [urlRequest setHTTPBody:jsondata];
     dispatch_semaphore_t    sem;
     sem = dispatch_semaphore_create(0);
@@ -189,47 +192,25 @@
     
 }
 
-
-
-
-
--(void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:YES];
-    self.navigationController.topViewController.title=@"Prescription";
-    //setup barbutton
-    UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc]
-                                       initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addInfo:)];
-    self.navigationController.topViewController.navigationItem.rightBarButtonItem = rightBarButton;
-
-    [self loadPatienttDataFromAPI];
-}
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
-    [self.currentTableView setHidden:NO];
-    [self.historyTableView setHidden:YES];
-    self.currentTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    self.historyTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-
+    
+    // Uncomment the following line to preserve selection between presentations.
+    // self.clearsSelectionOnViewWillAppear = NO;
+    
+    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
+    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
-
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    [self loadPatienttDataFromAPI];
+    [self.tableView reloadData];
+}
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
--(IBAction)addInfo:(id)sender{
-    NSLog(@"add Prescription");
-}
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -242,73 +223,80 @@
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell;
-    if (self.segmentController.selectedSegmentIndex ==0) {
-        cell = [self.currentTableView dequeueReusableCellWithIdentifier:@"currentCell" forIndexPath:indexPath];
-
-        NSDateFormatter * dateFormatterToLocal= [[NSDateFormatter alloc] init];
-        [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
-        [dateFormatterToLocal setDateFormat:@"MM/dd/yyyy"];
-        NSString *fromString = [self.prescriptionArray[indexPath.row] objectForKey:@"From"];
-        NSString *toString = [self.prescriptionArray[indexPath.row] objectForKey:@"To"];
-        NSDate *fromDate = [NSDate dateWithTimeIntervalSince1970:[fromString doubleValue]/1000];
-        NSDate *toDate = [NSDate dateWithTimeIntervalSince1970:[toString doubleValue]/1000];
-        NSDate *fromDateLocal = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:fromDate]];
-        NSDate *toDateLocal = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:toDate]];
-        cell.textLabel.text =[NSString stringWithFormat:@"%@ to %@",[dateFormatterToLocal stringFromDate:fromDateLocal],[dateFormatterToLocal stringFromDate:toDateLocal]];
-        cell.detailTextLabel.text = @"Details";
-    }else{
-        cell = [self.historyTableView dequeueReusableCellWithIdentifier:@"historyCell" forIndexPath:indexPath];
-        cell.textLabel.text = @"History prescription";
-    }
-
-
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"medicalRecordPrescription" forIndexPath:indexPath];
+    
     // Configure the cell...
-    cell.preservesSuperviewLayoutMargins = NO;
-    cell.separatorInset = UIEdgeInsetsZero;
-    cell.layoutMargins = UIEdgeInsetsZero;
+    NSDateFormatter * dateFormatterToLocal= [[NSDateFormatter alloc] init];
+    [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
+    [dateFormatterToLocal setDateFormat:@"MM/dd/yyyy"];
+    NSString *fromString = [self.prescriptionArray[indexPath.row] objectForKey:@"From"];
+    NSString *toString = [self.prescriptionArray[indexPath.row] objectForKey:@"To"];
+    NSDate *fromDate = [NSDate dateWithTimeIntervalSince1970:[fromString doubleValue]/1000];
+    NSDate *toDate = [NSDate dateWithTimeIntervalSince1970:[toString doubleValue]/1000];
+    NSDate *fromDateLocal = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:fromDate]];
+    NSDate *toDateLocal = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:toDate]];
+    cell.textLabel.text =[NSString stringWithFormat:@"%@ to %@",[dateFormatterToLocal stringFromDate:fromDateLocal],[dateFormatterToLocal stringFromDate:toDateLocal]];
+    cell.detailTextLabel.text = @"Details";
+
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     self.selectedPrescription = self.prescriptionArray[indexPath.row];
-    [self performSegueWithIdentifier:@"prescriptionShowDetail" sender:self];
-    if (self.segmentController.selectedSegmentIndex ==0) {
-        [self.currentTableView deselectRowAtIndexPath:indexPath animated:YES];
-    }
+    [self performSegueWithIdentifier:@"medicalRecordPrescriptionShowDetail" sender:self];
+
+    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+
 }
-- (IBAction)changeSegment:(id)sender {
-    switch (self.segmentController.selectedSegmentIndex)
-    {
-        case 0:
-            [self.currentTableView setHidden:NO];
-            [self.historyTableView setHidden:YES];
-            [self.currentTableView reloadData];
-            [self.historyTableView reloadData];
-            break;
-        case 1:
-            [self.historyTableView setHidden:NO];
-            [self.currentTableView setHidden:YES];
-            [self.currentTableView reloadData];
-            [self.historyTableView reloadData];
-            break;
-        default:
-            break;
-    }
+
+/*
+// Override to support conditional editing of the table view.
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    // Return NO if you do not want the specified item to be editable.
+    return YES;
 }
+*/
+
+/*
+// Override to support editing the table view.
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        // Delete the row from the data source
+        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
+        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+    }   
+}
+*/
+
+/*
+// Override to support rearranging the table view.
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
+}
+*/
+
+/*
+// Override to support conditional rearranging of the table view.
+- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
+    // Return NO if you do not want the item to be re-orderable.
+    return YES;
+}
+*/
+
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
-    if ([[segue identifier] isEqualToString:@"prescriptionShowDetail"])
+    if ([[segue identifier] isEqualToString:@"medicalRecordPrescriptionShowDetail"])
     {
         MedicineTableViewController * medicineTableViewcontroller = [segue destinationViewController];
         medicineTableViewcontroller.selectedPrescription = self.selectedPrescription;
     }
 
-    
 }
+
 
 @end
