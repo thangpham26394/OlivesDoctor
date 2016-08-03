@@ -80,6 +80,9 @@
     [self setupGestureRecognizer];
     self.navigationController.navigationBar.translucent = NO;
     self.avatar.layer.cornerRadius = self.avatar.frame.size.width / 2;
+    self.avatar.clipsToBounds = YES;
+    self.avatar.layer.borderWidth = 1.0f;
+    self.avatar.layer.borderColor = [UIColor whiteColor].CGColor;
     
     //Set up for slide view
     SWRevealViewController *revealViewController = self.revealViewController;

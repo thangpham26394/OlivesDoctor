@@ -9,5 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface MedicalRecordDetailTableViewController : UITableViewController
-@property(strong,nonatomic) NSArray *medicalRecordArray;
+@property(strong,nonatomic) NSMutableArray *medicalRecordArray;
+@property (strong,nonatomic)NSDictionary *selectedCategory;
+@property(strong,nonatomic) NSString *selectedPatientID;
 @end

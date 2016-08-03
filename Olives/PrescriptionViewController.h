@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface PrescriptionViewController : UIViewController
-
+@property(strong,nonatomic) NSString *selectedPatientID;
 @end

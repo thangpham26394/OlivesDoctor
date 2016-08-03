@@ -19,7 +19,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"menuBG.jpg"]];
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"menuBackGround2.jpg"]];
 
     self.tableView.backgroundView = imageView;
 //    self.tableView.backgroundColor = [UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0];

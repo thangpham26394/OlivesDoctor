@@ -10,4 +10,5 @@
 
 @interface MedicineTableViewController : UITableViewController
 @property(strong,nonatomic) NSDictionary *selectedPrescription;
+@property(assign,nonatomic) BOOL isAddNew;
 @end

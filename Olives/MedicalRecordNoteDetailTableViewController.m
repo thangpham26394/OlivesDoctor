@@ -1,49 +1,27 @@
 //
-//  MedicineDetailsTableViewController.m
+//  MedicalRecordNoteDetailTableViewController.m
 //  Olives
 //
-//  Created by Tony Tony Chopper on 7/27/16.
+//  Created by Tony Tony Chopper on 8/1/16.
 //  Copyright © 2016 Thang. All rights reserved.
 //
 
-#import "MedicineDetailsTableViewController.h"
-#import "MedicineTableViewCell.h"
-@interface MedicineDetailsTableViewController ()
-@property(strong,nonatomic) NSDictionary *medicinedic;
+#import "MedicalRecordNoteDetailTableViewController.h"
+
+@interface MedicalRecordNoteDetailTableViewController ()
+
 @end
 
-@implementation MedicineDetailsTableViewController
--(void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:YES];
-    self.navigationController.topViewController.title=@"Medical Presctiption";
-    //setup barbutton
-    UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc]
-                                       initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addMedicine:)];
-    self.navigationController.topViewController.navigationItem.rightBarButtonItem = rightBarButton;
-}
+@implementation MedicalRecordNoteDetailTableViewController
 
--(IBAction)addMedicine:(id)sender{
-//    [self performSegueWithIdentifier:@"addMedicalRecordPrescription" sender:self];
-}
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
-    //back ground for tableview view
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"menuscreen.jpg"]];
-    self.tableView.backgroundView = imageView;
-
-
-    if (self.isAddNew) {
-        self.medicinedic = [[NSDictionary alloc]init];
-    }else{
-        NSError *jsonError;
-        NSData *objectData = [self.medicineString dataUsingEncoding:NSUTF8StringEncoding];
-        self.medicinedic = [NSJSONSerialization JSONObjectWithData:objectData
-                                                           options:NSJSONReadingMutableContainers
-                                                             error:&jsonError];
-    }
-
-
+    
+    // Uncomment the following line to preserve selection between presentations.
+    // self.clearsSelectionOnViewWillAppear = NO;
+    
+    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
+    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -54,30 +32,24 @@
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-
-    return 1;
+#warning Incomplete implementation, return the number of sections
+    return 0;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.medicinedic.count;
+#warning Incomplete implementation, return the number of rows
+    return 0;
 }
 
-
+/*
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    MedicineTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"medicineDetailCell" forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
     
     // Configure the cell...
-    NSString *medicineName  = [[self.medicinedic allKeys] objectAtIndex:indexPath.row];
-    cell.medicineName.text = medicineName;
-    NSDictionary *medicineDic = [self.medicinedic objectForKey:medicineName];
-
-    cell.quantity.text =[NSString stringWithFormat:@"%@", [medicineDic objectForKey:@"Quantity"]];
-    cell.unit.text = [medicineDic objectForKey:@"Unit"];
-    cell.note.text = [medicineDic objectForKey:@"Note"];
-
+    
     return cell;
 }
-
+*/
 
 /*
 // Override to support conditional editing of the table view.

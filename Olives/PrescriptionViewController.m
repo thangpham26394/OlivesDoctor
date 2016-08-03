@@ -15,6 +15,8 @@
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segmentController;
 @property (strong,nonatomic) NSDictionary *responseJSONData;
 @property (strong,nonatomic) NSArray *prescriptionArray;
+@property (strong,nonatomic) NSMutableArray *currentPrescription;
+@property (strong,nonatomic) NSMutableArray *historyPrescription;
 @property (strong,nonatomic) NSDictionary *selectedPrescription;
 - (IBAction)changeSegment:(id)sender;
 
@@ -41,18 +43,22 @@
     for (int index =0; index<prescriptionObject.count; index++) {
         //get each patient in coredata
         prescription = [prescriptionObject objectAtIndex:index];
-        NSDictionary *appointmentDic = [NSDictionary dictionaryWithObjectsAndKeys:
-                                        [prescription valueForKey:@"prescriptionID" ],@"Id",
-                                        [prescription valueForKey:@"medicalRecord" ],@"MedicalRecord",
-                                        [prescription valueForKey:@"from" ],@"From",
-                                        [prescription valueForKey:@"to" ],@"To",
-                                        [prescription valueForKey:@"name" ],@"Name",
-                                        [prescription valueForKey:@"medicine" ],@"Medicine",
-                                        [prescription valueForKey:@"note" ],@"Note",
-                                        [prescription valueForKey:@"createdDate" ],@"Created",
-                                        [prescription valueForKey:@"lastModified" ],@"LastModified",
-                                        nil];
-        [prescriptionArrayForFailAPI addObject:appointmentDic];
+        if ([[prescription valueForKey:@"ownerID"] isEqual:[NSString stringWithFormat:@"%@",self.selectedPatientID]]) {
+            NSDictionary *appointmentDic = [NSDictionary dictionaryWithObjectsAndKeys:
+                                            [prescription valueForKey:@"prescriptionID" ],@"Id",
+                                            [prescription valueForKey:@"medicalRecord" ],@"MedicalRecord",
+                                            [prescription valueForKey:@"from" ],@"From",
+                                            [prescription valueForKey:@"to" ],@"To",
+                                            [prescription valueForKey:@"name" ],@"Name",
+                                            [prescription valueForKey:@"medicine" ],@"Medicine",
+                                            [prescription valueForKey:@"note" ],@"Note",
+                                            [prescription valueForKey:@"ownerID" ],@"Owner",
+                                            [prescription valueForKey:@"createdDate" ],@"Created",
+                                            [prescription valueForKey:@"lastModified" ],@"LastModified",
+                                            nil];
+            [prescriptionArrayForFailAPI addObject:appointmentDic];
+        }
+
     }
     self.prescriptionArray = (NSArray*)prescriptionArrayForFailAPI;
 
@@ -69,7 +75,10 @@
 
         for (int index=0; index < prescriptionObject.count; index++) {
             prescription = [prescriptionObject objectAtIndex:index];
-            [context deleteObject:prescription];
+            if ([[prescription valueForKey:@"ownerID"] isEqual:[NSString stringWithFormat:@"%@",self.selectedPatientID]]) {
+                [context deleteObject:prescription]; //only delete prescription that belong to selected patient
+            }
+
         }
     }
 
@@ -84,6 +93,7 @@
         NSString *name = [prescriptionDic objectForKey:@"Name"];
         NSString *medicine = [prescriptionDic objectForKey:@"Medicine"];
         NSString *note = [prescriptionDic objectForKey:@"Note"];
+        NSString *ownerID = [prescriptionDic objectForKey:@"Owner"];
         NSString *createdDate = [prescriptionDic objectForKey:@"Created"];
         NSString *lastModified = [prescriptionDic objectForKey:@"LastModified"];
 
@@ -98,6 +108,7 @@
         [newPrescription setValue: [NSString stringWithFormat:@"%@", name] forKey:@"name"];
         [newPrescription setValue: [NSString stringWithFormat:@"%@", medicine] forKey:@"medicine"];
         [newPrescription setValue: [NSString stringWithFormat:@"%@", note] forKey:@"note"];
+        [newPrescription setValue: [NSString stringWithFormat:@"%@", ownerID] forKey:@"ownerID"];
         [newPrescription setValue: [NSString stringWithFormat:@"%@", createdDate] forKey:@"createdDate"];
         [newPrescription setValue: [NSString stringWithFormat:@"%@", lastModified] forKey:@"lastModified"];
 
@@ -123,7 +134,8 @@
     NSDictionary *account = @{
                               @"Mode" :  @"0",
                               @"Sort" : @"1",
-                              @"Direction":@"0"
+                              @"Direction":@"0",
+                              @"Partner" :self.selectedPatientID
                               };
     NSError *error = nil;
     NSData *jsondata = [NSJSONSerialization dataWithJSONObject:account options:NSJSONWritingPrettyPrinted error:&error];
@@ -237,7 +249,30 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.prescriptionArray.count;
+    //check which prescriptions is current and which presctiption is history
+    self.currentPrescription = [[NSMutableArray alloc]init];
+    self.historyPrescription =[[NSMutableArray alloc]init];
+    NSDateFormatter * dateFormatterToLocal= [[NSDateFormatter alloc] init];
+    [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
+    [dateFormatterToLocal setDateFormat:@"MM/dd/yyyy"];
+
+    for (int index =0; index <self.prescriptionArray.count; index ++) {
+        NSDictionary *prescriptionDic = [self.prescriptionArray objectAtIndex:index];
+        NSString *toString = [prescriptionDic objectForKey:@"To"];
+        NSDate *toDate = [NSDate dateWithTimeIntervalSince1970:[toString doubleValue]/1000];
+        NSDate *toDateLocal = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:toDate]];
+
+        if ([toDateLocal timeIntervalSince1970] >= [[NSDate date] timeIntervalSince1970]) {
+            [self.currentPrescription addObject:prescriptionDic];
+        }else{
+            [self.historyPrescription addObject:prescriptionDic];
+        }
+    }
+    if (self.segmentController.selectedSegmentIndex ==0) {
+        return self.currentPrescription.count; //return total current prescription
+    }else{
+        return self.historyPrescription.count; //return total history prescription
+    }
 }
 
 
@@ -249,8 +284,8 @@
         NSDateFormatter * dateFormatterToLocal= [[NSDateFormatter alloc] init];
         [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
         [dateFormatterToLocal setDateFormat:@"MM/dd/yyyy"];
-        NSString *fromString = [self.prescriptionArray[indexPath.row] objectForKey:@"From"];
-        NSString *toString = [self.prescriptionArray[indexPath.row] objectForKey:@"To"];
+        NSString *fromString = [self.currentPrescription[indexPath.row] objectForKey:@"From"];
+        NSString *toString = [self.currentPrescription[indexPath.row] objectForKey:@"To"];
         NSDate *fromDate = [NSDate dateWithTimeIntervalSince1970:[fromString doubleValue]/1000];
         NSDate *toDate = [NSDate dateWithTimeIntervalSince1970:[toString doubleValue]/1000];
         NSDate *fromDateLocal = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:fromDate]];
@@ -259,7 +294,17 @@
         cell.detailTextLabel.text = @"Details";
     }else{
         cell = [self.historyTableView dequeueReusableCellWithIdentifier:@"historyCell" forIndexPath:indexPath];
-        cell.textLabel.text = @"History prescription";
+        NSDateFormatter * dateFormatterToLocal= [[NSDateFormatter alloc] init];
+        [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
+        [dateFormatterToLocal setDateFormat:@"MM/dd/yyyy"];
+        NSString *fromString = [self.historyPrescription[indexPath.row] objectForKey:@"From"];
+        NSString *toString = [self.historyPrescription[indexPath.row] objectForKey:@"To"];
+        NSDate *fromDate = [NSDate dateWithTimeIntervalSince1970:[fromString doubleValue]/1000];
+        NSDate *toDate = [NSDate dateWithTimeIntervalSince1970:[toString doubleValue]/1000];
+        NSDate *fromDateLocal = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:fromDate]];
+        NSDate *toDateLocal = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:toDate]];
+        cell.textLabel.text =[NSString stringWithFormat:@"%@ to %@",[dateFormatterToLocal stringFromDate:fromDateLocal],[dateFormatterToLocal stringFromDate:toDateLocal]];
+        cell.detailTextLabel.text = @"Details";
     }
 
 

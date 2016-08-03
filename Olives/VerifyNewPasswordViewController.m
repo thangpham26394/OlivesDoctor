@@ -1,24 +1,21 @@
 //
-//  ForgotPasswordViewController.m
+//  VerifyNewPasswordViewController.m
 //  Olives
 //
-//  Created by Tony Tony Chopper on 6/8/16.
+//  Created by Tony Tony Chopper on 7/31/16.
 //  Copyright © 2016 Thang. All rights reserved.
 //
 
-#import "ForgotPasswordViewController.h"
+#import "VerifyNewPasswordViewController.h"
 
-@interface ForgotPasswordViewController ()
-@property (weak, nonatomic) IBOutlet UITextField *emailTextField;
-@property (weak, nonatomic) IBOutlet UIButton *confirmEmailButton;
-@property (weak, nonatomic) IBOutlet UIView *contentView;
+@interface VerifyNewPasswordViewController ()
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (weak, nonatomic) IBOutlet UIView *contentView;
 @property (weak, nonatomic) UITextField *activeField;
-- (IBAction)cancelButton:(id)sender;
-
+@property (weak, nonatomic) IBOutlet UIButton *changePasswordButton;
 @end
 
-@implementation ForgotPasswordViewController
+@implementation VerifyNewPasswordViewController
 
 - (IBAction)textFieldDidBeginEditing:(UITextField *)sender
 {
@@ -33,7 +30,6 @@
     [self.activeField resignFirstResponder];
     return YES;
 }
-
 
 - (void)viewWillAppear:(BOOL)animated {
 
@@ -88,8 +84,8 @@
 
     CGRect aRect = self.view.frame;
     aRect.size.height -= kbRect.size.height;
-    if (!CGRectContainsPoint(aRect, self.confirmEmailButton.frame.origin) ) {
-        [self.scrollView scrollRectToVisible:self.confirmEmailButton.frame animated:YES];
+    if (!CGRectContainsPoint(aRect, self.changePasswordButton.frame.origin) ) {
+        [self.scrollView scrollRectToVisible:self.changePasswordButton.frame animated:YES];
     }
 }
 
@@ -108,15 +104,19 @@
 - (void)handleTapGesture:(UIPanGestureRecognizer *)recognizer{
     [self.activeField resignFirstResponder];
 }
+
+
+
 - (void)viewDidLoad {
     [super viewDidLoad];
+    // Do any additional setup after loading the view.
     self.navigationController.navigationBar.translucent = NO;
     [self setupGestureRecognizer];
     // Set up confirm email button
-    [self.confirmEmailButton.layer setCornerRadius:self.confirmEmailButton.frame.size.height/2+1];
-    self.confirmEmailButton.layer.shadowColor = [UIColor colorWithRed:0/255.0 green:150/255.0 blue:150/255.0 alpha:0.5f].CGColor;
-    self.confirmEmailButton.layer.shadowOffset = CGSizeMake(0.0f, 10.0f);
-    self.confirmEmailButton.layer.shadowOpacity = 0.5f;
+    [self.changePasswordButton.layer setCornerRadius:self.changePasswordButton.frame.size.height/2+1];
+    self.changePasswordButton.layer.shadowColor = [UIColor colorWithRed:0/255.0 green:150/255.0 blue:150/255.0 alpha:0.5f].CGColor;
+    self.changePasswordButton.layer.shadowOffset = CGSizeMake(0.0f, 10.0f);
+    self.changePasswordButton.layer.shadowOpacity = 0.5f;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -134,7 +134,4 @@
 }
 */
 
-- (IBAction)cancelButton:(id)sender {
-    [self dismissViewControllerAnimated:YES completion:nil];
-}
 @end

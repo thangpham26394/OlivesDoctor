@@ -9,7 +9,8 @@
 #import "MedicalNoteTableViewController.h"
 #import "ShowDetailInfoMedicalRecordTableViewController.h"
 #import "MedicalRecordPresctiptionTableViewController.h"
-
+#import "MedicalRecordNoteDetailTableViewController.h"
+#import <CoreData/CoreData.h>
 @interface MedicalNoteTableViewController ()
 @property (weak, nonatomic) IBOutlet UITextView *noteView;
 @property(assign,nonatomic) CGFloat noteViewHeight;
@@ -19,18 +20,81 @@
 
 @implementation MedicalNoteTableViewController
 
+#pragma mark - Handle Coredata
+- (NSManagedObjectContext *)managedObjectContext {
+    NSManagedObjectContext *context = nil;
+    id delegate = [[UIApplication sharedApplication] delegate];
+    if ([delegate performSelector:@selector(managedObjectContext)]) {
+        context = [delegate managedObjectContext];
+    }
+    return context;
+}
+
+-(void)reloadDataFromCoreData{
+    //get the newest medical record data which have just saved to coredata
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"MedicalRecord"];
+    NSMutableArray *medicalRecordObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *medicalRecord;
+
+    for (int index =0; index<medicalRecordObject.count; index++) {
+        //get each patient in coredata
+        medicalRecord = [medicalRecordObject objectAtIndex:index];
+        //get medical record category
+        NSFetchRequest *fetchRequestCategory = [[NSFetchRequest alloc] initWithEntityName:@"MedicalCategories"];
+        NSMutableArray *medicalCategoryObject = [[context executeFetchRequest:fetchRequestCategory error:nil] mutableCopy];
+        NSManagedObject *medicalCategory;
+        NSDictionary *medicalCategoryDic;
+
+        for (int i=0; i<medicalCategoryObject.count; i++) {
+            medicalCategory = [medicalCategoryObject objectAtIndex:i];
+            //check if the current medical category id is equal with medical record id
+            if ([[medicalCategory valueForKey:@"medicalCategoryID"] isEqual:[medicalRecord valueForKey:@"categoryID" ]]) {
+                medicalCategoryDic = [NSDictionary dictionaryWithObjectsAndKeys:
+                                      [medicalCategory valueForKey:@"medicalCategoryID" ],@"Id",
+                                      [medicalCategory valueForKey:@"name" ],@"Name",
+                                      nil];
+            }
+
+            NSDictionary *medicalRecordDic = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              [medicalRecord valueForKey:@"medicalRecordID" ],@"Id",
+                                              [medicalRecord valueForKey:@"ownerID" ],@"Owner",
+                                              [medicalRecord valueForKey:@"creatorID" ],@"Creator",
+                                              medicalCategoryDic,@"Category",
+                                              [medicalRecord valueForKey:@"info" ],@"Info",
+                                              [medicalRecord valueForKey:@"time" ],@"Time",
+                                              [medicalRecord valueForKey:@"createdDate" ],@"Created",
+                                              [medicalRecord valueForKey:@"lastModified" ],@"LastModified",
+                                              nil];
+
+            if ([[medicalRecord valueForKey:@"medicalRecordID" ] isEqual:[NSString stringWithFormat:@"%@",[self.medicalRecordDic objectForKey:@"Id"]]]) {
+                self.medicalRecordDic = medicalRecordDic;
+            }
+            
+        }
+        
+    }
+
+}
+
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setupGestureRecognizer];
-//    self.noteViewHeight = [self.medicalNote boundingRectWithSize:CGSizeMake(self.view.bounds.size.width - 20, CGFLOAT_MAX)
-//                                                                                         options:NSStringDrawingUsesLineFragmentOrigin
-//                                                                                      attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15]}
-//                                                                                         context:nil].size.height;
 }
+
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
+    [self reloadDataFromCoreData];
     self.navigationController.topViewController.title=@"Details";
+    //setup barbutton
+    UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc]
+                                       initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(createMedicalRecord:)];
+    self.navigationController.topViewController.navigationItem.rightBarButtonItem = rightBarButton;
+}
+-(IBAction)createMedicalRecord:(id)sender{
+//    [self performSegueWithIdentifier:@"addMedicalRecordInfo" sender:self];
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -129,18 +193,44 @@
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-    if ([[segue identifier] isEqualToString:@"showDetailInformation"])
-    {
-        ShowDetailInfoMedicalRecordTableViewController *medicalRecordDetail = [segue destinationViewController];
-        medicalRecordDetail.infoString = [self.medicalRecordDic objectForKey:@"Info"];
+    //this view is use for add new medical record or not
+    if (self.isAddNewMedicalRecord) {
+
+        if ([[segue identifier] isEqualToString:@"showDetailInformation"])
+        {
+            ShowDetailInfoMedicalRecordTableViewController *medicalRecordDetail = [segue destinationViewController];
+            medicalRecordDetail.isAddNew = YES;
+        }
+        if ([[segue identifier] isEqualToString:@"medicalRecordPrescription"])
+        {
+            MedicalRecordPresctiptionTableViewController *medicalRecordPrescriptionDetail = [segue destinationViewController];
+            medicalRecordPrescriptionDetail.isAddNew = YES;
+        }
+
+        if ([[segue identifier] isEqualToString:@"medicalRecordNoteDetail"])
+        {
+            MedicalRecordNoteDetailTableViewController *medicalRecordNoteDetail = [segue destinationViewController];
+            medicalRecordNoteDetail.isAddNew = YES;
+        }
+
+    }else{
+        if ([[segue identifier] isEqualToString:@"showDetailInformation"])
+        {
+            ShowDetailInfoMedicalRecordTableViewController *medicalRecordDetail = [segue destinationViewController];
+            medicalRecordDetail.selectedMedicalRecord = self.medicalRecordDic;
+        }
+        if ([[segue identifier] isEqualToString:@"medicalRecordPrescription"])
+        {
+            MedicalRecordPresctiptionTableViewController *medicalRecordPrescriptionDetail = [segue destinationViewController];
+            medicalRecordPrescriptionDetail.medicalRecordID = [self.medicalRecordDic objectForKey:@"Id"];
+        }
+        if ([[segue identifier] isEqualToString:@"medicalRecordNoteDetail"])
+        {
+            MedicalRecordNoteDetailTableViewController *medicalRecordNoteDetail = [segue destinationViewController];
+            medicalRecordNoteDetail.medicalRecordID = [self.medicalRecordDic objectForKey:@"Id"];
+        }
     }
-    if ([[segue identifier] isEqualToString:@"medicalRecordPrescription"])
-    {
-        MedicalRecordPresctiptionTableViewController *medicalRecordPrescriptionDetail = [segue destinationViewController];
-        medicalRecordPrescriptionDetail.medicalRecordID = [self.medicalRecordDic objectForKey:@"Id"];
-    }
+
 }
 
 

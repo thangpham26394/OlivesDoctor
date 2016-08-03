@@ -9,5 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface ShowDetailInfoMedicalRecordTableViewController : UITableViewController
-@property(strong,nonatomic) NSString *infoString;
+@property(strong,nonatomic) NSDictionary *selectedMedicalRecord;
+@property(assign,nonatomic) BOOL isAddNew;
 @end

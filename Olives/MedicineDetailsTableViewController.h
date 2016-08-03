@@ -10,4 +10,5 @@
 
 @interface MedicineDetailsTableViewController : UITableViewController
 @property(strong,nonatomic) NSString *medicineString;
+@property(assign,nonatomic)BOOL isAddNew;
 @end

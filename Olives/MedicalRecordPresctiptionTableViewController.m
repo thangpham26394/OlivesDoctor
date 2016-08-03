@@ -116,7 +116,7 @@
 }
 #pragma mark - Connect to API function
 
--(void)loadPatienttDataFromAPI{
+-(void)loadPresciptionDataFromAPI{
 
     // create url
     NSURL *url = [NSURL URLWithString:APIURL];
@@ -192,6 +192,18 @@
     
 }
 
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:YES];
+    self.navigationController.topViewController.title=@"Medical Presctiption";
+    //setup barbutton
+    UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc]
+                                       initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addInfo:)];
+    self.navigationController.topViewController.navigationItem.rightBarButtonItem = rightBarButton;
+}
+
+-(IBAction)addInfo:(id)sender{
+    [self performSegueWithIdentifier:@"addMedicalRecordPrescription" sender:self];
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -203,8 +215,11 @@
 }
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
-    [self loadPatienttDataFromAPI];
-    [self.tableView reloadData];
+    if (!self.isAddNew) {
+        [self loadPresciptionDataFromAPI];
+        [self.tableView reloadData];
+    }
+
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -294,6 +309,12 @@
     {
         MedicineTableViewController * medicineTableViewcontroller = [segue destinationViewController];
         medicineTableViewcontroller.selectedPrescription = self.selectedPrescription;
+        medicineTableViewcontroller.isAddNew = NO;
+    }
+    if ([[segue identifier] isEqualToString:@"addMedicalRecordPrescription"])
+    {
+        MedicineTableViewController * medicineTableViewcontroller = [segue destinationViewController];
+        medicineTableViewcontroller.isAddNew = YES;
     }
 
 }

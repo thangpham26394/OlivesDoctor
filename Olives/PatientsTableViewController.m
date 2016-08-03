@@ -5,13 +5,14 @@
 //  Created by Tony Tony Chopper on 5/26/16.
 //  Copyright © 2016 Thang. All rights reserved.
 //
-#define APIURL @"http://olive.azurewebsites.net/api/people/filter"
+#define APIURL @"http://olive.azurewebsites.net/api/patient/filter"
 #import "PatientsTableViewController.h"
 #import "SWRevealViewController.h"
 #import "PatientTableViewCell.h"
 #import "TimePickerViewController.h"
 #import "PatientDetailsViewController.h"
 #import "MedicalRecordTableViewController.h"
+#import "PrescriptionViewController.h"
 #import <CoreData/CoreData.h>
 @interface PatientsTableViewController ()
 //@property (weak, nonatomic) IBOutlet UIBarButtonItem *menuButton;
@@ -111,7 +112,7 @@
 }
 
 -(void)savePatientToCoreData{
-    self.patientArray = [self.responseJSONData objectForKey:@"Users"];
+    self.patientArray = [self.responseJSONData objectForKey:@"Patients"];
     //delete all the current patients in coredata
     NSManagedObjectContext *context = [self managedObjectContext];
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"PatientInfo"];
@@ -136,6 +137,8 @@
         NSString *photo = [patient objectForKey:@"Photo"];
         NSString *address = [patient objectForKey:@"Address"];
         NSString *email = [patient objectForKey:@"Email"];
+        NSString *weight = [patient objectForKey:@"Weight"];
+        NSString *height = [patient objectForKey:@"Height"];
 
         //create new patient object
         NSManagedObject *newPatient  = [NSEntityDescription insertNewObjectForEntityForName:@"PatientInfo" inManagedObjectContext:context];
@@ -151,6 +154,8 @@
         [newPatient setValue:patientPhotoData  forKey:@"photo"];
         [newPatient setValue: [NSString stringWithFormat:@"%@", address] forKey:@"address"];
         [newPatient setValue: [NSString stringWithFormat:@"%@", email] forKey:@"email"];
+        [newPatient setValue: [NSString stringWithFormat:@"%@", weight] forKey:@"weight"];
+        [newPatient setValue: [NSString stringWithFormat:@"%@", height] forKey:@"height"];
         NSError *error = nil;
         // Save the object to persistent store
         if (![context save:&error]) {
@@ -180,6 +185,8 @@
                                     [patient valueForKey:@"photo" ],@"Photo",
                                     [patient valueForKey:@"address" ],@"Address",
                                     [patient valueForKey:@"email" ],@"Email",
+                                    [patient valueForKey:@"weight" ],@"Weight",
+                                    [patient valueForKey:@"height" ],@"Height",
                                     nil];
         [patientArrayForFailAPI addObject:patientDic];
     }
@@ -347,8 +354,10 @@
 
         PatientDetailsViewController * patientDetail = [tabBar.viewControllers objectAtIndex:1];
         MedicalRecordTableViewController *medicalRecord = [tabBar.viewControllers objectAtIndex:2];
+        PrescriptionViewController *prescription = [tabBar.viewControllers objectAtIndex:3];
         patientDetail.selectedPatientID = [NSString stringWithFormat:@"%@",[self.selectedPatient objectForKey:@"Id"]];
         medicalRecord.selectedPatientID= [NSString stringWithFormat:@"%@",[self.selectedPatient objectForKey:@"Id"]];
+        prescription.selectedPatientID = [NSString stringWithFormat:@"%@",[self.selectedPatient objectForKey:@"Id"]];
         tabBar.selectedIndex = 1;
     }
 

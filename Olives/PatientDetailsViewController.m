@@ -5,7 +5,7 @@
 //  Created by Tony Tony Chopper on 6/25/16.
 //  Copyright © 2016 Thang. All rights reserved.
 //
-
+#define APIURL @"http://olive.azurewebsites.net/api/medical/experiment/filter"
 #import "PatientDetailsViewController.h"
 #import <CoreData/CoreData.h>
 @interface PatientDetailsViewController ()
@@ -17,7 +17,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *patientPhone;
 @property (weak, nonatomic) IBOutlet UILabel *patientAddress;
 @property (weak, nonatomic) IBOutlet UILabel *patientEmail;
-
+@property (strong,nonatomic) NSDictionary *responseJSONData;
+@property (strong,nonatomic) NSArray *experimentArray;
 
 @end
 
@@ -33,6 +34,166 @@
     return context;
 }
 
+-(void)loadMedicalExperimentFromCoreDataWhenAPIFail{
+    NSMutableArray *experimentArrayForFailAPI = [[NSMutableArray alloc]init];
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"ExperimentNotes"];
+    NSMutableArray *experimentNoteObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *experimentNote;
+    for (int index =0; index<experimentNoteObject.count; index++) {
+        //get each patient in coredata
+        experimentNote = [experimentNoteObject objectAtIndex:index];
+        if ([[experimentNote valueForKey:@"ownerID"] isEqual:self.selectedPatientID]) {
+            NSDictionary *experimentDic = [NSDictionary dictionaryWithObjectsAndKeys:
+                                           [experimentNote valueForKey:@"id" ],@"Id",
+                                           [experimentNote valueForKey:@"medicalRecordID"],@"MedicalRecord",
+                                           [experimentNote valueForKey:@"ownerID" ],@"Owner",
+                                           [experimentNote valueForKey:@"creatorID" ],@"Creator",
+                                           [experimentNote valueForKey:@"name" ],@"Name",
+                                           [experimentNote valueForKey:@"info" ],@"Info",
+                                           [experimentNote valueForKey:@"createdDate" ],@"Created",
+                                           [experimentNote valueForKey:@"lastModified" ],@"LastModified",
+                                           nil];
+            [experimentArrayForFailAPI addObject:experimentDic];
+        }
+
+    }
+    self.experimentArray = (NSArray*)experimentArrayForFailAPI;
+
+}
+
+-(void)saveMedicalExperimentToCoreData{
+    self.experimentArray = [self.responseJSONData objectForKey:@"ExperimentNotes"];
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"ExperimentNotes"];
+    NSMutableArray *experimentNoteObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *experimentNote;
+    //delete previous prescription
+    if (experimentNoteObject.count >0) {
+
+        for (int index=0; index < experimentNoteObject.count; index++) {
+            experimentNote = [experimentNoteObject objectAtIndex:index];
+            if ([[experimentNote valueForKey:@"ownerID"] isEqual:self.selectedPatientID]) {
+                [context deleteObject:experimentNote];//only delete the experiment note that belong to selected patient
+            }
+
+        }
+    }
+
+    // insert new patients that gotten from API
+    for (int index = 0; index < self.experimentArray.count; index++) {
+        NSDictionary *prescriptionDic = self.experimentArray[index];
+
+        NSString *experimentID = [prescriptionDic objectForKey:@"Id"];
+        NSString *medicalRecord = [prescriptionDic objectForKey:@"MedicalRecord"];
+        NSString *owner = [prescriptionDic objectForKey:@"Owner"];
+        NSString *creator = [prescriptionDic objectForKey:@"Creator"];
+        NSString *name = [prescriptionDic objectForKey:@"Name"];
+        NSString *info = [prescriptionDic objectForKey:@"Info"];
+        NSString *createdDate = [prescriptionDic objectForKey:@"Created"];
+        NSString *lastModified = [prescriptionDic objectForKey:@"LastModified"];
+
+
+        //create new patient object
+        NSManagedObject *newExperiment = [NSEntityDescription insertNewObjectForEntityForName:@"ExperimentNotes" inManagedObjectContext:context];
+        //set value for each attribute of new patient before save to core data
+        [newExperiment setValue: [NSString stringWithFormat:@"%@", experimentID] forKey:@"id"];
+        [newExperiment setValue: [NSString stringWithFormat:@"%@", medicalRecord] forKey:@"medicalRecordID"];
+        [newExperiment setValue: [NSString stringWithFormat:@"%@", owner] forKey:@"ownerID"];
+        [newExperiment setValue: [NSString stringWithFormat:@"%@", creator] forKey:@"creatorID"];
+        [newExperiment setValue: [NSString stringWithFormat:@"%@", name] forKey:@"name"];
+        [newExperiment setValue: [NSString stringWithFormat:@"%@", info] forKey:@"info"];
+        [newExperiment setValue: [NSString stringWithFormat:@"%@", createdDate] forKey:@"createdDate"];
+        [newExperiment setValue: [NSString stringWithFormat:@"%@", lastModified] forKey:@"lastModified"];
+
+
+        NSError *error = nil;
+        // Save the object to persistent store
+        if (![context save:&error]) {
+            NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
+        }else{
+            NSLog(@"Save Experiment Note success!");
+        }
+    }
+}
+
+
+#pragma mark - Connect to API function
+
+-(void)loadExperimentNoteDataFromAPI{
+
+    // create url
+    NSURL *url = [NSURL URLWithString:APIURL];
+    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+    //create JSON data to post to API
+    NSDictionary *account = @{
+                              @"Mode" :  @"0"
+                              };
+    NSError *error = nil;
+    NSData *jsondata = [NSJSONSerialization dataWithJSONObject:account options:NSJSONWritingPrettyPrinted error:&error];
+
+    sessionConfig.timeoutIntervalForRequest = 5.0;
+    sessionConfig.timeoutIntervalForResource = 5.0;
+    // config session
+    //NSURLSession *defaultSession = [NSURLSession sharedSession];
+    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:sessionConfig];
+    //create request
+    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
+
+    //get doctor email and password from coredata
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+
+    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+
+
+    //setup header and body for request
+    [urlRequest setHTTPMethod:@"POST"];
+    [urlRequest setValue:[doctor valueForKey:@"email"] forHTTPHeaderField:@"Email"];
+    [urlRequest setValue:[doctor valueForKey:@"password"]  forHTTPHeaderField:@"Password"];
+    [urlRequest setValue:@"en-US" forHTTPHeaderField:@"Accept-Language"];
+    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+
+    [urlRequest setHTTPBody:jsondata];
+    dispatch_semaphore_t    sem;
+    sem = dispatch_semaphore_create(0);
+
+    NSURLSessionDataTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
+                                                       completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+                                      {
+                                          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+
+                                          if((long)[httpResponse statusCode] == 200  && error ==nil)
+                                          {
+                                              NSError *parsJSONError = nil;
+                                              self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                              if (self.responseJSONData != nil) {
+                                                  [self saveMedicalExperimentToCoreData];
+                                              }else{
+                                                  [self loadMedicalExperimentFromCoreDataWhenAPIFail];
+                                              }
+
+
+                                              //stop waiting after get response from API
+                                              dispatch_semaphore_signal(sem);
+                                          }
+                                          else{
+                                              NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+                                              NSLog(@"\n\n\nError = %@",text);
+                                              //self.patientArray = [self loadPatientFromCoreDataWhenAPIFail];
+                                              [self loadMedicalExperimentFromCoreDataWhenAPIFail];
+                                              dispatch_semaphore_signal(sem);
+                                              return;
+                                          }
+                                      }];
+    [dataTask resume];
+    //start waiting until get response from API
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    
+}
+
+
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
     self.navigationController.topViewController.title=@"Patient Details";
@@ -41,6 +202,13 @@
                                        initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addInfo:)];
     self.navigationController.topViewController.navigationItem.rightBarButtonItem = rightBarButton;
 }
+
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    [self loadExperimentNoteDataFromAPI];
+    [self.importantInfoTableView reloadData];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -89,7 +257,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
-    return 10;
+    return self.experimentArray.count;
 }
 
 
@@ -102,8 +270,10 @@
 
     }
     // Configure the cell...
-    cell.textLabel.text = @"Diabetes";
-//    cell.detailTextLabel.text = @"details";
+
+    NSDictionary *experimentDic = [self.experimentArray objectAtIndex:indexPath.row];
+    cell.textLabel.text = [experimentDic objectForKey:@"Name"];
+    cell.detailTextLabel.text = @"details";
 
     cell.preservesSuperviewLayoutMargins = NO;
     cell.separatorInset = UIEdgeInsetsZero;

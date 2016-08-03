@@ -41,7 +41,16 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     self.title = @"Home";
+    self.messageNotiView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.2];
+    self.patientRequestNotiView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.2];
+    self.appointmentNotiView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.2];
+    self.serviceNotiView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.2];
+
     self.avatar.layer.cornerRadius = self.avatar.frame.size.width / 2;
+    self.avatar.clipsToBounds = YES;
+    self.avatar.layer.borderWidth = 1.0f;
+    self.avatar.layer.borderColor = [UIColor whiteColor].CGColor;
+    
     self.messageNotiView.layer.cornerRadius = 5.0f;
     self.patientRequestNotiView.layer.cornerRadius = 5.0f;
     self.appointmentNotiView.layer.cornerRadius = 5.0f;

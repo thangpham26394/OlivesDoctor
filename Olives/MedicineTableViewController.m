@@ -67,8 +67,8 @@
 #pragma mark - Table view data source
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    if (indexPath.section ==2) {
-        return self.noteViewHeight + 65;
+    if (indexPath.section ==3) {
+        return self.noteViewHeight + 100;
     }else{
         return 45;
     }
@@ -127,7 +127,13 @@
     if ([[segue identifier] isEqualToString:@"showListMedicines"])
     {
         MedicineDetailsTableViewController * medicineDetailTableViewcontroller = [segue destinationViewController];
-        medicineDetailTableViewcontroller.medicineString = [self.selectedPrescription objectForKey:@"Medicine"];
+        if (self.isAddNew) {
+            medicineDetailTableViewcontroller.isAddNew = YES;
+        }else{
+            medicineDetailTableViewcontroller.isAddNew = NO;
+            medicineDetailTableViewcontroller.medicineString = [self.selectedPrescription objectForKey:@"Medicine"];
+        }
+
     }
 }
 

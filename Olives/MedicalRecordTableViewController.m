@@ -8,6 +8,7 @@
 #define APIURL @"http://olive.azurewebsites.net/api/medical/record/filter"
 #import "MedicalRecordTableViewController.h"
 #import "MedicalRecordDetailTableViewController.h"
+#import "PickNewMedicalRecordViewController.h"
 #import <CoreData/CoreData.h>
 
 @interface MedicalRecordTableViewController ()
@@ -15,6 +16,8 @@
 @property (strong,nonatomic) NSMutableArray *medicalCategoryArray;
 @property (strong,nonatomic) NSArray *medicalRecordArray;
 @property (strong,nonatomic) NSArray *selectedMedicalRecord;
+@property (strong,nonatomic)NSDictionary *addNewCategory;
+@property (strong,nonatomic)NSDictionary *selectedCategory;
 @end
 
 @implementation MedicalRecordTableViewController
@@ -28,10 +31,30 @@
     self.navigationController.topViewController.navigationItem.rightBarButtonItem = rightBarButton;
 }
 
+-(void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    //self.addNewCategory = nil;
+}
+
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
     self.medicalCategoryArray = [[NSMutableArray alloc]init];
     [self loadMedicalRecordDataFromAPI];
+    //check if there is new catagory added
+    if (self.addNewCategory !=nil) {
+        BOOL isAlreadyHave = NO;
+        //check if new category already have or not
+        for (int index = 0; index <self.medicalCategoryArray.count; index++) {
+            if ([ [NSString stringWithFormat:@"%@",[self.medicalCategoryArray[index] objectForKey:@"Id"]] isEqual:[NSString stringWithFormat:@"%@",[self.addNewCategory objectForKey:@"Id"]]] ) {
+                isAlreadyHave = YES;
+            }
+        }
+        //if new category isn't in current category array then add new
+        if (!isAlreadyHave) {
+            [self.medicalCategoryArray addObject:self.addNewCategory];
+        }
+
+    }
     [self.tableView reloadData];
 }
 
@@ -119,7 +142,6 @@
 
                                               }
 
-
                                               //stop waiting after get response from API
                                               dispatch_semaphore_signal(sem);
                                           }
@@ -172,8 +194,20 @@
         NSString *createdDate = [medicalRecordDic objectForKey:@"Created"];
         NSString *lastModified = [medicalRecordDic objectForKey:@"LastModified"];
 
-        [self.medicalCategoryArray addObject:category];
-        [self saveMedicalCategoryToCoreData:category];
+        BOOL isAlreadyHave = NO;
+        //check if new category already have or not
+        for (int index = 0; index <self.medicalCategoryArray.count; index++) {
+            if ([ [NSString stringWithFormat:@"%@",[self.medicalCategoryArray[index] objectForKey:@"Id"]] isEqual:[NSString stringWithFormat:@"%@",[category objectForKey:@"Id"]]] ) {
+                isAlreadyHave = YES;
+            }
+        }
+        //if new category isn't in current category array then add new
+        if (!isAlreadyHave) {
+            [self.medicalCategoryArray addObject:category];
+            [self saveMedicalCategoryToCoreData:category];
+        }
+
+
 
         //create new medical record object
         NSManagedObject *newMedicalRecord = [NSEntityDescription insertNewObjectForEntityForName:@"MedicalRecord" inManagedObjectContext:context];
@@ -265,7 +299,19 @@
                                           [medicalCategory valueForKey:@"medicalCategoryID" ],@"Id",
                                           [medicalCategory valueForKey:@"name" ],@"Name",
                                           nil];
-                    [medicalCategoryForFailAPiArray addObject:medicalCategoryDic];
+                    
+                    BOOL isAlreadyHave = NO;
+                    //check if new category already have or not
+                    for (int index = 0; index <medicalCategoryForFailAPiArray.count; index++) {
+                        if ([ [NSString stringWithFormat:@"%@",[medicalCategoryForFailAPiArray[index] objectForKey:@"Id"]] isEqual:[NSString stringWithFormat:@"%@",[medicalCategoryDic objectForKey:@"Id"]]] ) {
+                            isAlreadyHave = YES;
+                        }
+                    }
+                    //if new category isn't in current category array then add new
+                    if (!isAlreadyHave) {
+                        [medicalCategoryForFailAPiArray addObject:medicalCategoryDic];
+                    }
+
                 }
             }
 
@@ -290,6 +336,7 @@
 
 -(IBAction)addInfo:(id)sender{
     NSLog(@"add medical");
+    [self performSegueWithIdentifier:@"pickMedicalRecord" sender:self];
 }
 
 #pragma mark - Table view data source
@@ -336,6 +383,7 @@
 
 
     self.selectedMedicalRecord = medicalRecordArray;
+    self.selectedCategory = [self.medicalCategoryArray objectAtIndex:indexPath.row] ;
     [self performSegueWithIdentifier:@"showMedicalRecord" sender:self];
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
@@ -378,6 +426,17 @@
 
 #pragma mark - Navigation
 
+- (IBAction)unwindChoseNewMedicalRecordViewController:(UIStoryboardSegue *)unwindSegue
+{
+        PickNewMedicalRecordViewController* sourceViewController = unwindSegue.sourceViewController;
+    
+        if (sourceViewController.didAddCategory)
+        {
+            self.addNewCategory= sourceViewController.selectedCategory;
+        }
+
+}
+
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
 //     Get the new view controller using [segue destinationViewController].
@@ -385,7 +444,9 @@
     if ([[segue identifier] isEqualToString:@"showMedicalRecord"])
     {
         MedicalRecordDetailTableViewController *medicalRecordDetail = [segue destinationViewController];
-        medicalRecordDetail.medicalRecordArray = self.selectedMedicalRecord;
+        medicalRecordDetail.medicalRecordArray = (NSMutableArray*)self.selectedMedicalRecord;
+        medicalRecordDetail.selectedCategory = self.selectedCategory;
+        medicalRecordDetail.selectedPatientID = self.selectedPatientID;
     }
 }
 
