@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface MedicineImagesCollectionViewController : UICollectionViewController
-
+@interface MedicineImagesCollectionViewController : UICollectionViewController<UIImagePickerControllerDelegate>
+@property(strong,nonatomic) NSString *selectedPrescriptionID;
 @end

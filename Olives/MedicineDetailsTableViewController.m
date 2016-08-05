@@ -8,14 +8,75 @@
 
 #import "MedicineDetailsTableViewController.h"
 #import "MedicineTableViewCell.h"
+#import "AddOrUpdateMedicineViewController.h"
+#import <CoreData/CoreData.h>
+
+
 @interface MedicineDetailsTableViewController ()
 @property(strong,nonatomic) NSDictionary *medicinedic;
+@property (strong,nonatomic) NSDictionary *selectedPrescription;
 @end
 
 @implementation MedicineDetailsTableViewController
+
+#pragma mark - Handle Coredata
+- (NSManagedObjectContext *)managedObjectContext {
+    NSManagedObjectContext *context = nil;
+    id delegate = [[UIApplication sharedApplication] delegate];
+    if ([delegate performSelector:@selector(managedObjectContext)]) {
+        context = [delegate managedObjectContext];
+    }
+    return context;
+}
+
+-(void)loadPrescriptionsFromCoreData{
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Prescriptions"];
+    NSMutableArray *prescriptionObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *prescription;
+    for (int index =0; index<prescriptionObject.count; index++) {
+        //get each patient in coredata
+        prescription = [prescriptionObject objectAtIndex:index];
+        if ([[prescription valueForKey:@"prescriptionID"] isEqual:[NSString stringWithFormat:@"%@",self.selectedPrescriptionID]]) {
+            NSDictionary *prescriptionDic = [NSDictionary dictionaryWithObjectsAndKeys:
+                                             [prescription valueForKey:@"prescriptionID" ],@"Id",
+                                             [prescription valueForKey:@"medicalRecord" ],@"MedicalRecord",
+                                             [prescription valueForKey:@"from" ],@"From",
+                                             [prescription valueForKey:@"to" ],@"To",
+                                             [prescription valueForKey:@"name" ],@"Name",
+                                             [prescription valueForKey:@"medicine" ],@"Medicine",
+                                             [prescription valueForKey:@"note" ],@"Note",
+                                             [prescription valueForKey:@"ownerID" ],@"Owner",
+                                             [prescription valueForKey:@"createdDate" ],@"Created",
+                                             [prescription valueForKey:@"lastModified" ],@"LastModified",
+                                             nil];
+            self.selectedPrescription = prescriptionDic;
+        }
+
+    }
+    
+}
+
+
+
+
+
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
-    self.navigationController.topViewController.title=@"Medical Presctiption";
+    [self loadPrescriptionsFromCoreData];
+    NSString *medicineString = [self.selectedPrescription objectForKey:@"Medicine"];
+    if ((id)medicineString == [NSNull null]) {
+        medicineString =@"";
+    }
+
+    NSError *jsonError;
+    NSData *objectData = [medicineString dataUsingEncoding:NSUTF8StringEncoding];
+    self.medicinedic = [NSJSONSerialization JSONObjectWithData:objectData
+                                                       options:NSJSONReadingMutableContainers
+                                                         error:&jsonError];
+    [self.tableView reloadData];
+    
+    self.navigationController.topViewController.title=@"Medicines";
     //setup barbutton
     UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc]
                                        initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addMedicine:)];
@@ -23,7 +84,7 @@
 }
 
 -(IBAction)addMedicine:(id)sender{
-//    [self performSegueWithIdentifier:@"addMedicalRecordPrescription" sender:self];
+    [self performSegueWithIdentifier:@"addNewMedicine" sender:self];
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -33,15 +94,6 @@
     self.tableView.backgroundView = imageView;
 
 
-    if (self.isAddNew) {
-        self.medicinedic = [[NSDictionary alloc]init];
-    }else{
-        NSError *jsonError;
-        NSData *objectData = [self.medicineString dataUsingEncoding:NSUTF8StringEncoding];
-        self.medicinedic = [NSJSONSerialization JSONObjectWithData:objectData
-                                                           options:NSJSONReadingMutableContainers
-                                                             error:&jsonError];
-    }
 
 
 }
@@ -113,14 +165,20 @@
 }
 */
 
-/*
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+    if ([[segue identifier] isEqualToString:@"addNewMedicine"])
+    {
+        AddOrUpdateMedicineViewController * addOrUpdatePrescriptionViewcontroller = [segue destinationViewController];
+        addOrUpdatePrescriptionViewcontroller.selectedPrescription = self.selectedPrescription;
+
+    }
 }
-*/
+
 
 @end

@@ -9,6 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface MedicineDetailsTableViewController : UITableViewController
-@property(strong,nonatomic) NSString *medicineString;
-@property(assign,nonatomic)BOOL isAddNew;
+@property(strong,nonatomic) NSString *selectedPrescriptionID;
 @end

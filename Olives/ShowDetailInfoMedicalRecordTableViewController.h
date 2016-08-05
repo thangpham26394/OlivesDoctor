@@ -10,5 +10,5 @@
 
 @interface ShowDetailInfoMedicalRecordTableViewController : UITableViewController
 @property(strong,nonatomic) NSDictionary *selectedMedicalRecord;
-@property(assign,nonatomic) BOOL isAddNew;
+
 @end

@@ -8,15 +8,59 @@
 
 #import "MedicineTableViewController.h"
 #import "MedicineDetailsTableViewController.h"
+#import "MedicineImagesCollectionViewController.h"
+#import "AddNewPrescriptionViewController.h"
+#import <CoreData/CoreData.h>
 
 @interface MedicineTableViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 @property (weak, nonatomic) IBOutlet UITextView *noteView;
 @property(assign,nonatomic) CGFloat noteViewHeight;
-
+@property (strong,nonatomic) NSDictionary *selectedPrescription;
 @end
 
 @implementation MedicineTableViewController
+
+#pragma mark - Handle Coredata
+- (NSManagedObjectContext *)managedObjectContext {
+    NSManagedObjectContext *context = nil;
+    id delegate = [[UIApplication sharedApplication] delegate];
+    if ([delegate performSelector:@selector(managedObjectContext)]) {
+        context = [delegate managedObjectContext];
+    }
+    return context;
+}
+
+-(void)loadPrescriptionsFromCoreData{
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Prescriptions"];
+    NSMutableArray *prescriptionObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *prescription;
+    for (int index =0; index<prescriptionObject.count; index++) {
+        //get each patient in coredata
+        prescription = [prescriptionObject objectAtIndex:index];
+        if ([[prescription valueForKey:@"prescriptionID"] isEqual:[NSString stringWithFormat:@"%@",self.selectedPrescriptionID]]) {
+            NSDictionary *prescriptionDic = [NSDictionary dictionaryWithObjectsAndKeys:
+                                            [prescription valueForKey:@"prescriptionID" ],@"Id",
+                                            [prescription valueForKey:@"medicalRecord" ],@"MedicalRecord",
+                                            [prescription valueForKey:@"from" ],@"From",
+                                            [prescription valueForKey:@"to" ],@"To",
+                                            [prescription valueForKey:@"name" ],@"Name",
+                                            [prescription valueForKey:@"medicine" ],@"Medicine",
+                                            [prescription valueForKey:@"note" ],@"Note",
+                                            [prescription valueForKey:@"ownerID" ],@"Owner",
+                                            [prescription valueForKey:@"createdDate" ],@"Created",
+                                            [prescription valueForKey:@"lastModified" ],@"LastModified",
+                                            nil];
+            self.selectedPrescription = prescriptionDic;
+        }
+
+    }
+    
+}
+
+
+
 //-(void)viewWillLayoutSubviews{
 //    CGFloat fixedWidth = self.noteView.frame.size.width;
 //    CGSize newSize = [self.noteView sizeThatFits:CGSizeMake(fixedWidth, MAXFLOAT)];
@@ -24,11 +68,12 @@
 //    newFrame.size = CGSizeMake(fmaxf(newSize.width, fixedWidth), newSize.height);
 //    self.noteView.frame = newFrame;
 //}
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    NSLog(@"-------------------------%@",self.selectedPrescription);
-    [self setupGestureRecognizer];
 
+
+
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    [self loadPrescriptionsFromCoreData];
     NSDateFormatter * dateFormatterToLocal= [[NSDateFormatter alloc] init];
     [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
     [dateFormatterToLocal setDateFormat:@"MM/dd/yyyy"];
@@ -43,12 +88,21 @@
 
     self.timeLabel.text = [NSString stringWithFormat:@"From:%@ to:%@",[dateFormatterToLocal stringFromDate:fromDateLocal],[dateFormatterToLocal stringFromDate:toDateLocal]];
     self.noteView.text=[self.selectedPrescription objectForKey:@"Note"];
+    [self.noteView setUserInteractionEnabled:NO];
     [self.noteView sizeToFit];
 
     self.noteViewHeight = [[self.selectedPrescription objectForKey:@"Note"] boundingRectWithSize:CGSizeMake(self.view.bounds.size.width - 20, CGFLOAT_MAX)
-                                                    options:NSStringDrawingUsesLineFragmentOrigin
-                                                 attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15]}
-                                                    context:nil].size.height;
+                                                                                         options:NSStringDrawingUsesLineFragmentOrigin
+                                                                                      attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15]}
+                                                                                         context:nil].size.height;
+}
+
+
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    NSLog(@"-------------------------%@",self.selectedPrescriptionID);
+    [self setupGestureRecognizer];
 }
 -(void) setupGestureRecognizer {
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
@@ -67,8 +121,8 @@
 #pragma mark - Table view data source
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    if (indexPath.section ==3) {
-        return self.noteViewHeight + 100;
+    if (indexPath.section ==2) {
+        return self.noteViewHeight + 60;
     }else{
         return 45;
     }
@@ -127,12 +181,19 @@
     if ([[segue identifier] isEqualToString:@"showListMedicines"])
     {
         MedicineDetailsTableViewController * medicineDetailTableViewcontroller = [segue destinationViewController];
-        if (self.isAddNew) {
-            medicineDetailTableViewcontroller.isAddNew = YES;
-        }else{
-            medicineDetailTableViewcontroller.isAddNew = NO;
-            medicineDetailTableViewcontroller.medicineString = [self.selectedPrescription objectForKey:@"Medicine"];
-        }
+        medicineDetailTableViewcontroller.selectedPrescriptionID = self.selectedPrescriptionID ;
+
+    }
+    if ([[segue identifier] isEqualToString:@"showPrescriptionImage"])
+    {
+        MedicineImagesCollectionViewController * medicineImageColectionViewcontroller = [segue destinationViewController];
+        medicineImageColectionViewcontroller.selectedPrescriptionID = [self.selectedPrescription objectForKey:@"Id"];
+
+    }
+    if ([[segue identifier] isEqualToString:@"editMedicineInfo"])
+    {
+        AddNewPrescriptionViewController * addNewPrescriptionViewcontroller = [segue destinationViewController];
+        addNewPrescriptionViewcontroller.selectedPrescription = self.selectedPrescription;
 
     }
 }

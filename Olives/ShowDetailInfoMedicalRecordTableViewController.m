@@ -9,6 +9,7 @@
 #import "ShowDetailInfoMedicalRecordTableViewController.h"
 #import "UpdateDetailInfoMedicalRecordViewController.h"
 #import "StringStringTableViewCell.h"
+#import <CoreData/CoreData.h>
 @interface ShowDetailInfoMedicalRecordTableViewController ()
 @property(strong,nonatomic) NSMutableDictionary *info;
 @property(strong,nonatomic) NSString *selectedInfoKey;
@@ -16,6 +17,40 @@
 @end
 
 @implementation ShowDetailInfoMedicalRecordTableViewController
+#pragma mark - Handle Coredata
+- (NSManagedObjectContext *)managedObjectContext {
+    NSManagedObjectContext *context = nil;
+    id delegate = [[UIApplication sharedApplication] delegate];
+    if ([delegate performSelector:@selector(managedObjectContext)]) {
+        context = [delegate managedObjectContext];
+    }
+    return context;
+}
+
+-(void)loadInfoFromCoredata{
+    self.info = [[NSMutableDictionary alloc] init];
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"MedicalRecord"];
+    NSMutableArray *medicalRecordObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *medicalRecord;
+
+    for (int index=0; index < medicalRecordObject.count; index++) {
+        medicalRecord = [medicalRecordObject objectAtIndex:index];
+        if ([[medicalRecord valueForKey:@"medicalRecordID"] isEqual:[NSString stringWithFormat:@"%@",[self.selectedMedicalRecord objectForKey:@"Id"]]]) {
+            //get info of medical record in coredata which have same id with selected medical record
+            NSString *infoString = [medicalRecord valueForKey:@"info"];
+
+            NSError *jsonError;
+            NSData *objectData = [infoString dataUsingEncoding:NSUTF8StringEncoding];
+            self.info = [NSJSONSerialization JSONObjectWithData:objectData
+                                                        options:NSJSONReadingMutableContainers
+                                                          error:&jsonError];
+        }
+    }
+    if (self.info ==nil) {
+        self.info = [[NSMutableDictionary alloc] init];
+    }
+}
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
@@ -24,6 +59,7 @@
     UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc]
                                        initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addInfo:)];
     self.navigationController.topViewController.navigationItem.rightBarButtonItem = rightBarButton;
+    [self loadInfoFromCoredata];
 }
 
 -(IBAction)addInfo:(id)sender{
@@ -33,15 +69,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
-    NSError *jsonError;
-    NSData *objectData = [[self.selectedMedicalRecord objectForKey:@"Info"] dataUsingEncoding:NSUTF8StringEncoding];
-    self.info = [NSJSONSerialization JSONObjectWithData:objectData
-                                                    options:NSJSONReadingMutableContainers
-                                                      error:&jsonError];
-    if (self.info ==nil) {
-        self.info = [[NSMutableDictionary alloc]init];
-    }
-    
+
+//    if (self.info ==nil) {
+//        self.info = [[NSMutableDictionary alloc]init];
+//    }
+
 }
 
 - (void)didReceiveMemoryWarning {

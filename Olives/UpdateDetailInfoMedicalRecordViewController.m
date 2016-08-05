@@ -22,6 +22,9 @@
 @property (strong,nonatomic) NSMutableDictionary *updateCopy;
 @property(assign,nonatomic) BOOL isUpdateView;
 - (IBAction)saveAction:(id)sender;
+- (IBAction)deleteAction:(id)sender;
+@property (weak, nonatomic) IBOutlet UIButton *deleteOrCancalButton;
+
 
 @end
 
@@ -68,7 +71,7 @@
     [urlRequest setValue:@"en-US" forHTTPHeaderField:@"Accept-Language"];
     [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     //create JSON data to post to API
-//    NSDictionary *account = self.totalInfo;
+
     NSDictionary *account = @{
                               @"Infos" :self.totalInfo,
                               @"Category":[[self.selectedMedicalRecord objectForKey:@"Category"]objectForKey:@"Id"],
@@ -127,7 +130,12 @@
     for (int index=0; index < medicalRecordObject.count; index++) {
         medicalRecord = [medicalRecordObject objectAtIndex:index];
         if ([[medicalRecord valueForKey:@"medicalRecordID"] isEqual:[NSString stringWithFormat:@"%@",[self.selectedMedicalRecord objectForKey:@"Id"]]]) {
-            [medicalRecord setValue:[NSString stringWithFormat:@"%@",self.totalInfo] forKey:@"info"];//only update medical record that selected before
+
+            NSError * err;
+            NSData * jsonData = [NSJSONSerialization dataWithJSONObject:self.totalInfo options:0 error:&err];
+            NSString * myString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+
+            [medicalRecord setValue:[NSString stringWithFormat:@"%@",myString] forKey:@"info"];//only update medical record that selected before
 
         }
 
@@ -173,6 +181,7 @@
     if (self.isUpdateView) {
         self.textField.text = self.selectedInfoKey;
         self.textView.text = [self.totalInfo objectForKey:self.selectedInfoKey];
+        [self.deleteOrCancalButton setTitle:@"Delete" forState:UIControlStateNormal];
     }
 }
 
@@ -208,12 +217,16 @@
         [self.totalInfo removeObjectForKey:self.selectedInfoKey];
         [self.totalInfo setObject:value forKey:name];
 
-//        self.info = [NSDictionary dictionaryWithObjectsAndKeys:
-//                     value,name
-//                     , nil];
-
-        
     }
+
+    if ([[segue identifier] isEqualToString:@"deleteInfoUnwind"])
+    {
+        //create mutable copy of totalinfo
+        self.updateCopy = [self.totalInfo mutableCopy];
+        [self.totalInfo removeObjectForKey:self.selectedInfoKey]; //remove info in dictionary
+    }
+
+
     [self updateNewMedicalRecordDataToAPI];
 
 }
@@ -228,4 +241,37 @@
         [self performSegueWithIdentifier:@"addNewInfoUnwind" sender:self];
     }
 }
+
+- (IBAction)deleteAction:(id)sender {
+    if (self.isUpdateView) {
+        [self showAlertViewWhenDelete];
+
+    }else{
+        //add new info string
+       [self.navigationController popViewControllerAnimated:YES];
+    }
+}
+
+-(void)showAlertViewWhenDelete{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Are you sure"
+                                                                   message:@"This info will be deleted"
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {
+                                                         //sent request to API here
+                                                         NSLog(@"OK Action!");
+                                                         [self performSegueWithIdentifier:@"deleteInfoUnwind" sender:self];
+
+                                                     }];
+    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
+                                                         handler:^(UIAlertAction * action) {
+                                                             NSLog(@"cancel Action!");
+                                                         }];
+
+
+    [alert addAction:OKAction];
+    [alert addAction:cancelAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
 @end

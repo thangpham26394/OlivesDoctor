@@ -44,7 +44,7 @@
         //get each patient in coredata
         prescription = [prescriptionObject objectAtIndex:index];
         if ([[prescription valueForKey:@"ownerID"] isEqual:[NSString stringWithFormat:@"%@",self.selectedPatientID]]) {
-            NSDictionary *appointmentDic = [NSDictionary dictionaryWithObjectsAndKeys:
+            NSDictionary *prescriptionDic = [NSDictionary dictionaryWithObjectsAndKeys:
                                             [prescription valueForKey:@"prescriptionID" ],@"Id",
                                             [prescription valueForKey:@"medicalRecord" ],@"MedicalRecord",
                                             [prescription valueForKey:@"from" ],@"From",
@@ -56,7 +56,7 @@
                                             [prescription valueForKey:@"createdDate" ],@"Created",
                                             [prescription valueForKey:@"lastModified" ],@"LastModified",
                                             nil];
-            [prescriptionArrayForFailAPI addObject:appointmentDic];
+            [prescriptionArrayForFailAPI addObject:prescriptionDic];
         }
 
     }
@@ -209,11 +209,13 @@
     [super viewWillAppear:YES];
     self.navigationController.topViewController.title=@"Prescription";
     //setup barbutton
-    UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc]
-                                       initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addInfo:)];
+    UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] init];
     self.navigationController.topViewController.navigationItem.rightBarButtonItem = rightBarButton;
+//    [rightBarButton setEnabled:NO];
 
     [self loadPatienttDataFromAPI];
+    [self.currentTableView reloadData];
+    [self.historyTableView reloadData];
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -230,9 +232,6 @@
     // Dispose of any resources that can be recreated.
 }
 
--(IBAction)addInfo:(id)sender{
-    NSLog(@"add Prescription");
-}
 /*
 #pragma mark - Navigation
 
@@ -254,15 +253,25 @@
     self.historyPrescription =[[NSMutableArray alloc]init];
     NSDateFormatter * dateFormatterToLocal= [[NSDateFormatter alloc] init];
     [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
-    [dateFormatterToLocal setDateFormat:@"MM/dd/yyyy"];
+    [dateFormatterToLocal setDateFormat:@"MM/dd/yyyy HH:mm:ss:SSS"];
 
     for (int index =0; index <self.prescriptionArray.count; index ++) {
         NSDictionary *prescriptionDic = [self.prescriptionArray objectAtIndex:index];
         NSString *toString = [prescriptionDic objectForKey:@"To"];
         NSDate *toDate = [NSDate dateWithTimeIntervalSince1970:[toString doubleValue]/1000];
         NSDate *toDateLocal = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:toDate]];
+        NSTimeInterval toDateLocalTimInterval = [toDateLocal timeIntervalSince1970];
 
-        if ([toDateLocal timeIntervalSince1970] >= [[NSDate date] timeIntervalSince1970]) {
+        //today date time with tim = 00:00:00:000
+        NSDateFormatter * todayFormatter= [[NSDateFormatter alloc] init];
+        [todayFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+        [todayFormatter setDateFormat:@"MM/dd/yyyy"];
+
+        NSString *stringToday = [NSString stringWithFormat:@"%@ %@",[todayFormatter stringFromDate:[NSDate date] ] ,@"00:00:00:000"] ;
+        NSDate *today = [dateFormatterToLocal dateFromString:stringToday];
+        NSTimeInterval toDayLocalTimInterval = [today timeIntervalSince1970];
+
+        if (toDateLocalTimInterval >= toDayLocalTimInterval) {
             [self.currentPrescription addObject:prescriptionDic];
         }else{
             [self.historyPrescription addObject:prescriptionDic];
@@ -281,29 +290,25 @@
     if (self.segmentController.selectedSegmentIndex ==0) {
         cell = [self.currentTableView dequeueReusableCellWithIdentifier:@"currentCell" forIndexPath:indexPath];
 
-        NSDateFormatter * dateFormatterToLocal= [[NSDateFormatter alloc] init];
-        [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
-        [dateFormatterToLocal setDateFormat:@"MM/dd/yyyy"];
-        NSString *fromString = [self.currentPrescription[indexPath.row] objectForKey:@"From"];
-        NSString *toString = [self.currentPrescription[indexPath.row] objectForKey:@"To"];
-        NSDate *fromDate = [NSDate dateWithTimeIntervalSince1970:[fromString doubleValue]/1000];
-        NSDate *toDate = [NSDate dateWithTimeIntervalSince1970:[toString doubleValue]/1000];
-        NSDate *fromDateLocal = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:fromDate]];
-        NSDate *toDateLocal = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:toDate]];
-        cell.textLabel.text =[NSString stringWithFormat:@"%@ to %@",[dateFormatterToLocal stringFromDate:fromDateLocal],[dateFormatterToLocal stringFromDate:toDateLocal]];
+        NSString *prescriptioneName = [self.currentPrescription[indexPath.row] objectForKey:@"Name"];
+
+        if ((id)prescriptioneName != [NSNull null]) {
+            cell.textLabel.text = prescriptioneName;
+        }else{
+            cell.textLabel.text = @"no name";
+        }
+
         cell.detailTextLabel.text = @"Details";
     }else{
         cell = [self.historyTableView dequeueReusableCellWithIdentifier:@"historyCell" forIndexPath:indexPath];
-        NSDateFormatter * dateFormatterToLocal= [[NSDateFormatter alloc] init];
-        [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
-        [dateFormatterToLocal setDateFormat:@"MM/dd/yyyy"];
-        NSString *fromString = [self.historyPrescription[indexPath.row] objectForKey:@"From"];
-        NSString *toString = [self.historyPrescription[indexPath.row] objectForKey:@"To"];
-        NSDate *fromDate = [NSDate dateWithTimeIntervalSince1970:[fromString doubleValue]/1000];
-        NSDate *toDate = [NSDate dateWithTimeIntervalSince1970:[toString doubleValue]/1000];
-        NSDate *fromDateLocal = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:fromDate]];
-        NSDate *toDateLocal = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:toDate]];
-        cell.textLabel.text =[NSString stringWithFormat:@"%@ to %@",[dateFormatterToLocal stringFromDate:fromDateLocal],[dateFormatterToLocal stringFromDate:toDateLocal]];
+
+        NSString *prescriptioneName = [self.historyPrescription[indexPath.row] objectForKey:@"Name"];
+
+        if ((id)prescriptioneName != [NSNull null]) {
+            cell.textLabel.text = prescriptioneName;
+        }else{
+            cell.textLabel.text = @"no name";
+        }
         cell.detailTextLabel.text = @"Details";
     }
 
@@ -316,9 +321,13 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    self.selectedPrescription = self.prescriptionArray[indexPath.row];
-    [self performSegueWithIdentifier:@"prescriptionShowDetail" sender:self];
     if (self.segmentController.selectedSegmentIndex ==0) {
+        self.selectedPrescription = self.currentPrescription[indexPath.row];
+        [self performSegueWithIdentifier:@"prescriptionShowDetail" sender:self];
+        [self.currentTableView deselectRowAtIndexPath:indexPath animated:YES];
+    }else{
+        self.selectedPrescription = self.historyPrescription[indexPath.row];
+        [self performSegueWithIdentifier:@"prescriptionShowDetail" sender:self];
         [self.currentTableView deselectRowAtIndexPath:indexPath animated:YES];
     }
 }
@@ -350,7 +359,7 @@
     if ([[segue identifier] isEqualToString:@"prescriptionShowDetail"])
     {
         MedicineTableViewController * medicineTableViewcontroller = [segue destinationViewController];
-        medicineTableViewcontroller.selectedPrescription = self.selectedPrescription;
+        medicineTableViewcontroller.selectedPrescriptionID = [self.selectedPrescription objectForKey:@"Id"];
     }
 
     

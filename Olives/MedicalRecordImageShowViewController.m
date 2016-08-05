@@ -19,7 +19,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.navigationController.navigationBar.translucent = NO;
-    UIImage *initialImage = [UIImage imageNamed:self.imageName];
+    UIImage *initialImage = self.displayImage;
     self.imageView = [[UIImageView alloc] init];
     self.imageView.image = initialImage;
     self.scrollView = [[UIScrollView alloc] initWithFrame:self.view.bounds];

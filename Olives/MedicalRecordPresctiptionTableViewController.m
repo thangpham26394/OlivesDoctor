@@ -8,6 +8,7 @@
 #define APIURL @"http://olive.azurewebsites.net/api/medical/prescription/filter"
 #import "MedicalRecordPresctiptionTableViewController.h"
 #import "MedicineTableViewController.h"
+#import "AddNewPrescriptionViewController.h"
 #import <CoreData/CoreData.h>
 
 @interface MedicalRecordPresctiptionTableViewController ()
@@ -47,6 +48,7 @@
                                             [prescription valueForKey:@"name" ],@"Name",
                                             [prescription valueForKey:@"medicine" ],@"Medicine",
                                             [prescription valueForKey:@"note" ],@"Note",
+                                            [prescription valueForKey:@"ownerID" ],@"Owner",
                                             [prescription valueForKey:@"createdDate" ],@"Created",
                                             [prescription valueForKey:@"lastModified" ],@"LastModified",
                                             nil];
@@ -87,6 +89,7 @@
         NSString *name = [prescriptionDic objectForKey:@"Name"];
         NSString *medicine = [prescriptionDic objectForKey:@"Medicine"];
         NSString *note = [prescriptionDic objectForKey:@"Note"];
+        NSString *ownerID = [prescriptionDic objectForKey:@"Owner"];
         NSString *createdDate = [prescriptionDic objectForKey:@"Created"];
         NSString *lastModified = [prescriptionDic objectForKey:@"LastModified"];
 
@@ -101,6 +104,7 @@
         [newPrescription setValue: [NSString stringWithFormat:@"%@", name] forKey:@"name"];
         [newPrescription setValue: [NSString stringWithFormat:@"%@", medicine] forKey:@"medicine"];
         [newPrescription setValue: [NSString stringWithFormat:@"%@", note] forKey:@"note"];
+        [newPrescription setValue: [NSString stringWithFormat:@"%@", ownerID] forKey:@"ownerID"];
         [newPrescription setValue: [NSString stringWithFormat:@"%@", createdDate] forKey:@"createdDate"];
         [newPrescription setValue: [NSString stringWithFormat:@"%@", lastModified] forKey:@"lastModified"];
 
@@ -115,6 +119,8 @@
     }
 }
 #pragma mark - Connect to API function
+
+
 
 -(void)loadPresciptionDataFromAPI{
 
@@ -215,10 +221,10 @@
 }
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
-    if (!self.isAddNew) {
+
         [self loadPresciptionDataFromAPI];
         [self.tableView reloadData];
-    }
+
 
 }
 - (void)didReceiveMemoryWarning {
@@ -244,13 +250,18 @@
     NSDateFormatter * dateFormatterToLocal= [[NSDateFormatter alloc] init];
     [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
     [dateFormatterToLocal setDateFormat:@"MM/dd/yyyy"];
-    NSString *fromString = [self.prescriptionArray[indexPath.row] objectForKey:@"From"];
-    NSString *toString = [self.prescriptionArray[indexPath.row] objectForKey:@"To"];
-    NSDate *fromDate = [NSDate dateWithTimeIntervalSince1970:[fromString doubleValue]/1000];
-    NSDate *toDate = [NSDate dateWithTimeIntervalSince1970:[toString doubleValue]/1000];
-    NSDate *fromDateLocal = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:fromDate]];
-    NSDate *toDateLocal = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:toDate]];
-    cell.textLabel.text =[NSString stringWithFormat:@"%@ to %@",[dateFormatterToLocal stringFromDate:fromDateLocal],[dateFormatterToLocal stringFromDate:toDateLocal]];
+    NSString *name;
+    if ([self.prescriptionArray[indexPath.row] objectForKey:@"Name"] != [NSNull null]) {
+        name = [self.prescriptionArray[indexPath.row] objectForKey:@"Name"];
+    }else{
+        name = @"no name";
+    }
+//    NSString *toString = [self.prescriptionArray[indexPath.row] objectForKey:@"To"];
+//    NSDate *fromDate = [NSDate dateWithTimeIntervalSince1970:[fromString doubleValue]/1000];
+//    NSDate *toDate = [NSDate dateWithTimeIntervalSince1970:[toString doubleValue]/1000];
+//    NSDate *fromDateLocal = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:fromDate]];
+//    NSDate *toDateLocal = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:toDate]];
+    cell.textLabel.text = name;
     cell.detailTextLabel.text = @"Details";
 
     return cell;
@@ -308,14 +319,16 @@
     if ([[segue identifier] isEqualToString:@"medicalRecordPrescriptionShowDetail"])
     {
         MedicineTableViewController * medicineTableViewcontroller = [segue destinationViewController];
-        medicineTableViewcontroller.selectedPrescription = self.selectedPrescription;
-        medicineTableViewcontroller.isAddNew = NO;
+        medicineTableViewcontroller.selectedPrescriptionID = [self.selectedPrescription objectForKey:@"Id"];
+
     }
     if ([[segue identifier] isEqualToString:@"addMedicalRecordPrescription"])
     {
-        MedicineTableViewController * medicineTableViewcontroller = [segue destinationViewController];
-        medicineTableViewcontroller.isAddNew = YES;
+        AddNewPrescriptionViewController * addNewPrescriptionViewcontroller = [segue destinationViewController];
+        addNewPrescriptionViewcontroller.selectedMedicalRecordId = self.medicalRecordID;
+
     }
+
 
 }
 

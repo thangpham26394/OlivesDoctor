@@ -16,8 +16,8 @@
 @property (strong,nonatomic) NSMutableArray *medicalCategoryArray;
 @property (strong,nonatomic) NSArray *medicalRecordArray;
 @property (strong,nonatomic) NSArray *selectedMedicalRecord;
-@property (strong,nonatomic)NSDictionary *addNewCategory;
 @property (strong,nonatomic)NSDictionary *selectedCategory;
+
 @end
 
 @implementation MedicalRecordTableViewController
@@ -33,7 +33,7 @@
 
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
-    //self.addNewCategory = nil;
+
 }
 
 -(void)viewDidAppear:(BOOL)animated{
@@ -41,20 +41,29 @@
     self.medicalCategoryArray = [[NSMutableArray alloc]init];
     [self loadMedicalRecordDataFromAPI];
     //check if there is new catagory added
-    if (self.addNewCategory !=nil) {
-        BOOL isAlreadyHave = NO;
-        //check if new category already have or not
-        for (int index = 0; index <self.medicalCategoryArray.count; index++) {
-            if ([ [NSString stringWithFormat:@"%@",[self.medicalCategoryArray[index] objectForKey:@"Id"]] isEqual:[NSString stringWithFormat:@"%@",[self.addNewCategory objectForKey:@"Id"]]] ) {
-                isAlreadyHave = YES;
+
+    NSData *dictionaryData = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"BrandNewCategoryOfId%@",self.selectedPatientID]];
+    NSArray *newBlankCategoryArray = [NSKeyedUnarchiver unarchiveObjectWithData:dictionaryData];
+    if (newBlankCategoryArray !=nil) {
+        for (int index =0; index < newBlankCategoryArray.count; index++) {
+            NSDictionary *newBlankCategory = newBlankCategoryArray[index];
+            if (newBlankCategory !=nil) {
+                BOOL isAlreadyHave = NO;
+                //check if new category already have or not
+                for (int index = 0; index <self.medicalCategoryArray.count; index++) {
+                    if ([ [NSString stringWithFormat:@"%@",[self.medicalCategoryArray[index] objectForKey:@"Id"]] isEqual:[NSString stringWithFormat:@"%@",[newBlankCategory objectForKey:@"Id"]]] ) {
+                        isAlreadyHave = YES;
+                    }
+                }
+                //if new category isn't in current category array then add new
+                if (!isAlreadyHave) {
+                    [self.medicalCategoryArray addObject:newBlankCategory];
+                }
             }
         }
-        //if new category isn't in current category array then add new
-        if (!isAlreadyHave) {
-            [self.medicalCategoryArray addObject:self.addNewCategory];
-        }
-
     }
+
+
     [self.tableView reloadData];
 }
 
@@ -397,17 +406,40 @@
 }
 */
 
-/*
+
 // Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
+        BOOL permission = YES;
+        //check if selected category can delete or not < only blank category with no medical record related to selected patient can be deleted >
+        NSManagedObjectContext *context = [self managedObjectContext];
+        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"MedicalRecord"];
+        NSMutableArray *medicalRecordObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+        NSManagedObject *medicalRecord;
+        if (medicalRecordObject.count >0) {
+
+            for (int index=0; index < medicalRecordObject.count; index++) {
+                medicalRecord = [medicalRecordObject objectAtIndex:index];
+
+                //check if current medical record is belong to selected patient or not
+                if ([[medicalRecord valueForKey:@"ownerID"] isEqual:self.selectedPatientID]) {
+
+                    NSString *selectedCategoryID = [NSString stringWithFormat:@"%@",[[self.medicalCategoryArray objectAtIndex:indexPath.row] objectForKey:@"Id"]];
+
+                    //check if selected medical category is category of any medical record or not
+                    if ([[medicalRecord valueForKey:@"categoryID"] isEqual:selectedCategoryID]) {
+                        permission = NO;
+                    }
+                }
+                
+            }
+        }
+
+
+        [self showAlertViewWhenDelete:indexPath withPermission:permission];
+    }
 }
-*/
+
 
 /*
 // Override to support rearranging the table view.
@@ -432,7 +464,28 @@
     
         if (sourceViewController.didAddCategory)
         {
-            self.addNewCategory= sourceViewController.selectedCategory;
+            NSDictionary *brandNewcategory = sourceViewController.selectedCategory;
+            //check if this brand new category is saved in Nsuserdefault or not
+            NSData *dictionaryData = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"BrandNewCategoryOfId%@",self.selectedPatientID]];
+            NSMutableArray *categoryArray = [NSKeyedUnarchiver unarchiveObjectWithData:dictionaryData];
+            if (categoryArray ==nil) {
+                categoryArray = [[NSMutableArray alloc]init];
+            }
+            BOOL isAlreadyHave = NO;
+            for (int index =0; index < categoryArray.count; index ++) {
+                NSDictionary *currentBrandNewCategory = categoryArray[index];
+                if ([[NSString stringWithFormat:@"%@",[currentBrandNewCategory objectForKey:@"Id"]] isEqual:[NSString stringWithFormat:@"%@",[brandNewcategory objectForKey:@"Id"]]]) {
+                    isAlreadyHave = YES;
+                }
+            }
+            if (!isAlreadyHave) {
+                [categoryArray addObject:brandNewcategory];
+            }
+
+            //save to NSuserdefault
+            NSData *data = [NSKeyedArchiver archivedDataWithRootObject:categoryArray];
+            [[NSUserDefaults standardUserDefaults] setObject:data forKey:[NSString stringWithFormat:@"BrandNewCategoryOfId%@",self.selectedPatientID]];
+            [[NSUserDefaults standardUserDefaults] synchronize];
         }
 
 }
@@ -451,4 +504,76 @@
 }
 
 
+-(void)deleteCategoryFromNSUserdefault:(NSDictionary*)category{
+
+    //check if this brand new category is saved in Nsuserdefault or not
+    NSData *dictionaryData = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"BrandNewCategoryOfId%@",self.selectedPatientID]];
+    NSMutableArray *categoryArray = [NSKeyedUnarchiver unarchiveObjectWithData:dictionaryData];
+    if (categoryArray ==nil) {
+        return; //nothing left to delete
+    }
+
+    //find out the category to delete
+    for (int index =0; index < categoryArray.count; index ++) {
+        NSDictionary *currentBrandNewCategory = categoryArray[index];
+        if ([[NSString stringWithFormat:@"%@",[currentBrandNewCategory objectForKey:@"Id"]] isEqual:[NSString stringWithFormat:@"%@",[category objectForKey:@"Id"]]]) {
+            [categoryArray removeObject:currentBrandNewCategory];
+        }
+    }
+
+
+    //save to NSuserdefault
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:categoryArray];
+    [[NSUserDefaults standardUserDefaults] setObject:data forKey:[NSString stringWithFormat:@"BrandNewCategoryOfId%@",self.selectedPatientID]];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+
+-(void)showAlertViewWhenDelete:(NSIndexPath *)indexPath withPermission:(BOOL)permission{
+    UIAlertController* alert;
+
+    if (permission) {
+        //if can delete
+        alert = [UIAlertController alertControllerWithTitle:@"Are you sure"
+                                                    message:@"This blank category will be deleted"
+                                             preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                         handler:^(UIAlertAction * action) {
+                                                             //sent request to API here
+                                                             NSLog(@"OK Action!");
+
+
+                                                             //delete in NSUser default
+                                                             NSDictionary *categoryToDelete = [self.medicalCategoryArray objectAtIndex:indexPath.row];
+                                                             [self deleteCategoryFromNSUserdefault:categoryToDelete];
+                                                             //delete in category array
+                                                             [self.medicalCategoryArray removeObjectAtIndex:indexPath.row];
+                                                             //delete in tableview
+                                                             [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+                                                         }];
+        UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
+                                                             handler:^(UIAlertAction * action) {
+                                                                 NSLog(@"cancel Action!");
+                                                             }];
+
+
+        [alert addAction:OKAction];
+        [alert addAction:cancelAction];
+    }else{
+        //can not delete
+        alert = [UIAlertController alertControllerWithTitle:@"Can not delete"
+                                                    message:@"This category content medical record which only patient can delete!"
+                                             preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                         handler:^(UIAlertAction * action) {
+                                                             //sent request to API here
+                                                             NSLog(@"OK Action!");
+
+                                                         }];
+        [alert addAction:OKAction];
+
+    }
+
+    [self presentViewController:alert animated:YES completion:nil];
+}
 @end

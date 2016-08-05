@@ -10,5 +10,5 @@
 
 @interface MedicalRecordNoteDetailTableViewController : UITableViewController
 @property (strong,nonatomic) NSString *medicalRecordID;
-@property(assign,nonatomic) BOOL isAddNew;
+
 @end

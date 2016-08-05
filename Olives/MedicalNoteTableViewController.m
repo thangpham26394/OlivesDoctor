@@ -10,6 +10,7 @@
 #import "ShowDetailInfoMedicalRecordTableViewController.h"
 #import "MedicalRecordPresctiptionTableViewController.h"
 #import "MedicalRecordNoteDetailTableViewController.h"
+#import "MedicalRecordImagesCollectionViewController.h"
 #import <CoreData/CoreData.h>
 @interface MedicalNoteTableViewController ()
 @property (weak, nonatomic) IBOutlet UITextView *noteView;
@@ -81,6 +82,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setupGestureRecognizer];
+    NSLog(@"%@",self.medicalRecordDic);
 }
 
 
@@ -88,14 +90,8 @@
     [super viewWillAppear:animated];
     [self reloadDataFromCoreData];
     self.navigationController.topViewController.title=@"Details";
-    //setup barbutton
-    UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc]
-                                       initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(createMedicalRecord:)];
-    self.navigationController.topViewController.navigationItem.rightBarButtonItem = rightBarButton;
 }
--(IBAction)createMedicalRecord:(id)sender{
-//    [self performSegueWithIdentifier:@"addMedicalRecordInfo" sender:self];
-}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -194,26 +190,7 @@
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     //this view is use for add new medical record or not
-    if (self.isAddNewMedicalRecord) {
 
-        if ([[segue identifier] isEqualToString:@"showDetailInformation"])
-        {
-            ShowDetailInfoMedicalRecordTableViewController *medicalRecordDetail = [segue destinationViewController];
-            medicalRecordDetail.isAddNew = YES;
-        }
-        if ([[segue identifier] isEqualToString:@"medicalRecordPrescription"])
-        {
-            MedicalRecordPresctiptionTableViewController *medicalRecordPrescriptionDetail = [segue destinationViewController];
-            medicalRecordPrescriptionDetail.isAddNew = YES;
-        }
-
-        if ([[segue identifier] isEqualToString:@"medicalRecordNoteDetail"])
-        {
-            MedicalRecordNoteDetailTableViewController *medicalRecordNoteDetail = [segue destinationViewController];
-            medicalRecordNoteDetail.isAddNew = YES;
-        }
-
-    }else{
         if ([[segue identifier] isEqualToString:@"showDetailInformation"])
         {
             ShowDetailInfoMedicalRecordTableViewController *medicalRecordDetail = [segue destinationViewController];
@@ -229,6 +206,11 @@
             MedicalRecordNoteDetailTableViewController *medicalRecordNoteDetail = [segue destinationViewController];
             medicalRecordNoteDetail.medicalRecordID = [self.medicalRecordDic objectForKey:@"Id"];
         }
+        if ([[segue identifier] isEqualToString:@"showMedicalRecordImages"])
+        {
+            MedicalRecordImagesCollectionViewController *medicalRecordImage= [segue destinationViewController];
+            medicalRecordImage.medicalRecordID = [self.medicalRecordDic objectForKey:@"Id"];
+
     }
 
 }

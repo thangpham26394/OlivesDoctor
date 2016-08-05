@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface MedicalRecordImagesCollectionViewController : UICollectionViewController
-
+@interface MedicalRecordImagesCollectionViewController : UICollectionViewController<UIImagePickerControllerDelegate>
+@property (strong,nonatomic) NSString *medicalRecordID;
 @end

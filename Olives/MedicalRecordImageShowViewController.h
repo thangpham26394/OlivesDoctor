@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface MedicalRecordImageShowViewController : UIViewController<UIScrollViewDelegate,UIGestureRecognizerDelegate>
-@property (strong,nonatomic) NSString *imageName;
+@property (strong,nonatomic) UIImage *displayImage;
 @end

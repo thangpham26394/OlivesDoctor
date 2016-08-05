@@ -5,17 +5,308 @@
 //  Created by Tony Tony Chopper on 7/21/16.
 //  Copyright © 2016 Thang. All rights reserved.
 //
+#define APIURL @"http://olive.azurewebsites.net/api/medical/prescription/image/filter"
+#define APIURLUPLOAD @"http://olive.azurewebsites.net/api/medical/prescription/image"
+#define ACCEPTLIMITSIZE 4000
 
 #import "MedicineImagesCollectionViewController.h"
 #import "MedicinesCollectionReusableView.h"
 #import "MedicalRecordImageShowViewController.h"
-@interface MedicineImagesCollectionViewController ()
+#import <CoreData/CoreData.h>
 
+
+
+@interface MedicineImagesCollectionViewController ()
+@property(strong,nonatomic) NSString *partner;
+@property (strong,nonatomic) NSDictionary *responseJSONData;
+@property(strong,nonatomic) NSMutableArray *prescriptionImages;
+@property (strong,nonatomic) UIImage *selectedImage;
 @end
 
 @implementation MedicineImagesCollectionViewController
 
+
+#pragma mark - Handle Coredata
+- (NSManagedObjectContext *)managedObjectContext {
+    NSManagedObjectContext *context = nil;
+    id delegate = [[UIApplication sharedApplication] delegate];
+    if ([delegate performSelector:@selector(managedObjectContext)]) {
+        context = [delegate managedObjectContext];
+    }
+    return context;
+}
 static NSString * const reuseIdentifier = @"medicineImageCell";
+
+-(void)loadPartnerFromCoredata{
+
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Prescriptions"];
+    NSMutableArray *prescriptionObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *prescription;
+
+    for (int index=0; index < prescriptionObject.count; index++) {
+        prescription = [prescriptionObject objectAtIndex:index];
+        if ([[prescription valueForKey:@"prescriptionID"] isEqual:[NSString stringWithFormat:@"%@",self.selectedPrescriptionID]]) {
+            self.partner = [prescription valueForKey:@"ownerID"];
+        }
+    }
+    
+}
+
+#pragma mark - Connect to API function
+
+//resize image func
+- (UIImage *)compressForUpload:(UIImage *)original scale:(CGFloat)scale
+{
+    // Calculate new size given scale factor.
+    CGSize originalSize = original.size;
+    CGSize newSize = CGSizeMake(originalSize.width * scale, originalSize.height * scale);
+
+    // Scale the original image to match the new size.
+    UIGraphicsBeginImageContext(newSize);
+    [original drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
+    UIImage* compressedImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+
+    return compressedImage;
+}
+
+//upload prescription image
+-(void)uploadPrescriptionImageToAPI:(UIImage *)pickedImage{
+    // create url
+    NSURL *url = [NSURL URLWithString:APIURLUPLOAD];
+    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:sessionConfig];
+    //create request
+    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
+
+    //get doctor email and password from coredata
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+
+    NSString *BoundaryConstant = @"----------V2ymHFg03ehbqgZCaKO6jy";
+    //setup header and body for request
+    [urlRequest setHTTPMethod:@"POST"];
+    [urlRequest setValue:[doctor valueForKey:@"email"] forHTTPHeaderField:@"Email"];
+    [urlRequest setValue:[doctor valueForKey:@"password"]  forHTTPHeaderField:@"Password"];
+    [urlRequest setValue:@"en-US" forHTTPHeaderField:@"Accept-Language"];
+
+    //set up content type for request <content both params and image data>
+    NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", BoundaryConstant];
+    [urlRequest setValue:contentType forHTTPHeaderField: @"Content-Type"];
+
+
+
+    // config body
+    NSMutableData *body = [NSMutableData data];
+    [body appendData:[[NSString stringWithFormat:@"--%@\r\n", BoundaryConstant] dataUsingEncoding:NSUTF8StringEncoding]];
+    [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"Prescription\"\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+
+    [body appendData:[[NSString stringWithFormat:@"%@\r\n", self.selectedPrescriptionID] dataUsingEncoding:NSUTF8StringEncoding]];
+
+
+    // add image data
+    NSData *imgData = UIImagePNGRepresentation(pickedImage);
+    NSLog(@"before-------------%lu",imgData.length /1024);
+
+    UIImage *resizedImage = pickedImage;
+    while (imgData.length/1024 > ACCEPTLIMITSIZE) {
+
+        resizedImage = [self compressForUpload:resizedImage scale:0.9];
+        imgData = UIImagePNGRepresentation(resizedImage);
+    }
+
+
+    NSLog(@"after-------------%lu",imgData.length /1024);
+
+
+    //create a name for image with the current time in milisec
+    NSDateFormatter *dateFormaterToUTC = [[NSDateFormatter alloc] init];
+    dateFormaterToUTC.timeStyle = NSDateFormatterNoStyle;
+    dateFormaterToUTC.dateFormat = @"MM/dd/yyyy HH:mm:ss:SSS";
+
+
+    if (imgData) {
+        [body appendData:[[NSString stringWithFormat:@"--%@\r\n", BoundaryConstant] dataUsingEncoding:NSUTF8StringEncoding]];
+        [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"Image\"; filename=\"%@\"\r\n",[dateFormaterToUTC stringFromDate:[NSDate date]]] dataUsingEncoding:NSUTF8StringEncoding]];
+        [body appendData:[@"Content-Type: image/png\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+        [body appendData:imgData];
+        [body appendData:[[NSString stringWithFormat:@"\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+    }
+
+    [body appendData:[[NSString stringWithFormat:@"--%@--\r\n", BoundaryConstant] dataUsingEncoding:NSUTF8StringEncoding]];
+
+    // setting the body of the post to the reqeust
+    [urlRequest setHTTPBody:body];
+
+
+
+    //    [urlRequest setHTTPBody:jsondata];
+
+    dispatch_semaphore_t    sem;
+    sem = dispatch_semaphore_create(0);
+
+    NSURLSessionTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
+                                                   completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+                                  {
+                                      NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+
+                                      if((long)[httpResponse statusCode] == 200  && error ==nil)
+                                      {
+                                          NSError *parsJSONError = nil;
+                                          self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                          if (self.responseJSONData != nil) {
+                                              //                                                  [self saveMedicalRecordToCoreData];
+                                          }else{
+
+                                          }
+                                          //stop waiting after get response from API
+                                          dispatch_semaphore_signal(sem);
+                                      }
+                                      else{
+                                          NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+                                          NSLog(@"\n\n\nError = %@",text);
+                                          //create new api no need load from core data when api fail
+                                          dispatch_semaphore_signal(sem);
+                                          return;
+                                      }
+                                  }];
+    [dataTask resume];
+    //start waiting until get response from API
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    
+}
+
+
+//download prescription image
+-(void)downloadPrescriptionImageFromAPI{
+    // create url
+    NSURL *url = [NSURL URLWithString:APIURL];
+    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+    //    sessionConfig.timeoutIntervalForRequest = 5.0;
+    //    sessionConfig.timeoutIntervalForResource = 5.0;
+    // config session
+    //NSURLSession *defaultSession = [NSURLSession sharedSession];
+    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:sessionConfig];
+    //create request
+    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
+
+    //get doctor email and password from coredata
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+
+    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+
+
+    //setup header and body for request
+    [urlRequest setHTTPMethod:@"POST"];
+    [urlRequest setValue:[doctor valueForKey:@"email"] forHTTPHeaderField:@"Email"];
+    [urlRequest setValue:[doctor valueForKey:@"password"]  forHTTPHeaderField:@"Password"];
+    [urlRequest setValue:@"en-US" forHTTPHeaderField:@"Accept-Language"];
+    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    //create JSON data to post to API
+
+    NSDictionary *account = @{
+                              @"Partner" :self.partner,
+                              @"Mode":@"0",
+                              @"Prescription":self.selectedPrescriptionID,
+                              };
+    NSError *error = nil;
+    NSData *jsondata = [NSJSONSerialization dataWithJSONObject:account options:NSJSONWritingPrettyPrinted error:&error];
+    [urlRequest setHTTPBody:jsondata];
+    dispatch_semaphore_t    sem;
+    sem = dispatch_semaphore_create(0);
+
+    NSURLSessionTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
+                                                   completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+                                  {
+                                      NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+
+                                      if((long)[httpResponse statusCode] == 200  && error ==nil)
+                                      {
+                                          NSError *parsJSONError = nil;
+                                          self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                          if (self.responseJSONData != nil) {
+                                              //                                                  [self saveMedicalRecordToCoreData];
+                                          }else{
+
+                                          }
+                                          //stop waiting after get response from API
+                                          dispatch_semaphore_signal(sem);
+                                      }
+                                      else{
+                                          NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+                                          NSLog(@"\n\n\nError = %@",text);
+                                          //create new api no need load from core data when api fail
+                                          dispatch_semaphore_signal(sem);
+                                          return;
+                                      }
+                                  }];
+    [dataTask resume];
+    //start waiting until get response from API
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    
+}
+
+
+
+
+
+
+
+
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    self.prescriptionImages = [[NSMutableArray alloc]init];
+
+    [self loadPartnerFromCoredata];
+    [self downloadPrescriptionImageFromAPI];
+    NSArray *imageArray = [self.responseJSONData objectForKey:@"PrescriptionImages"];
+
+    for (int index=0; index < imageArray.count; index ++) {
+        NSDictionary *imageDic = imageArray[index];
+        NSString *base64String = [imageDic objectForKey:@"Image"];
+
+
+
+        NSData *data = [[NSData alloc] initWithBase64EncodedString:base64String options:NSDataBase64DecodingIgnoreUnknownCharacters];
+
+        //initiate image from data
+
+        UIImage *convertImage = [[UIImage alloc] initWithData:data];
+
+        [self.prescriptionImages addObject:convertImage];
+        [self.collectionView reloadData];
+    }
+    
+}
+
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:YES];
+    self.navigationController.topViewController.title=@"Prescription Images";
+    //setup barbutton
+    UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc]
+                                       initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addImage:)];
+    self.navigationController.topViewController.navigationItem.rightBarButtonItem = rightBarButton;
+}
+
+-(IBAction)addImage:(id)sender{
+    UIImagePickerController *myImagePicker = [[UIImagePickerController alloc] init];
+    myImagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    myImagePicker.delegate = self;
+    [self presentViewController:myImagePicker animated:YES completion:nil];
+}
+
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo
+{
+    [picker dismissViewControllerAnimated:YES completion:^{}];
+    [self uploadPrescriptionImageToAPI:image];
+}
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -45,7 +336,7 @@ static NSString * const reuseIdentifier = @"medicineImageCell";
         NSArray *indexPaths = [self.collectionView indexPathsForSelectedItems];
         MedicalRecordImageShowViewController *destViewController = segue.destinationViewController;
         NSIndexPath *indexPath = [indexPaths objectAtIndex:0];
-        destViewController.imageName = @"menuBG.jpg";//[self.recipeImages[indexPath.section] objectAtIndex:indexPath.row];
+        destViewController.displayImage = self.selectedImage;
         [self.collectionView deselectItemAtIndexPath:indexPath animated:NO];
     }
 }
@@ -76,14 +367,14 @@ static NSString * const reuseIdentifier = @"medicineImageCell";
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
 
-    return 10;
+    return self.prescriptionImages.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseIdentifier forIndexPath:indexPath];
     UIImageView * imageView = [[UIImageView alloc]init];
-    imageView.image = [UIImage imageNamed:@"scrollphoto.png"]; //[UIImage imageNamed:[self.recipeImages[indexPath.section] objectAtIndex:indexPath.row]];
-    cell.layer.cornerRadius = 10;
+    imageView.image = [self.prescriptionImages objectAtIndex:indexPath.row];;
+    cell.layer.cornerRadius = 5;
 
     cell.layer.masksToBounds = YES;
     cell.backgroundView = imageView;
@@ -92,6 +383,7 @@ static NSString * const reuseIdentifier = @"medicineImageCell";
 }
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath  {
+    self.selectedImage = [self.prescriptionImages objectAtIndex:indexPath.row];
     [self performSegueWithIdentifier:@"showMedicinePhoto" sender:self];
 }
 
