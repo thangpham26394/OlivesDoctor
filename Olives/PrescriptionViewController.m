@@ -304,7 +304,7 @@
 
         NSString *prescriptioneName = [self.historyPrescription[indexPath.row] objectForKey:@"Name"];
 
-        if ((id)prescriptioneName != [NSNull null]) {
+        if ((id)prescriptioneName != [NSNull null]  && ![prescriptioneName isEqual:@"<null>"]) {
             cell.textLabel.text = prescriptioneName;
         }else{
             cell.textLabel.text = @"no name";

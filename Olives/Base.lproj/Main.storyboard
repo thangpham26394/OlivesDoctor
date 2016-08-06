@@ -2970,7 +2970,6 @@
                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="F90-L1-XfM">
                                                 <rect key="frame" x="10" y="198" width="580" height="182"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. a.</string>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                 <connections>
@@ -3888,6 +3887,6 @@
         <segue reference="dDZ-Jx-9mZ"/>
         <segue reference="DTx-UW-86k"/>
         <segue reference="4NF-RN-mxh"/>
-        <segue reference="3ZB-gn-OAd"/>
+        <segue reference="z2S-tF-6C6"/>
     </inferredMetricsTieBreakers>
 </document>

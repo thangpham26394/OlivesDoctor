@@ -15,6 +15,7 @@
 @interface MedicineDetailsTableViewController ()
 @property(strong,nonatomic) NSDictionary *medicinedic;
 @property (strong,nonatomic) NSDictionary *selectedPrescription;
+@property (strong,nonatomic) NSDictionary *selectedMedicine;
 @end
 
 @implementation MedicineDetailsTableViewController
@@ -130,6 +131,13 @@
     return cell;
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSString *key = [[self.medicinedic allKeys] objectAtIndex:indexPath.row];
+    self.selectedMedicine = [NSDictionary dictionaryWithObjectsAndKeys:[self.medicinedic objectForKey:key], key,nil];
+    [self performSegueWithIdentifier:@"updateMedicine" sender:self];
+    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+
+}
 
 /*
 // Override to support conditional editing of the table view.
@@ -176,6 +184,13 @@
     {
         AddOrUpdateMedicineViewController * addOrUpdatePrescriptionViewcontroller = [segue destinationViewController];
         addOrUpdatePrescriptionViewcontroller.selectedPrescription = self.selectedPrescription;
+
+    }
+    if ([[segue identifier] isEqualToString:@"updateMedicine"])
+    {
+        AddOrUpdateMedicineViewController * addOrUpdatePrescriptionViewcontroller = [segue destinationViewController];
+        addOrUpdatePrescriptionViewcontroller.selectedPrescription = self.selectedPrescription;
+        addOrUpdatePrescriptionViewcontroller.selectedMedicine = self.selectedMedicine;
 
     }
 }

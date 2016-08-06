@@ -10,4 +10,5 @@
 
 @interface AddOrUpdateMedicineViewController : UIViewController
 @property (strong,nonatomic) NSDictionary *selectedPrescription;
+@property (strong,nonatomic) NSDictionary *selectedMedicine;
 @end

@@ -159,6 +159,16 @@
     self.medicinedic = [NSJSONSerialization JSONObjectWithData:objectData
                                                        options:NSJSONReadingMutableContainers
                                                          error:&jsonError];
+
+
+    if (self.selectedMedicine != nil) {
+        NSString *name = [[self.selectedMedicine allKeys] objectAtIndex:0];
+        self.nameTextField.text = name;
+        NSDictionary *value = [self.selectedMedicine objectForKey:name];
+        self.quantityTextField.text = [NSString stringWithFormat:@"%@",[value objectForKey:@"Quantity"]];
+        self.unitTextField.text = [NSString stringWithFormat:@"%@",[value objectForKey:@"Unit"]];
+        self.noteTextView.text = [NSString stringWithFormat:@"%@",[value objectForKey:@"Note"]];
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -217,6 +227,11 @@
     if (self.medicinedic ==nil) {
         self.medicinedic = [[NSMutableDictionary alloc]init];
     }
+    if (self.selectedMedicine != nil) {
+        [self.medicinedic removeObjectForKey:[[self.selectedMedicine allKeys] objectAtIndex:0]];
+    }
+
+
     [self.medicinedic setObject:value forKey:key];
 
     NSDictionary *account = @{
