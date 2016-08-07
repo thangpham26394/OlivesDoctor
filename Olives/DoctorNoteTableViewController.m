@@ -5,14 +5,235 @@
 //  Created by Tony Tony Chopper on 7/17/16.
 //  Copyright © 2016 Thang. All rights reserved.
 //
-
+#define APIURL @"http://olive.azurewebsites.net/api/diary/filter"
+#define APIURLDELETE @"http://olive.azurewebsites.net/api/diary?Id="
 #import "DoctorNoteTableViewController.h"
 #import "DoctorNoteTableViewCell.h"
+#import "AddNewDiaryViewController.h"
+#import <CoreData/CoreData.h>
+
 @interface DoctorNoteTableViewController ()
 @property(assign,nonatomic) CGFloat noteLabelHeight;
+@property (strong,nonatomic) NSDictionary *responseJSONData;
+@property (strong,nonatomic) NSMutableArray *diaryArray;
+@property (strong,nonatomic) NSDictionary *selectedDiary;
+@property (assign,nonatomic) BOOL apiDeleted;
 @end
 
 @implementation DoctorNoteTableViewController
+
+#pragma mark - Handle Coredata
+- (NSManagedObjectContext *)managedObjectContext {
+    NSManagedObjectContext *context = nil;
+    id delegate = [[UIApplication sharedApplication] delegate];
+    if ([delegate performSelector:@selector(managedObjectContext)]) {
+        context = [delegate managedObjectContext];
+    }
+    return context;
+}
+
+-(void)loadDiaryFromCoreDataWhenAPIFail{
+    NSMutableArray *diaryArrayForFailAPI = [[NSMutableArray alloc]init];
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Diary"];
+    NSMutableArray *diaryObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *diary;
+    for (int index =0; index<diaryObject.count; index++) {
+        //get each patient in coredata
+        diary = [diaryObject objectAtIndex:index];
+        NSDictionary *diaryDic = [NSDictionary dictionaryWithObjectsAndKeys:
+                                  [diary valueForKey:@"id" ],@"Id",
+                                  [diary valueForKey:@"note" ],@"Note",
+                                  [diary valueForKey:@"time" ],@"Time",
+                                  [diary valueForKey:@"ownerID" ],@"Owner",
+                                  [diary valueForKey:@"created" ],@"Created",
+                                  [diary valueForKey:@"lastModified" ],@"LastModified",
+                                  nil];
+        [diaryArrayForFailAPI addObject:diaryDic];
+
+    }
+    self.diaryArray = diaryArrayForFailAPI;
+
+}
+
+-(void)saveDiaryToCoreData{
+    self.diaryArray = [self.responseJSONData objectForKey:@"Diaries"];
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Diary"];
+    NSMutableArray *diaryObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *diary;
+    //delete previous diary
+    if (diaryObject.count >0) {
+        for (int index=0; index < diaryObject.count; index++) {
+            diary = [diaryObject objectAtIndex:index];
+            [context deleteObject:diary];
+
+        }
+    }
+
+    // insert new patients that gotten from API
+    for (int index = 0; index < self.diaryArray.count; index++) {
+        NSDictionary *diaryDic = self.diaryArray[index];
+
+        NSString *diaryID = [diaryDic objectForKey:@"Id"];
+        NSString *note = [diaryDic objectForKey:@"Note"];
+        NSString *ownerID = [diaryDic objectForKey:@"Owner"];
+        NSString *time = [diaryDic objectForKey:@"Time"];
+        NSString *createdDate = [diaryDic objectForKey:@"Created"];
+        NSString *lastModified = [diaryDic objectForKey:@"LastModified"];
+
+
+        //create new patient object
+        NSManagedObject *newDiary  = [NSEntityDescription insertNewObjectForEntityForName:@"Diary" inManagedObjectContext:context];
+        //set value for each attribute of new patient before save to core data
+        [newDiary setValue: [NSString stringWithFormat:@"%@", diaryID] forKey:@"id"];
+        [newDiary setValue: [NSString stringWithFormat:@"%@", note] forKey:@"note"];
+        [newDiary setValue: [NSString stringWithFormat:@"%@", ownerID] forKey:@"ownerID"];
+        [newDiary setValue: [NSString stringWithFormat:@"%@", time] forKey:@"time"];
+        [newDiary setValue: [NSString stringWithFormat:@"%@", createdDate] forKey:@"created"];
+        [newDiary setValue: [NSString stringWithFormat:@"%@", lastModified] forKey:@"lastModified"];
+
+
+        NSError *error = nil;
+        // Save the object to persistent store
+        if (![context save:&error]) {
+            NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
+        }else{
+            NSLog(@"Save Prescription success!");
+        }
+    }
+}
+
+
+#pragma mark - Connect to API function
+-(void)deleteDiaryAPI:(NSString *)diaryID{
+    // create url
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", APIURLDELETE,diaryID ]];
+    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+
+    sessionConfig.timeoutIntervalForRequest = 5.0;
+    sessionConfig.timeoutIntervalForResource = 5.0;
+    // config session
+    //NSURLSession *defaultSession = [NSURLSession sharedSession];
+    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:sessionConfig];
+    //create request
+    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
+
+    //get doctor email and password from coredata
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+
+    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+
+
+    //setup header and body for request
+    [urlRequest setHTTPMethod:@"DELETE"];
+    [urlRequest setValue:[doctor valueForKey:@"email"] forHTTPHeaderField:@"Email"];
+    [urlRequest setValue:[doctor valueForKey:@"password"]  forHTTPHeaderField:@"Password"];
+    [urlRequest setValue:@"en-US" forHTTPHeaderField:@"Accept-Language"];
+    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+
+    dispatch_semaphore_t    sem;
+    sem = dispatch_semaphore_create(0);
+
+    NSURLSessionDataTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
+                                                       completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+                                      {
+                                          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+
+                                          if((long)[httpResponse statusCode] == 200  && error ==nil)
+                                          {
+                                              self.apiDeleted = YES;
+                                              //stop waiting after get response from API
+                                              dispatch_semaphore_signal(sem);
+                                          }
+                                          else{
+                                              NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+                                              NSLog(@"\n\n\nError = %@",text);
+                                              dispatch_semaphore_signal(sem);
+                                              return;
+                                          }
+                                      }];
+    [dataTask resume];
+    //start waiting until get response from API
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+}
+
+-(void)loadDiaryFromAPI{
+
+    // create url
+    NSURL *url = [NSURL URLWithString:APIURL];
+    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+    //create JSON data to post to API
+    NSDictionary *account = @{
+                              @"Sort" : @"0",
+                              };
+    NSError *error = nil;
+    NSData *jsondata = [NSJSONSerialization dataWithJSONObject:account options:NSJSONWritingPrettyPrinted error:&error];
+
+    sessionConfig.timeoutIntervalForRequest = 5.0;
+    sessionConfig.timeoutIntervalForResource = 5.0;
+    // config session
+    //NSURLSession *defaultSession = [NSURLSession sharedSession];
+    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:sessionConfig];
+    //create request
+    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
+
+    //get doctor email and password from coredata
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+
+    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+
+
+    //setup header and body for request
+    [urlRequest setHTTPMethod:@"POST"];
+    [urlRequest setValue:[doctor valueForKey:@"email"] forHTTPHeaderField:@"Email"];
+    [urlRequest setValue:[doctor valueForKey:@"password"]  forHTTPHeaderField:@"Password"];
+    [urlRequest setValue:@"en-US" forHTTPHeaderField:@"Accept-Language"];
+    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+
+    [urlRequest setHTTPBody:jsondata];
+    dispatch_semaphore_t    sem;
+    sem = dispatch_semaphore_create(0);
+
+    NSURLSessionDataTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
+                                                       completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+                                      {
+                                          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+
+                                          if((long)[httpResponse statusCode] == 200  && error ==nil)
+                                          {
+                                              NSError *parsJSONError = nil;
+                                              self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                              if (self.responseJSONData != nil) {
+                                                  [self saveDiaryToCoreData];
+                                              }else{
+                                                  [self loadDiaryFromCoreDataWhenAPIFail];
+                                              }
+
+
+                                              //stop waiting after get response from API
+                                              dispatch_semaphore_signal(sem);
+                                          }
+                                          else{
+                                              NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+                                              NSLog(@"\n\n\nError = %@",text);
+                                              //self.patientArray = [self loadPatientFromCoreDataWhenAPIFail];
+                                              [self loadDiaryFromCoreDataWhenAPIFail];
+                                              dispatch_semaphore_signal(sem);
+                                              return;
+                                          }
+                                      }];
+    [dataTask resume];
+    //start waiting until get response from API
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    
+}
+
+
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
@@ -21,6 +242,18 @@
     UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc]
                                        initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addInfo:)];
     self.navigationController.topViewController.navigationItem.rightBarButtonItem = rightBarButton;
+}
+
+
+-(IBAction)addInfo:(id)sender{
+    [self performSegueWithIdentifier:@"addNewDiary" sender:self];
+}
+
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    self.apiDeleted = NO;
+    [self loadDiaryFromAPI];
+    [self.tableView reloadData];
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -46,7 +279,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 4;
+    return self.diaryArray.count;
 }
 
 
@@ -60,34 +293,38 @@
     }
     // Configure the cell...
 
-    NSString *doctorNote ;
-    NSString *dateTime;
-    if (indexPath.row %2 ==0) {
-      dateTime = @"20/10/2010";
-      doctorNote  = @"phát hiện triệu chứng ung thư máu, mỡ máu rất cao, mức độ đường huyết không ổn định can som phat hien va dieu tri de tranh nhung bien chung sau nay khong mong muon phát hiện triệu chứng ung thư máu, mỡ máu rất cao, mức độ đường huyết không ổn định can som phat hien va dieu tri de tranh nhung bien chung sau nay khong mong muon";
-    }else{
-        dateTime = @"1/11/2011";
-        doctorNote  = @"phát hiện triệu chứng ung thư máu, mỡ máu rất cao, mức độ đường huyết không ổn định";
-    }
-    cell.textLabel.text = dateTime;
-    cell.detailTextLabel.text =doctorNote;
+    NSDictionary *diaryDic = [self.diaryArray objectAtIndex:indexPath.row];
+    NSString *note = [diaryDic objectForKey:@"Note"];
+    NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
+    [formatter setTimeZone:[NSTimeZone systemTimeZone]];
+    [formatter setLocale:[NSLocale systemLocale]];
+    [formatter setDateFormat:@"MM/dd/yyyy"];
+
+    NSTimeInterval dateTimeInterval = [[diaryDic objectForKey:@"Time"] doubleValue]/1000;
+    NSDate *timeDate = [NSDate dateWithTimeIntervalSince1970:dateTimeInterval];
+    NSString *time = [formatter stringFromDate:timeDate];
+
+    cell.textLabel.text = time;
+    cell.detailTextLabel.text =note;
 
     cell.preservesSuperviewLayoutMargins = NO;
     cell.separatorInset = UIEdgeInsetsZero;
     cell.layoutMargins = UIEdgeInsetsZero;
 
-//    self.noteLabelHeight=[doctorNote sizeWithFont:[UIFont fontWithName:@"Arial" size:14] constrainedToSize:CGSizeMake(500, CGFLOAT_MAX) lineBreakMode:UILineBreakModeWordWrap].height;
-
-//    self.noteLabelHeight = [doctorNote sizeWithFont:[UIFont systemFontOfSize:20]
-//       constrainedToSize:CGSizeMake(self.view.bounds.size.width - 40, CGFLOAT_MAX) // - 40 For cell padding
-//           lineBreakMode:NSLineBreakByWordWrapping].height;
-
-    self.noteLabelHeight = [doctorNote boundingRectWithSize:CGSizeMake(self.view.bounds.size.width - 40, CGFLOAT_MAX)
+    self.noteLabelHeight = [note boundingRectWithSize:CGSizeMake(self.view.bounds.size.width - 40, CGFLOAT_MAX)
                                               options:NSStringDrawingUsesLineFragmentOrigin
                                            attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:16]}
                                               context:nil].size.height;
 
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    self.selectedDiary = self.diaryArray[indexPath.row];
+    [self performSegueWithIdentifier:@"updateDiary" sender:self];
+
+    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -102,17 +339,63 @@
 }
 */
 
-/*
-// Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
+        //check if selected category can delete or not < only blank category with no medical record related to selected patient can be deleted >
+
+        [self showAlertViewWhenDeleteDiary:indexPath];
+    }
 }
-*/
+
+
+-(void)showAlertCannotDelete{
+    UIAlertController* alert  = [UIAlertController alertControllerWithTitle:@"We are sorry"
+                                                                    message:@"Server is temporary not response!"
+                                                             preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {
+                                                     }];
+
+    [alert addAction:OKAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+-(void)showAlertViewWhenDeleteDiary:(NSIndexPath *)indexPath{
+    UIAlertController* alert  = [UIAlertController alertControllerWithTitle:@"Are you sure"
+                                                    message:@"This diary note will be deleted"
+                                             preferredStyle:UIAlertControllerStyleAlert];
+
+    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                         handler:^(UIAlertAction * action) {
+                                                             //sent request to API here
+                                                             NSLog(@"OK Action!");
+
+                                                             NSDictionary *deleteDiary = [self.diaryArray objectAtIndex:indexPath.row];
+                                                             //call api to delete in server
+                                                             [self deleteDiaryAPI:[deleteDiary objectForKey:@"Id"]];
+                                                             if (self.apiDeleted) {
+                                                                 //delete in category array
+                                                                 [self.diaryArray removeObjectAtIndex:indexPath.row];
+                                                                 //delete in tableview
+                                                                 [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+                                                             }else{
+                                                                 [self showAlertCannotDelete];
+                                                             }
+
+                                                         }];
+    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
+                                                             handler:^(UIAlertAction * action) {
+                                                                 NSLog(@"cancel Action!");
+                                                             }];
+
+
+    [alert addAction:OKAction];
+    [alert addAction:cancelAction];
+
+    
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
 
 /*
 // Override to support rearranging the table view.
@@ -128,14 +411,19 @@
 }
 */
 
-/*
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+
+    if ([[segue identifier] isEqualToString:@"updateDiary"])
+    {
+        AddNewDiaryViewController * addNewDiaryViewcontroller = [segue destinationViewController];
+        addNewDiaryViewcontroller.selectedDiary = self.selectedDiary;
+        
+    }
 }
-*/
+
 
 @end

@@ -220,7 +220,6 @@
     for (int index=0; index < self.experimentArray.count; index ++) {
         NSDictionary *prescriptionDic = self.experimentArray[index];
 
-        //convert selected from to time to UTC
         NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
         [formatter setTimeZone:[NSTimeZone systemTimeZone]];
         [formatter setLocale:[NSLocale systemLocale]];

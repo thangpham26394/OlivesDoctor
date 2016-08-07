@@ -46,10 +46,10 @@
             NSDictionary *medicalNoteDic = [NSDictionary dictionaryWithObjectsAndKeys:
                                         [medicalNote valueForKey:@"medicalNoteID" ],@"Id",
                                         [medicalNote valueForKey:@"medicalRecordID" ],@"MedicalRecord",
-                                        [medicalNote valueForKey:@"ownerID" ],@"Owner",
-                                        [medicalNote valueForKey:@"creatorID" ],@"Creator",
                                         [medicalNote valueForKey:@"note" ],@"Note",
                                         [medicalNote valueForKey:@"time" ],@"Time",
+                                        [medicalNote valueForKey:@"ownerID" ],@"Owner",
+                                        [medicalNote valueForKey:@"creatorID" ],@"Creator",
                                         [medicalNote valueForKey:@"created" ],@"Created",
                                         [medicalNote valueForKey:@"lastModified" ],@"LastModified",
                                         nil];

@@ -105,12 +105,36 @@
                                               dispatch_semaphore_signal(sem);
                                           }
                                           else{
-                                              NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
-                                              NSLog(@"\n\n\nError = %@",text);
                                               if (self.isUpdateView) {
                                                   self.totalInfo = self.updateCopy;
                                               }
-                                              //create new api no need load from core data when api fail
+                                              NSError *parsJSONError = nil;
+                                              if (data ==nil) {
+                                                  UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Internet Error"
+                                                                                                                 message:nil
+                                                                                                          preferredStyle:UIAlertControllerStyleAlert];
+                                                  UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                                                                     style:UIAlertActionStyleDefault
+                                                                                                   handler:^(UIAlertAction * action) {}];
+                                                  [alert addAction:OKAction];
+                                                  [self presentViewController:alert animated:YES completion:nil];
+                                                  dispatch_semaphore_signal(sem);
+
+                                                  return;
+                                              }
+                                              NSDictionary *errorDic = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                              NSArray *errorArray = [errorDic objectForKey:@"Errors"];
+                                              //                                              NSLog(@"\n\n\nError = %@",[errorArray objectAtIndex:0]);
+
+                                              UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                                                             message:[errorArray objectAtIndex:0]
+                                                                                                      preferredStyle:UIAlertControllerStyleAlert];
+
+                                              UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                                                                 style:UIAlertActionStyleDefault
+                                                                                               handler:^(UIAlertAction * action) {}];
+                                              [alert addAction:OKAction];
+                                              [self presentViewController:alert animated:YES completion:nil];
                                               dispatch_semaphore_signal(sem);
                                               return;
                                           }

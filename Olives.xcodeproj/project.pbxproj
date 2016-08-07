@@ -18,6 +18,7 @@
 		15BF126E1D56744100728456 /* MedicalRecordExperimentNoteTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BF126D1D56744100728456 /* MedicalRecordExperimentNoteTableViewController.m */; };
 		15BF12711D5679F200728456 /* StringDoubleTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BF12701D5679F200728456 /* StringDoubleTableViewCell.m */; };
 		15BF12741D567E0B00728456 /* ExperimentNoteGeneralTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BF12731D567E0B00728456 /* ExperimentNoteGeneralTableViewController.m */; };
+		15BF129E1D57BDDD00728456 /* AddNewDiaryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BF129D1D57BDDD00728456 /* AddNewDiaryViewController.m */; };
 		15DCF5781CF3593800013F19 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 15DCF5771CF3593800013F19 /* main.m */; };
 		15DCF57B1CF3593800013F19 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 15DCF57A1CF3593800013F19 /* AppDelegate.m */; };
 		15DCF5841CF3593800013F19 /* Olives.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 15DCF5821CF3593800013F19 /* Olives.xcdatamodeld */; };
@@ -193,6 +194,8 @@
 		15BF12701D5679F200728456 /* StringDoubleTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StringDoubleTableViewCell.m; sourceTree = "<group>"; };
 		15BF12721D567E0B00728456 /* ExperimentNoteGeneralTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExperimentNoteGeneralTableViewController.h; sourceTree = "<group>"; };
 		15BF12731D567E0B00728456 /* ExperimentNoteGeneralTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExperimentNoteGeneralTableViewController.m; sourceTree = "<group>"; };
+		15BF129C1D57BDDD00728456 /* AddNewDiaryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddNewDiaryViewController.h; sourceTree = "<group>"; };
+		15BF129D1D57BDDD00728456 /* AddNewDiaryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddNewDiaryViewController.m; sourceTree = "<group>"; };
 		15DCF5731CF3593800013F19 /* Olives.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Olives.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		15DCF5771CF3593800013F19 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		15DCF5791CF3593800013F19 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -553,6 +556,8 @@
 			children = (
 				15E8C4E61D3AE7150056E8AE /* DoctorNoteTableViewController.h */,
 				15E8C4E71D3AE7150056E8AE /* DoctorNoteTableViewController.m */,
+				15BF129C1D57BDDD00728456 /* AddNewDiaryViewController.h */,
+				15BF129D1D57BDDD00728456 /* AddNewDiaryViewController.m */,
 			);
 			name = DoctorNote;
 			sourceTree = "<group>";
@@ -995,6 +1000,7 @@
 				15E7E4871D53CE6400B405EB /* AddNewPrescriptionViewController.m in Sources */,
 				15E8C4F31D3AEB290056E8AE /* MedicalRecordImagesCollectionViewController.m in Sources */,
 				15DCF5AB1CF3870F00013F19 /* OLTableViewCell.m in Sources */,
+				15BF129E1D57BDDD00728456 /* AddNewDiaryViewController.m in Sources */,
 				15EB44BB1D34F80C00C489A2 /* TimePickerViewController.m in Sources */,
 				15E8C4FE1D3B70970056E8AE /* DoctorNoteTableViewCell.m in Sources */,
 				15E9D6FD1D06B3D6006D5DD1 /* UIColor+expanded.m in Sources */,
