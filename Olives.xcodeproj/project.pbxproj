@@ -14,6 +14,10 @@
 		1567353E1D19522A00392ADA /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1567353D1D19522A00392ADA /* HomeViewController.m */; };
 		156735411D1C408700392ADA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1567353F1D1C408700392ADA /* Main.storyboard */; };
 		15BF12671D5516E900728456 /* AddOrUpdateMedicineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BF12661D5516E900728456 /* AddOrUpdateMedicineViewController.m */; };
+		15BF126A1D56462800728456 /* AddNewMedicalNoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BF12691D56462800728456 /* AddNewMedicalNoteViewController.m */; };
+		15BF126E1D56744100728456 /* MedicalRecordExperimentNoteTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BF126D1D56744100728456 /* MedicalRecordExperimentNoteTableViewController.m */; };
+		15BF12711D5679F200728456 /* StringDoubleTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BF12701D5679F200728456 /* StringDoubleTableViewCell.m */; };
+		15BF12741D567E0B00728456 /* ExperimentNoteGeneralTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BF12731D567E0B00728456 /* ExperimentNoteGeneralTableViewController.m */; };
 		15DCF5781CF3593800013F19 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 15DCF5771CF3593800013F19 /* main.m */; };
 		15DCF57B1CF3593800013F19 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 15DCF57A1CF3593800013F19 /* AppDelegate.m */; };
 		15DCF5841CF3593800013F19 /* Olives.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 15DCF5821CF3593800013F19 /* Olives.xcdatamodeld */; };
@@ -181,6 +185,14 @@
 		156735401D1C408700392ADA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		15BF12651D5516E900728456 /* AddOrUpdateMedicineViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddOrUpdateMedicineViewController.h; sourceTree = "<group>"; };
 		15BF12661D5516E900728456 /* AddOrUpdateMedicineViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddOrUpdateMedicineViewController.m; sourceTree = "<group>"; };
+		15BF12681D56462800728456 /* AddNewMedicalNoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddNewMedicalNoteViewController.h; sourceTree = "<group>"; };
+		15BF12691D56462800728456 /* AddNewMedicalNoteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddNewMedicalNoteViewController.m; sourceTree = "<group>"; };
+		15BF126C1D56744100728456 /* MedicalRecordExperimentNoteTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MedicalRecordExperimentNoteTableViewController.h; sourceTree = "<group>"; };
+		15BF126D1D56744100728456 /* MedicalRecordExperimentNoteTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MedicalRecordExperimentNoteTableViewController.m; sourceTree = "<group>"; };
+		15BF126F1D5679F200728456 /* StringDoubleTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringDoubleTableViewCell.h; sourceTree = "<group>"; };
+		15BF12701D5679F200728456 /* StringDoubleTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StringDoubleTableViewCell.m; sourceTree = "<group>"; };
+		15BF12721D567E0B00728456 /* ExperimentNoteGeneralTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExperimentNoteGeneralTableViewController.h; sourceTree = "<group>"; };
+		15BF12731D567E0B00728456 /* ExperimentNoteGeneralTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExperimentNoteGeneralTableViewController.m; sourceTree = "<group>"; };
 		15DCF5731CF3593800013F19 /* Olives.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Olives.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		15DCF5771CF3593800013F19 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		15DCF5791CF3593800013F19 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -366,6 +378,17 @@
 			name = AddOrUpdateMedicine;
 			sourceTree = "<group>";
 		};
+		15BF126B1D56740300728456 /* MedicalRecordExperimentNote */ = {
+			isa = PBXGroup;
+			children = (
+				15BF126C1D56744100728456 /* MedicalRecordExperimentNoteTableViewController.h */,
+				15BF126D1D56744100728456 /* MedicalRecordExperimentNoteTableViewController.m */,
+				15BF12721D567E0B00728456 /* ExperimentNoteGeneralTableViewController.h */,
+				15BF12731D567E0B00728456 /* ExperimentNoteGeneralTableViewController.m */,
+			);
+			name = MedicalRecordExperimentNote;
+			sourceTree = "<group>";
+		};
 		15DCF56A1CF3593800013F19 = {
 			isa = PBXGroup;
 			children = (
@@ -547,6 +570,7 @@
 		15E8C4DC1D3AE4D50056E8AE /* MedicalRecordDetails */ = {
 			isa = PBXGroup;
 			children = (
+				15BF126B1D56740300728456 /* MedicalRecordExperimentNote */,
 				15F6EFB31D4F46C5002B166C /* MedicalRecordNoteDetail */,
 				15E585FC1D4DF48E00C6F468 /* MedicalRecordPrescription */,
 				15EF10E91D4D3D8800456636 /* ShowDetailInfoMedicalRecord */,
@@ -688,6 +712,8 @@
 		15F01D3B1CF81DA600EAAF9B /* TableViewCell */ = {
 			isa = PBXGroup;
 			children = (
+				15BF126F1D5679F200728456 /* StringDoubleTableViewCell.h */,
+				15BF12701D5679F200728456 /* StringDoubleTableViewCell.m */,
 				15F6EFC81D5097D6002B166C /* StringStringTableViewCell.h */,
 				15F6EFC91D5097D6002B166C /* StringStringTableViewCell.m */,
 				15DCF5A91CF3870F00013F19 /* OLTableViewCell.h */,
@@ -746,6 +772,8 @@
 			children = (
 				15F6EFB71D4F46E9002B166C /* MedicalRecordNoteDetailTableViewController.h */,
 				15F6EFB81D4F46E9002B166C /* MedicalRecordNoteDetailTableViewController.m */,
+				15BF12681D56462800728456 /* AddNewMedicalNoteViewController.h */,
+				15BF12691D56462800728456 /* AddNewMedicalNoteViewController.m */,
 			);
 			name = MedicalRecordNoteDetail;
 			sourceTree = "<group>";
@@ -951,12 +979,15 @@
 				15E8C4EF1D3AE8D40056E8AE /* MedicalRecordDetailTableViewController.m in Sources */,
 				15E5860E1D4E44D700C6F468 /* VerifyNewPasswordViewController.m in Sources */,
 				15BF12671D5516E900728456 /* AddOrUpdateMedicineViewController.m in Sources */,
+				15BF12741D567E0B00728456 /* ExperimentNoteGeneralTableViewController.m in Sources */,
 				15F0105A1D48B914001663CE /* ChangePasswordViewController.m in Sources */,
 				15F6EFCA1D5097D6002B166C /* StringStringTableViewCell.m in Sources */,
 				1567353E1D19522A00392ADA /* HomeViewController.m in Sources */,
 				15DCF57B1CF3593800013F19 /* AppDelegate.m in Sources */,
 				15EF10E81D4D272A00456636 /* MedicalNoteTableViewController.m in Sources */,
+				15BF12711D5679F200728456 /* StringDoubleTableViewCell.m in Sources */,
 				15F010651D4A6E19001663CE /* MoneyManagementViewController.m in Sources */,
+				15BF126A1D56462800728456 /* AddNewMedicalNoteViewController.m in Sources */,
 				15E9D6F91D06B3D6006D5DD1 /* VRGCalendarView.m in Sources */,
 				15E9D6EE1D06A99C006D5DD1 /* AppointmentViewController.m in Sources */,
 				15E9D6FC1D06B3D6006D5DD1 /* NSDate+convenience.m in Sources */,
@@ -978,6 +1009,7 @@
 				15DCF5A61CF3820F00013F19 /* OLTableViewController.m in Sources */,
 				15DCF5781CF3593800013F19 /* main.m in Sources */,
 				15E8C4F81D3AEE460056E8AE /* MedicalRecordImageShowViewController.m in Sources */,
+				15BF126E1D56744100728456 /* MedicalRecordExperimentNoteTableViewController.m in Sources */,
 				15F542C51D40D51D003A61F0 /* MedicineTableViewController.m in Sources */,
 				15F01D3E1CF81DC700EAAF9B /* PatientTableViewCell.m in Sources */,
 				15E76B7A1D2F9BA80028EFEB /* AppointmentViewDetailViewController.m in Sources */,

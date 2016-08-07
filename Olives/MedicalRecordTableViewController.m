@@ -194,8 +194,8 @@
         NSDictionary *medicalRecordDic = [self.medicalRecordArray objectAtIndex:index];
 
         NSString *medicalRecordID = [medicalRecordDic objectForKey:@"Id"];
-        NSString *owner = [medicalRecordDic objectForKey:@"Owner"];
-        NSString *creator = [medicalRecordDic objectForKey:@"Creator"];
+        NSString *owner = [[medicalRecordDic objectForKey:@"Owner"] objectForKey:@"Id"];
+        NSString *creator = [[medicalRecordDic objectForKey:@"Creator"] objectForKey:@"Id"];
         NSDictionary *category = [medicalRecordDic objectForKey:@"Category"];
         NSString *categoryID = [category objectForKey:@"Id"];
         NSString *info = [medicalRecordDic objectForKey:@"Info"];

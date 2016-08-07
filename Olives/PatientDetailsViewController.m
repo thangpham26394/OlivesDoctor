@@ -73,7 +73,7 @@
 
         for (int index=0; index < experimentNoteObject.count; index++) {
             experimentNote = [experimentNoteObject objectAtIndex:index];
-            if ([[experimentNote valueForKey:@"ownerID"] isEqual:self.selectedPatientID]) {
+            if ([[experimentNote valueForKey:@"ownerID"] isEqual:[NSString stringWithFormat:@"%@",self.selectedPatientID]]) {
                 [context deleteObject:experimentNote];//only delete the experiment note that belong to selected patient
             }
 
@@ -278,7 +278,6 @@
     cell.preservesSuperviewLayoutMargins = NO;
     cell.separatorInset = UIEdgeInsetsZero;
     cell.layoutMargins = UIEdgeInsetsZero;
-    // Configure the cell...
 
     return cell;
 }

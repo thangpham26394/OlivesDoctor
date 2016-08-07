@@ -100,8 +100,8 @@
     
     // Configure the cell...
     NSString *key = [[self.info allKeys] objectAtIndex:indexPath.row];
-    cell.nameTextField.text = key;
-    cell.valueTextView.text = [self.info objectForKey:key];
+    cell.nameTextField.text = [NSString stringWithFormat:@"%@",key];
+    cell.valueTextView.text = [NSString stringWithFormat:@"%@",[self.info objectForKey:key]];
     cell.nameTextField.userInteractionEnabled = NO;
     cell.valueTextView.userInteractionEnabled = NO;
 

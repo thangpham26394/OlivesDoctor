@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface MedicalRecordNoteDetailTableViewController : UITableViewController
-@property (strong,nonatomic) NSString *medicalRecordID;
+@property (strong,nonatomic) NSDictionary *selectedMedicalRecord;
 
 @end

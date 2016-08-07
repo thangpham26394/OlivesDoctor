@@ -11,7 +11,10 @@
 #import "MedicalRecordPresctiptionTableViewController.h"
 #import "MedicalRecordNoteDetailTableViewController.h"
 #import "MedicalRecordImagesCollectionViewController.h"
+#import "ExperimentNoteGeneralTableViewController.h"
 #import <CoreData/CoreData.h>
+
+
 @interface MedicalNoteTableViewController ()
 @property (weak, nonatomic) IBOutlet UITextView *noteView;
 @property(assign,nonatomic) CGFloat noteViewHeight;
@@ -204,12 +207,18 @@
         if ([[segue identifier] isEqualToString:@"medicalRecordNoteDetail"])
         {
             MedicalRecordNoteDetailTableViewController *medicalRecordNoteDetail = [segue destinationViewController];
-            medicalRecordNoteDetail.medicalRecordID = [self.medicalRecordDic objectForKey:@"Id"];
+            medicalRecordNoteDetail.selectedMedicalRecord = self.medicalRecordDic;
         }
         if ([[segue identifier] isEqualToString:@"showMedicalRecordImages"])
         {
             MedicalRecordImagesCollectionViewController *medicalRecordImage= [segue destinationViewController];
             medicalRecordImage.medicalRecordID = [self.medicalRecordDic objectForKey:@"Id"];
+
+        }
+    if ([[segue identifier] isEqualToString:@"showExperimentNote"])
+    {
+        ExperimentNoteGeneralTableViewController *medicalRecordExperimentNote= [segue destinationViewController];
+        medicalRecordExperimentNote.medicalRecordID = [self.medicalRecordDic objectForKey:@"Id"];
 
     }
 

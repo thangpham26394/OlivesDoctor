@@ -422,9 +422,6 @@
         NSLog(@"Save Prescription success!");
     }
 
-
-
-
 }
 
 
