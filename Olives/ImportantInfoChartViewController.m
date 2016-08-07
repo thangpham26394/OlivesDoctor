@@ -10,7 +10,7 @@
 #import "Olives-Bridging-Header.h"
 @interface ImportantInfoChartViewController ()
 @property (weak, nonatomic) IBOutlet LineChartView *lineChartView;
-
+@property(strong,nonatomic)NSString *chartName;
 
 
 @end
@@ -22,10 +22,21 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.lineChartView setHidden:NO];
-    // Do any additional setup after loading the view, typically from a nib.
-    NSArray * monthArray = @[@"Jan", @"Feb", @"Mar", @"Apr", @"May", @"Jun"];
-    NSArray *unitSold = @[@"20.0", @"4.0", @"6.0",@"3.0", @"12.0", @"16.0"];
-    [self setChart:monthArray withValue:unitSold];
+    self.chartName = [[self.displayDataDic allKeys] objectAtIndex:0];
+    NSArray *displayData = [self.displayDataDic objectForKey:self.chartName];
+    NSMutableArray *timeArray = [[NSMutableArray alloc]init];
+    NSMutableArray *valueArray = [[NSMutableArray alloc]init];
+    //get infor from self.displayData
+    for (int index = 0; index<displayData.count; index++) {
+        NSDictionary *currentDic = displayData[index];
+        NSString *key = [[currentDic allKeys] objectAtIndex:0];
+        NSString *value = [currentDic objectForKey:key];
+        [timeArray addObject:value];
+        [valueArray addObject:key];
+    }
+
+
+    [self setChart:timeArray withValue:valueArray];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -42,23 +53,16 @@
     }
 
 
-    LineChartDataSet *lineChartDataSet = [[LineChartDataSet alloc]initWithYVals:dataEntries label:@"Glycemic"];
+    LineChartDataSet *lineChartDataSet = [[LineChartDataSet alloc]initWithYVals:dataEntries label:self.chartName];
     LineChartData *lineCharData = [[LineChartData alloc] initWithXVals:dataPoint dataSet:lineChartDataSet];
     self.lineChartView.backgroundColor = [UIColor whiteColor];
-    self.lineChartView.descriptionText = @"Diabetes statistic";
+    self.lineChartView.descriptionText = @"";
     self.lineChartView.xAxis.labelPosition = XAxisLabelPositionBottom;
-    ChartLimitLine * limit = [[ChartLimitLine alloc]initWithLimit:10.0 label:@"Normal"];
 
-    limit.lineColor = [UIColor blueColor];
-    [self.lineChartView.rightAxis addLimitLine:limit];
     lineChartDataSet.colors = @[[UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0]];
     NSMutableArray *colorArray = [[NSMutableArray alloc]init];
     for (int i=0;i<doubleValue.count; i++) {
-        if ([[doubleValue objectAtIndex:i] doubleValue] <=10.0) {
-            [colorArray addObject:[UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0]];
-        }else{
-            [colorArray addObject:[UIColor redColor]];
-        }
+         [colorArray addObject:[UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0]];
     }
     lineChartDataSet.circleColors = [colorArray copy];
     [self.lineChartView animateWithXAxisDuration:2.0 yAxisDuration:2.0 easingOption:ChartEasingOptionEaseInSine];

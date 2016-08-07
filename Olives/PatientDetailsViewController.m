@@ -7,6 +7,7 @@
 //
 #define APIURL @"http://olive.azurewebsites.net/api/medical/experiment/filter"
 #import "PatientDetailsViewController.h"
+#import "ImportantInfoChartViewController.h"
 #import <CoreData/CoreData.h>
 @interface PatientDetailsViewController ()
 
@@ -19,7 +20,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *patientEmail;
 @property (strong,nonatomic) NSDictionary *responseJSONData;
 @property (strong,nonatomic) NSArray *experimentArray;
-
+@property (strong,nonatomic) NSDictionary *dictionaryForDisplay;
+@property(strong,nonatomic) NSDictionary *selectedDataDic;
 @end
 
 @implementation PatientDetailsViewController
@@ -127,7 +129,8 @@
     NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
     //create JSON data to post to API
     NSDictionary *account = @{
-                              @"Mode" :  @"0"
+                              @"Mode" :  @"0",
+                              @"Partner" :self.selectedPatientID,
                               };
     NSError *error = nil;
     NSData *jsondata = [NSJSONSerialization dataWithJSONObject:account options:NSJSONWritingPrettyPrinted error:&error];
@@ -198,15 +201,69 @@
     [super viewWillAppear:YES];
     self.navigationController.topViewController.title=@"Patient Details";
     //setup barbutton
-    UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc]
-                                       initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addInfo:)];
+    UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] init];
     self.navigationController.topViewController.navigationItem.rightBarButtonItem = rightBarButton;
 }
 
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
     [self loadExperimentNoteDataFromAPI];
+    [self createShowAllDataArray];
     [self.importantInfoTableView reloadData];
+
+    //get all the experiment info and add to 1 dictionary self.experimentArray
+}
+
+-(void)createShowAllDataArray{
+
+    NSMutableDictionary *dataDic = [[NSMutableDictionary alloc] init];
+    for (int index=0; index < self.experimentArray.count; index ++) {
+        NSDictionary *prescriptionDic = self.experimentArray[index];
+
+        //convert selected from to time to UTC
+        NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
+        [formatter setTimeZone:[NSTimeZone systemTimeZone]];
+        [formatter setLocale:[NSLocale systemLocale]];
+        [formatter setDateFormat:@"MM/dd/yyyy"];
+
+        NSTimeInterval dateTimeInterval = [[prescriptionDic objectForKey:@"Created"] doubleValue]/1000;
+        NSDate *createdDate = [NSDate dateWithTimeIntervalSince1970:dateTimeInterval];
+        NSString *timeCreate = [formatter stringFromDate:createdDate];
+
+        NSString *infoString = [prescriptionDic objectForKey:@"Info"];
+        NSError *jsonError;
+        NSData *objectData = [infoString dataUsingEncoding:NSUTF8StringEncoding];
+        NSMutableDictionary *currentDic = [NSJSONSerialization JSONObjectWithData:objectData
+                                                    options:NSJSONReadingMutableContainers
+                                                      error:&jsonError];
+
+        //go throught every element of currentDic
+        NSUInteger totalElement = [[currentDic allKeys] count];
+        for (int i=0; i<totalElement; i++) {
+            NSString *key = [[currentDic allKeys]objectAtIndex:i];
+            NSString *value = [currentDic objectForKey:key];
+            NSDictionary *dicValue = [NSDictionary dictionaryWithObjectsAndKeys:timeCreate,value, nil];//object is timecreated key is string value
+
+            //check if this key is exist in dataDic or not
+            if ([[dataDic allKeys] containsObject:key]) {
+                //if this key already exist then get the mutable array value for key then add value into it
+                NSMutableArray *dataDicArrayValue = [dataDic objectForKey:key];
+                //check if dicValue is in the dataDicArrayvalue or not
+                if (![dataDicArrayValue containsObject:dicValue]) {
+                    [dataDicArrayValue addObject:dicValue]; //only add if there is no redundant value
+                }
+
+                [dataDic setObject:dataDicArrayValue forKey:key];
+            }else{
+                //if the key is new then create a value array content the value to become datadic value for key
+                NSMutableArray *dataDicArrayValue = [[NSMutableArray alloc]init];
+                [dataDicArrayValue addObject:dicValue];
+                [dataDic setObject:dataDicArrayValue forKey:key];
+            }
+        }
+    }
+    self.dictionaryForDisplay = dataDic;
+
 }
 
 - (void)viewDidLoad {
@@ -257,7 +314,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
-    return self.experimentArray.count;
+    return [[self.dictionaryForDisplay allKeys] count];
 }
 
 
@@ -271,8 +328,8 @@
     }
     // Configure the cell...
 
-    NSDictionary *experimentDic = [self.experimentArray objectAtIndex:indexPath.row];
-    cell.textLabel.text = [experimentDic objectForKey:@"Name"];
+    NSString *experimentName = [[self.dictionaryForDisplay allKeys] objectAtIndex:indexPath.row];
+    cell.textLabel.text = experimentName;
     cell.detailTextLabel.text = @"details";
 
     cell.preservesSuperviewLayoutMargins = NO;
@@ -284,19 +341,23 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // Do some stuff when the row is selected
+    NSString *key = [[self.dictionaryForDisplay allKeys] objectAtIndex:indexPath.row];
+    self.selectedDataDic =[NSDictionary dictionaryWithObjectsAndKeys:[self.dictionaryForDisplay objectForKey:key],key, nil] ;
     [self performSegueWithIdentifier:@"showChartView" sender:self];
-
     [self.importantInfoTableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
-/*
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    if ([[segue identifier] isEqualToString:@"showChartView"])
+    {
+        ImportantInfoChartViewController *importantChartView = [segue destinationViewController];
+        importantChartView.displayDataDic = self.selectedDataDic;
+    }
 }
-*/
+
 
 @end

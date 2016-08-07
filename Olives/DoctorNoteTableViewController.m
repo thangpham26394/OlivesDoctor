@@ -37,9 +37,7 @@
     // Dispose of any resources that can be recreated.
 }
 
--(IBAction)addInfo:(id)sender{
-    NSLog(@"add diary");
-}
+
 
 #pragma mark - Table view data source
 

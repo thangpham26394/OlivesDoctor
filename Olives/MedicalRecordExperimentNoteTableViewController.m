@@ -5,7 +5,7 @@
 //  Created by Tony Tony Chopper on 8/7/16.
 //  Copyright © 2016 Thang. All rights reserved.
 //
-#define APIURL @"http://olive.azurewebsites.net/api/medical/experiment?Id="
+#define APIURLEDIT @"http://olive.azurewebsites.net/api/medical/experiment?Experiment="
 #import "MedicalRecordExperimentNoteTableViewController.h"
 #import "StringDoubleTableViewCell.h"
 #import <CoreData/CoreData.h>
@@ -19,8 +19,8 @@
 @property (weak, nonatomic) IBOutlet UITextField *experimentNameTextField;
 @property (weak, nonatomic) IBOutlet UIButton *buttonEdit;
 @property (strong,nonatomic) NSDictionary *responseJSONData;
-
-
+@property (strong,nonatomic) NSString *selectedExperimentNoteID;
+@property (assign,nonatomic) BOOL isUpDateName;
 - (IBAction)buttonEditNameAction:(id)sender;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @end
@@ -63,7 +63,126 @@
     }
 }
 
+-(void)saveEditedExperimentNoteToCoreData{
+    NSDictionary *noteDic = [self.responseJSONData objectForKey:@"ExperimentNote"];
 
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSString *experimentID = [noteDic objectForKey:@"Id"];
+    NSString *medicalRecord = [noteDic objectForKey:@"MedicalRecord"];
+    NSString *name = [noteDic objectForKey:@"Name"];
+    NSString *info = [noteDic objectForKey:@"Info"];
+    NSString *createdDate = [noteDic objectForKey:@"Created"];
+    NSString *lastModified = [noteDic objectForKey:@"LastModified"];
+
+
+    //create new patient object
+    NSManagedObject *newExperiment = [NSEntityDescription insertNewObjectForEntityForName:@"ExperimentNotes" inManagedObjectContext:context];
+    //set value for each attribute of new patient before save to core data
+    [newExperiment setValue: [NSString stringWithFormat:@"%@", experimentID] forKey:@"id"];
+    [newExperiment setValue: [NSString stringWithFormat:@"%@", medicalRecord] forKey:@"medicalRecordID"];
+    [newExperiment setValue: [NSString stringWithFormat:@"%@", name] forKey:@"name"];
+    [newExperiment setValue: [NSString stringWithFormat:@"%@", info] forKey:@"info"];
+    [newExperiment setValue: [NSString stringWithFormat:@"%@", createdDate] forKey:@"createdDate"];
+    [newExperiment setValue: [NSString stringWithFormat:@"%@", lastModified] forKey:@"lastModified"];
+
+
+    NSError *error = nil;
+    // Save the object to persistent store
+    if (![context save:&error]) {
+        NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
+    }else{
+        NSLog(@"Save New Experiment Note success!");
+    }
+    
+}
+
+#pragma mark - Connect to API function
+
+-(void)editExperimentNoteAPI{
+    // create url
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",APIURLEDIT,self.experimentNoteID]];
+    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+
+
+    sessionConfig.timeoutIntervalForRequest = 5.0;
+    sessionConfig.timeoutIntervalForResource = 5.0;
+    // config session
+    //NSURLSession *defaultSession = [NSURLSession sharedSession];
+    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:sessionConfig];
+    //create request
+    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
+
+    //get doctor email and password from coredata
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+
+    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+
+
+    //setup header and body for request
+    [urlRequest setHTTPMethod:@"PUT"];
+    [urlRequest setValue:[doctor valueForKey:@"email"] forHTTPHeaderField:@"Email"];
+    [urlRequest setValue:[doctor valueForKey:@"password"]  forHTTPHeaderField:@"Password"];
+    [urlRequest setValue:@"en-US" forHTTPHeaderField:@"Accept-Language"];
+    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    //create JSON data to post to API
+
+    NSDictionary *account = @{
+                              @"Name":self.experimentNameTextField.text,
+                              @"Infos":self.info,
+                              };
+    NSError *error = nil;
+    NSData *jsondata = [NSJSONSerialization dataWithJSONObject:account options:NSJSONWritingPrettyPrinted error:&error];
+    [urlRequest setHTTPBody:jsondata];
+    dispatch_semaphore_t    sem;
+    sem = dispatch_semaphore_create(0);
+
+    NSURLSessionDataTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
+                                                       completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+                                      {
+                                          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+
+                                          if((long)[httpResponse statusCode] == 200  && error ==nil)
+                                          {
+                                              NSError *parsJSONError = nil;
+                                              self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                              if (self.responseJSONData != nil) {
+                                                  [self saveEditedExperimentNoteToCoreData];
+                                              }else{
+
+
+                                              }
+
+                                              //stop waiting after get response from API
+                                              dispatch_semaphore_signal(sem);
+                                          }
+                                          else{
+                                              NSError *parsJSONError = nil;
+                                              NSDictionary *errorDic = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                              NSArray *errorArray = [errorDic objectForKey:@"Errors"];
+                                              //                                              NSLog(@"\n\n\nError = %@",[errorArray objectAtIndex:0]);
+
+                                              dispatch_async(dispatch_get_main_queue(), ^{
+                                                  UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                                                                 message:[errorArray objectAtIndex:0]
+                                                                                                          preferredStyle:UIAlertControllerStyleAlert];
+
+                                                  UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                                                                     style:UIAlertActionStyleDefault
+                                                                                                   handler:^(UIAlertAction * action) {}];
+                                                  [alert addAction:OKAction];
+                                                  [self presentViewController:alert animated:YES completion:nil];
+                                                                            });
+
+                                              dispatch_semaphore_signal(sem);
+                                              return;
+                                          }
+                                      }];
+    [dataTask resume];
+    //start waiting until get response from API
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+}
 
 
 
@@ -79,6 +198,10 @@
 }
 
 -(IBAction)addInfo:(id)sender{
+    [self showPopUpViewForEdit:NO];
+}
+
+-(void)showPopUpViewForEdit:(BOOL)isUpdateInfo{
     // show popup view here
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     CGFloat screenWidth = screenRect.size.width;
@@ -131,7 +254,12 @@
     [titleLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:20.0]];
     titleLabel.textAlignment = NSTextAlignmentCenter;
     [titleLabel setTextColor:[UIColor blackColor]];
-    titleLabel.text = @"Add new experiment note";
+    if (isUpdateInfo) {
+        titleLabel.text = @"Update experiment note";
+    }else{
+        titleLabel.text = @"Add new experiment note";
+    }
+
 
     //top content View
     UIView *topContentView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, screenWidth-40, 229)];
@@ -146,13 +274,19 @@
     self.stringTextField = [[UITextField alloc]initWithFrame:CGRectMake(70, 100, screenWidth-130, 30)];
     [self.stringTextField  setBackgroundColor:[UIColor colorWithRed:240/255.0 green:240/255.0 blue:240/255.0 alpha:1.0]];
     self.stringTextField .layer.cornerRadius = 5.0f;
+    if (isUpdateInfo) {
+        self.stringTextField.text = self.selectedExperimentNoteID;
 
+    }
 
     //text Field For double
     self.doubleTextField = [[UITextField alloc]initWithFrame:CGRectMake(70, 140, screenWidth-130, 30)];
     [self.doubleTextField setBackgroundColor:[UIColor colorWithRed:240/255.0 green:240/255.0 blue:240/255.0 alpha:1.0]];
     self.doubleTextField.layer.cornerRadius = 5.0f;
-
+    if (isUpdateInfo) {
+        self.doubleTextField.text = [NSString stringWithFormat:@"%@",[self.info objectForKey:self.selectedExperimentNoteID]];
+        [self.info removeObjectForKey:[NSString stringWithFormat:@"%@",self.selectedExperimentNoteID]];
+    }
 
     //name Label
     UILabel *nameLabel = [[UILabel alloc]initWithFrame:CGRectMake(10,100, 50, 30)];
@@ -167,10 +301,6 @@
     valueLabel.textAlignment = NSTextAlignmentCenter;
     [valueLabel setTextColor:[UIColor blackColor]];
     valueLabel.text = @"Value";
-
-
-
-
 
 
     [topContentView addSubview:titleLabel];
@@ -202,12 +332,21 @@
     UIButton *button = (UIButton*)sender;
     button.backgroundColor = [UIColor whiteColor];
     NSLog(@"OK ACtion     %@",self.stringTextField.text);
+    //set up infoDic then call edit api
+    [self.info setObject:self.doubleTextField.text forKey:self.stringTextField.text];
+    [self editExperimentNoteAPI];
+    [self loadInfoFromCoredata];
+    [self.tableView reloadData];
+    [UIView animateWithDuration:0.5
+                     animations:^{self.popupView .alpha = 0.0;}
+                     completion:^(BOOL finished){ [self.popupView removeFromSuperview]; }];
 }
 //dissmiss popup view
 -(IBAction)cancelButtonActionNormal:(id)sender{
     UIButton *button = (UIButton*)sender;
     button.backgroundColor = [UIColor whiteColor];
-    NSLog(@"Cancel ACtion");
+    [self loadInfoFromCoredata];
+    [self.tableView reloadData];
     [UIView animateWithDuration:0.5
                      animations:^{self.popupView .alpha = 0.0;}
                      completion:^(BOOL finished){ [self.popupView removeFromSuperview]; }];
@@ -217,6 +356,9 @@
     [super viewDidLoad];
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     self.buttonEdit.layer.cornerRadius = 5.0f;
+    self.isUpDateName = NO;
+    [self.experimentNameTextField setUserInteractionEnabled:NO];
+    self.tableView.layer.cornerRadius = 5.0f;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -250,6 +392,13 @@
     cell.separatorInset = UIEdgeInsetsZero;
     cell.layoutMargins = UIEdgeInsetsZero;
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    // get the selected string string info
+    self.selectedExperimentNoteID = [[self.info allKeys] objectAtIndex:indexPath.row];
+    [self showPopUpViewForEdit:YES];
+    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -300,5 +449,18 @@
 */
 
 - (IBAction)buttonEditNameAction:(id)sender {
+    if (self.isUpDateName) {
+        [self.buttonEdit setTitle:@"Edit Name" forState:UIControlStateNormal];
+        [self.experimentNameTextField setUserInteractionEnabled:NO];
+        self.isUpDateName = NO;
+        [self.experimentNameTextField resignFirstResponder];
+        //call api func to update name here
+        [self editExperimentNoteAPI];
+    }else{
+        [self.buttonEdit setTitle:@"Save" forState:UIControlStateNormal];
+        [self.experimentNameTextField setUserInteractionEnabled:YES];
+        self.isUpDateName = YES;
+        [self.experimentNameTextField becomeFirstResponder];
+    }
 }
 @end

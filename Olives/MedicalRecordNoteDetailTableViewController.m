@@ -153,7 +153,7 @@
 
     //create JSON data to post to API
     NSDictionary *account = @{
-                              @"Partner" :@"77",//[self.selectedMedicalRecord objectForKey:@"Owner"],
+                              @"Partner" :[self.selectedMedicalRecord objectForKey:@"Owner"],
                               @"Mode":@"0",
                               @"Sort":@"1",
                               @"MedicalRecord":[self.selectedMedicalRecord objectForKey:@"Id"],

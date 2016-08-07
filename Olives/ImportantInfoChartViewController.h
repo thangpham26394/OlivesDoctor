@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface ImportantInfoChartViewController : UIViewController
-
+@property(strong,nonatomic) NSDictionary *displayDataDic;
 @end
