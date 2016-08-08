@@ -5,7 +5,9 @@
 //  Created by Tony Tony Chopper on 7/22/16.
 //  Copyright © 2016 Thang. All rights reserved.
 //
-#define APIURL @"http://olive.azurewebsites.net/api/doctor/profile"
+#define APIURL @"http://olive.azurewebsites.net/api/doctor?Id="
+#define APIURLUPLOAD @"http://olive.azurewebsites.net/api/account/avatar"
+#define ACCEPTLIMITSIZE 2000
 #import "EditProfileViewController.h"
 #import "SWRevealViewController.h"
 #import "ChangePasswordViewController.h"
@@ -33,9 +35,12 @@
 @property (weak, nonatomic) IBOutlet UILabel *mistakeLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *avatar;
 @property (strong,nonatomic) NSDictionary *responseJSONData ;
+@property (strong,nonatomic) NSDictionary *responseImageData ;
 @property (strong,nonatomic) NSDictionary *mistake;
+@property (weak, nonatomic) IBOutlet UIButton *changeImageButton;
 
 - (IBAction)updateProfile:(id)sender;
+- (IBAction)changeImageAction:(id)sender;
 
 
 
@@ -95,6 +100,8 @@
 
     [self.saveButton.layer setCornerRadius:self.saveButton.frame.size.height/2+1];
     self.saveButton.backgroundColor = [UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0];
+    [self.changeImageButton.layer setCornerRadius:5.0f];
+    self.changeImageButton.backgroundColor = [UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0];
     self.genderBackground.layer.cornerRadius = 5.0f;
 
     //get the current doctor data
@@ -232,10 +239,119 @@
 //    }
 
 }
+#pragma mark - Connect to API function
 
--(void)updateDoctorProfileToAPIWith:(NSString*)email and :(NSString*)password{
+//resize image func
+- (UIImage *)compressForUpload:(UIImage *)original scale:(CGFloat)scale
+{
+    // Calculate new size given scale factor.
+    CGSize originalSize = original.size;
+    CGSize newSize = CGSizeMake(originalSize.width * scale, originalSize.height * scale);
+
+    // Scale the original image to match the new size.
+    UIGraphicsBeginImageContext(newSize);
+    [original drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
+    UIImage* compressedImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+
+    return compressedImage;
+}
+//upload prescription image
+-(void)uploadDoctorImageToAPI:(UIImage *)pickedImage{
     // create url
-    NSURL *url = [NSURL URLWithString:APIURL];
+    NSURL *url = [NSURL URLWithString:APIURLUPLOAD];
+    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:sessionConfig];
+    //create request
+    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
+
+    //get doctor email and password from coredata
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+
+    //setup header and body for request
+    [urlRequest setHTTPMethod:@"POST"];
+    [urlRequest setValue:[doctor valueForKey:@"email"] forHTTPHeaderField:@"Email"];
+    [urlRequest setValue:[doctor valueForKey:@"password"]  forHTTPHeaderField:@"Password"];
+    [urlRequest setValue:@"en-US" forHTTPHeaderField:@"Accept-Language"];
+
+
+    // add image data
+    NSData *imgData = UIImagePNGRepresentation(pickedImage);
+    NSLog(@"before-------------%lu",imgData.length /1024);
+    UIImage *resizedImage = pickedImage;
+    while (imgData.length/1024 > ACCEPTLIMITSIZE) {
+
+        resizedImage = [self compressForUpload:resizedImage scale:0.9];
+        imgData = UIImagePNGRepresentation(resizedImage);
+    }
+    NSLog(@"after-------------%lu",imgData.length /1024);
+
+    dispatch_semaphore_t    sem;
+    sem = dispatch_semaphore_create(0);
+    NSURLSessionUploadTask *uploadTask = [defaultSession uploadTaskWithRequest:urlRequest fromData:imgData completionHandler:
+        ^(NSData *data, NSURLResponse *response, NSError *error) {
+
+            NSHTTPURLResponse *httpResp = (NSHTTPURLResponse*) response;
+            if (!error && httpResp.statusCode == 200) {
+
+                NSError *parsJSONError = nil;
+                self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                if (self.responseJSONData != nil) {
+                    [self saveImageToCoreData];
+                }else{
+
+                }
+
+                //stop waiting after get response from API
+                dispatch_semaphore_signal(sem);
+
+            } else {
+                NSError *parsJSONError = nil;
+                if (data ==nil) {
+                    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Internet Error"
+                                                                                   message:nil
+                                                                            preferredStyle:UIAlertControllerStyleAlert];
+                    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                                       style:UIAlertActionStyleDefault
+                                                                     handler:^(UIAlertAction * action) {}];
+                    [alert addAction:OKAction];
+                    [self presentViewController:alert animated:YES completion:nil];
+                    dispatch_semaphore_signal(sem);
+
+                    return;
+                }
+                NSDictionary *errorDic = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                NSArray *errorArray = [errorDic objectForKey:@"Errors"];
+                //                                              NSLog(@"\n\n\nError = %@",[errorArray objectAtIndex:0]);
+
+                UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                               message:[errorArray objectAtIndex:0]
+                                                                        preferredStyle:UIAlertControllerStyleAlert];
+
+                UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                                   style:UIAlertActionStyleDefault
+                                                                 handler:^(UIAlertAction * action) {}];
+                [alert addAction:OKAction];
+                [self presentViewController:alert animated:YES completion:nil];
+                dispatch_semaphore_signal(sem);
+                return;
+
+            }
+    }];
+    [uploadTask resume];
+    //start waiting until get response from API
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+
+}
+
+
+
+-(void)updateDoctorProfileToAPIWith:(NSString*)email and :(NSString*)password forDocTor:(NSString*)doctorID{
+    // create url
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", APIURL,doctorID ]];
     NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
 
 
@@ -296,16 +412,21 @@
 
                                           if((long)[httpResponse statusCode] == 200  && error ==nil)
                                           {
+
+
                                               NSError *parsJSONError = nil;
                                               self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
-                                              self.mistake = nil;
-                                              [self updateNewProfileToCoreData];
+                                              if (self.responseJSONData != nil) {
+                                                  self.mistake = nil;
+                                                  [self updateNewProfileToCoreData];
+                                              }else{
+
+                                              }
                                               //stop waiting after get response from API
                                               dispatch_semaphore_signal(sem);
                                           }
                                           else{
-//                                              NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
-//                                              NSLog(@"\n\n\nError = %@",text);
+
                                               NSError *parsJSONError = nil;
                                               self.mistakeLabel.textColor = [UIColor redColor];
                                               self.mistake = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
@@ -319,10 +440,33 @@
 
 }
 
--(void)updateNewProfileToCoreData{
-    NSDictionary *newDoctor = [self.responseJSONData objectForKey:@"User"];
+-(void)saveImageToCoreData{
+    NSDictionary *newDoctor = [self.responseImageData objectForKey:@"User"];
+    NSString *photoURL = [newDoctor objectForKey:@"Photo"];
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
 
-    //get the current doctor data
+    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+    //get avatar from receive url
+    NSURL *url = [NSURL URLWithString:photoURL];
+    NSData *doctorPhotoData = [NSData dataWithContentsOfURL:url];
+    [newDoctor setValue:doctorPhotoData  forKey:@"photoURL"];
+
+    NSError *error = nil;
+    // Save the object to persistent store
+    if (![context save:&error]) {
+        NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
+    }else{
+        NSLog(@"Save success!");
+    }
+
+}
+
+-(void)updateNewProfileToCoreData{
+    NSDictionary *newDoctor = [self.responseJSONData objectForKey:@"Doctor"];
+
+
     NSManagedObjectContext *context = [self managedObjectContext];
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
     NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
@@ -356,7 +500,7 @@
     NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
     NSManagedObject *doctor = [doctorObject objectAtIndex:0];
 
-    [self updateDoctorProfileToAPIWith:[doctor valueForKey:@"email"] and:[doctor valueForKey:@"password"]];
+    [self updateDoctorProfileToAPIWith:[doctor valueForKey:@"email"] and:[doctor valueForKey:@"password"] forDocTor:[doctor valueForKey:@"doctorID"]];
     NSArray *mistakeArray = [self.mistake objectForKey:@"Errors"];
     if (mistakeArray != nil) {
         self.mistakeLabel.text = @"";
@@ -370,5 +514,18 @@
         }
     }
     
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo
+{
+    [picker dismissViewControllerAnimated:YES completion:^{}];
+    [self uploadDoctorImageToAPI:image];
+}
+
+- (IBAction)changeImageAction:(id)sender {
+    UIImagePickerController *myImagePicker = [[UIImagePickerController alloc] init];
+    myImagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    myImagePicker.delegate = self;
+    [self presentViewController:myImagePicker animated:YES completion:nil];
 }
 @end

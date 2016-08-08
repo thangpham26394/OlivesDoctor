@@ -19,6 +19,11 @@
 		15BF12711D5679F200728456 /* StringDoubleTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BF12701D5679F200728456 /* StringDoubleTableViewCell.m */; };
 		15BF12741D567E0B00728456 /* ExperimentNoteGeneralTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BF12731D567E0B00728456 /* ExperimentNoteGeneralTableViewController.m */; };
 		15BF129E1D57BDDD00728456 /* AddNewDiaryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BF129D1D57BDDD00728456 /* AddNewDiaryViewController.m */; };
+		15BF12AA1D5880B800728456 /* AddictionTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BF12A91D5880B800728456 /* AddictionTableViewController.m */; };
+		15BF12AE1D5880DF00728456 /* AlgeryTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BF12AD1D5880DF00728456 /* AlgeryTableViewController.m */; };
+		15BF12B41D5886EA00728456 /* BloodPresureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BF12B31D5886EA00728456 /* BloodPresureViewController.m */; };
+		15BF12B71D5886FC00728456 /* BloodSugarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BF12B61D5886FC00728456 /* BloodSugarViewController.m */; };
+		15BF12BA1D58870C00728456 /* HeartBeatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BF12B91D58870C00728456 /* HeartBeatViewController.m */; };
 		15DCF5781CF3593800013F19 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 15DCF5771CF3593800013F19 /* main.m */; };
 		15DCF57B1CF3593800013F19 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 15DCF57A1CF3593800013F19 /* AppDelegate.m */; };
 		15DCF5841CF3593800013F19 /* Olives.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 15DCF5821CF3593800013F19 /* Olives.xcdatamodeld */; };
@@ -196,6 +201,16 @@
 		15BF12731D567E0B00728456 /* ExperimentNoteGeneralTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExperimentNoteGeneralTableViewController.m; sourceTree = "<group>"; };
 		15BF129C1D57BDDD00728456 /* AddNewDiaryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddNewDiaryViewController.h; sourceTree = "<group>"; };
 		15BF129D1D57BDDD00728456 /* AddNewDiaryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddNewDiaryViewController.m; sourceTree = "<group>"; };
+		15BF12A81D5880B800728456 /* AddictionTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddictionTableViewController.h; sourceTree = "<group>"; };
+		15BF12A91D5880B800728456 /* AddictionTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddictionTableViewController.m; sourceTree = "<group>"; };
+		15BF12AC1D5880DF00728456 /* AlgeryTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlgeryTableViewController.h; sourceTree = "<group>"; };
+		15BF12AD1D5880DF00728456 /* AlgeryTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlgeryTableViewController.m; sourceTree = "<group>"; };
+		15BF12B21D5886EA00728456 /* BloodPresureViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BloodPresureViewController.h; sourceTree = "<group>"; };
+		15BF12B31D5886EA00728456 /* BloodPresureViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BloodPresureViewController.m; sourceTree = "<group>"; };
+		15BF12B51D5886FC00728456 /* BloodSugarViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BloodSugarViewController.h; sourceTree = "<group>"; };
+		15BF12B61D5886FC00728456 /* BloodSugarViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BloodSugarViewController.m; sourceTree = "<group>"; };
+		15BF12B81D58870C00728456 /* HeartBeatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeartBeatViewController.h; sourceTree = "<group>"; };
+		15BF12B91D58870C00728456 /* HeartBeatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HeartBeatViewController.m; sourceTree = "<group>"; };
 		15DCF5731CF3593800013F19 /* Olives.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Olives.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		15DCF5771CF3593800013F19 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		15DCF5791CF3593800013F19 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -390,6 +405,63 @@
 				15BF12731D567E0B00728456 /* ExperimentNoteGeneralTableViewController.m */,
 			);
 			name = MedicalRecordExperimentNote;
+			sourceTree = "<group>";
+		};
+		15BF12A31D58809300728456 /* MoreInfo */ = {
+			isa = PBXGroup;
+			children = (
+				15BF12B11D5880FB00728456 /* HeartBeat */,
+				15BF12B01D5880F200728456 /* BloodSugar */,
+				15BF12AF1D5880E800728456 /* BloodPressure */,
+				15BF12AB1D5880CF00728456 /* AlgeryInfo */,
+				15BF12A71D58809B00728456 /* AddictionInfo */,
+			);
+			name = MoreInfo;
+			sourceTree = "<group>";
+		};
+		15BF12A71D58809B00728456 /* AddictionInfo */ = {
+			isa = PBXGroup;
+			children = (
+				15BF12A81D5880B800728456 /* AddictionTableViewController.h */,
+				15BF12A91D5880B800728456 /* AddictionTableViewController.m */,
+			);
+			name = AddictionInfo;
+			sourceTree = "<group>";
+		};
+		15BF12AB1D5880CF00728456 /* AlgeryInfo */ = {
+			isa = PBXGroup;
+			children = (
+				15BF12AC1D5880DF00728456 /* AlgeryTableViewController.h */,
+				15BF12AD1D5880DF00728456 /* AlgeryTableViewController.m */,
+			);
+			name = AlgeryInfo;
+			sourceTree = "<group>";
+		};
+		15BF12AF1D5880E800728456 /* BloodPressure */ = {
+			isa = PBXGroup;
+			children = (
+				15BF12B21D5886EA00728456 /* BloodPresureViewController.h */,
+				15BF12B31D5886EA00728456 /* BloodPresureViewController.m */,
+			);
+			name = BloodPressure;
+			sourceTree = "<group>";
+		};
+		15BF12B01D5880F200728456 /* BloodSugar */ = {
+			isa = PBXGroup;
+			children = (
+				15BF12B51D5886FC00728456 /* BloodSugarViewController.h */,
+				15BF12B61D5886FC00728456 /* BloodSugarViewController.m */,
+			);
+			name = BloodSugar;
+			sourceTree = "<group>";
+		};
+		15BF12B11D5880FB00728456 /* HeartBeat */ = {
+			isa = PBXGroup;
+			children = (
+				15BF12B81D58870C00728456 /* HeartBeatViewController.h */,
+				15BF12B91D58870C00728456 /* HeartBeatViewController.m */,
+			);
+			name = HeartBeat;
 			sourceTree = "<group>";
 		};
 		15DCF56A1CF3593800013F19 = {
@@ -634,6 +706,7 @@
 		15E8C4E01D3AE5880056E8AE /* PatientDetails */ = {
 			isa = PBXGroup;
 			children = (
+				15BF12A31D58809300728456 /* MoreInfo */,
 				15EB738F1D3E110500C6284A /* MedicalRecordCategory */,
 				15E8C4DD1D3AE5010056E8AE /* ImportantInfo */,
 				15E8C4DB1D3AE4CB0056E8AE /* Prescription */,
@@ -991,6 +1064,7 @@
 				15DCF57B1CF3593800013F19 /* AppDelegate.m in Sources */,
 				15EF10E81D4D272A00456636 /* MedicalNoteTableViewController.m in Sources */,
 				15BF12711D5679F200728456 /* StringDoubleTableViewCell.m in Sources */,
+				15BF12B41D5886EA00728456 /* BloodPresureViewController.m in Sources */,
 				15F010651D4A6E19001663CE /* MoneyManagementViewController.m in Sources */,
 				15BF126A1D56462800728456 /* AddNewMedicalNoteViewController.m in Sources */,
 				15E9D6F91D06B3D6006D5DD1 /* VRGCalendarView.m in Sources */,
@@ -1000,8 +1074,10 @@
 				15E7E4871D53CE6400B405EB /* AddNewPrescriptionViewController.m in Sources */,
 				15E8C4F31D3AEB290056E8AE /* MedicalRecordImagesCollectionViewController.m in Sources */,
 				15DCF5AB1CF3870F00013F19 /* OLTableViewCell.m in Sources */,
+				15BF12AA1D5880B800728456 /* AddictionTableViewController.m in Sources */,
 				15BF129E1D57BDDD00728456 /* AddNewDiaryViewController.m in Sources */,
 				15EB44BB1D34F80C00C489A2 /* TimePickerViewController.m in Sources */,
+				15BF12AE1D5880DF00728456 /* AlgeryTableViewController.m in Sources */,
 				15E8C4FE1D3B70970056E8AE /* DoctorNoteTableViewCell.m in Sources */,
 				15E9D6FD1D06B3D6006D5DD1 /* UIColor+expanded.m in Sources */,
 				15DDAA8A1D3D6924001D4BBB /* ImportantInfoChartViewController.m in Sources */,
@@ -1009,9 +1085,11 @@
 				15F542CC1D410A2D003A61F0 /* MedicineImagesCollectionViewController.m in Sources */,
 				15E9D6FB1D06B3D6006D5DD1 /* NSMutableArray+convenience.m in Sources */,
 				15E9D7071D0812DD006D5DD1 /* ForgotPasswordViewController.m in Sources */,
+				15BF12B71D5886FC00728456 /* BloodSugarViewController.m in Sources */,
 				15E586031D4DF4C300C6F468 /* MedicalRecordPresctiptionTableViewController.m in Sources */,
 				15EB73951D3E114D00C6284A /* MedicalRecordTableViewController.m in Sources */,
 				15E5860A1D4E311200C6F468 /* SignUpViewController.m in Sources */,
+				15BF12BA1D58870C00728456 /* HeartBeatViewController.m in Sources */,
 				15DCF5A61CF3820F00013F19 /* OLTableViewController.m in Sources */,
 				15DCF5781CF3593800013F19 /* main.m in Sources */,
 				15E8C4F81D3AEE460056E8AE /* MedicalRecordImageShowViewController.m in Sources */,

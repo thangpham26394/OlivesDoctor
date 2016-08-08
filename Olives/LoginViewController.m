@@ -267,8 +267,6 @@
     //get avatar from receive url
     NSURL *url = [NSURL URLWithString:doctorPhoto];
     NSData *doctorPhotoData = [NSData dataWithContentsOfURL:url];
-    
-
 
     [newDoctor setValue:doctorPhotoData  forKey:@"photoURL"];
 
