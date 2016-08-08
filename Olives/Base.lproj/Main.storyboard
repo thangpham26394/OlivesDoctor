@@ -584,7 +584,7 @@
                                                 </connections>
                                             </textField>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ECl-DU-Fpe">
-                                                <rect key="frame" x="20" y="362" width="560" height="38"/>
+                                                <rect key="frame" x="300" y="362" width="280" height="38"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="38" id="hBo-fs-I3f"/>
                                                 </constraints>
@@ -612,7 +612,7 @@
                                         <constraints>
                                             <constraint firstItem="i9Z-g2-2Z7" firstAttribute="top" secondItem="ECl-DU-Fpe" secondAttribute="bottom" constant="5" id="72g-7f-dL6"/>
                                             <constraint firstItem="NuN-0O-Kpa" firstAttribute="height" secondItem="NlW-jD-2i7" secondAttribute="height" id="ErO-eF-iLm"/>
-                                            <constraint firstItem="ECl-DU-Fpe" firstAttribute="width" secondItem="NuN-0O-Kpa" secondAttribute="width" id="Jxc-uD-C8D"/>
+                                            <constraint firstItem="ECl-DU-Fpe" firstAttribute="width" secondItem="NuN-0O-Kpa" secondAttribute="width" multiplier="0.5" id="Jxc-uD-C8D"/>
                                             <constraint firstItem="NBO-qG-eSS" firstAttribute="leading" secondItem="i9Z-g2-2Z7" secondAttribute="leading" id="MMp-xB-Dop"/>
                                             <constraint firstItem="y49-wd-xMB" firstAttribute="leading" secondItem="qfW-pf-EJu" secondAttribute="leading" constant="20" id="SHh-Lk-oGS"/>
                                             <constraint firstItem="NBO-qG-eSS" firstAttribute="top" secondItem="i9Z-g2-2Z7" secondAttribute="bottom" constant="40" id="TkC-Uf-iLj"/>
@@ -726,6 +726,7 @@
                                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                                 </state>
                                                 <connections>
+                                                    <action selector="confirmEmailAction:" destination="Wf8-jM-8YE" eventType="touchUpInside" id="mCL-aY-dAH"/>
                                                     <segue destination="IN5-sq-0j1" kind="show" id="pDV-a9-bbS"/>
                                                 </connections>
                                             </button>

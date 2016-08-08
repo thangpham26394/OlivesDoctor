@@ -8,6 +8,7 @@
 
 #import "HomeViewController.h"
 #import "SWRevealViewController.h"
+#import "SignalR.h"
 #import <CoreData/CoreData.h>
 
 @interface HomeViewController ()
@@ -22,7 +23,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *patientRequestImage;
 @property (weak, nonatomic) IBOutlet UIImageView *appointmentImage;
 @property (weak, nonatomic) IBOutlet UIImageView *serviceImage;
-
+@property(strong,nonatomic) SRHubProxy *myHub;
 
 
 @end
@@ -78,15 +79,6 @@
     self.nameLabel.text = [NSString stringWithFormat:@"%@ %@", [doctor valueForKey:@"firstName"], [doctor valueForKey:@"lastName"]];
     self.avatar.image = [UIImage imageWithData:[doctor valueForKey:@"photoURL"]];
 
-
-
-//    NSString * doctorBirthDay = [doctor valueForKey:@"birthday"];
-//    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-//    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
-//    [dateFormatter setDateFormat:@"MM/dd/yyyy"];
-//
-//    NSDate *reverseDate = [NSDate dateWithTimeIntervalSince1970:[doctorBirthDay doubleValue]];
-//    self.nameLabel.text =     [NSString stringWithFormat:@"%@",[dateFormatter stringFromDate:reverseDate] ];
 }
 
 - (void)didReceiveMemoryWarning {

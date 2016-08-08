@@ -191,11 +191,44 @@
 
                                                            }
                                                            else{
-                                                               NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
-                                                               NSLog(@"\n\n\nError = %@",text);
                                                                self.canLogin = NO;
+                                                               NSError *parsJSONError = nil;
+                                                               if (data ==nil) {
+                                                                   dispatch_async(dispatch_get_main_queue(), ^{
+                                                                       UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Internet Error"
+                                                                                                                                      message:nil
+                                                                                                                               preferredStyle:UIAlertControllerStyleAlert];
+                                                                       UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                                                                                          style:UIAlertActionStyleDefault
+                                                                                                                        handler:^(UIAlertAction * action) {}];
+                                                                       [alert addAction:OKAction];
+                                                                       [self presentViewController:alert animated:YES completion:nil];
+                                                                                                 });
+
+                                                                   dispatch_semaphore_signal(sem);
+                                                                   return;
+                                                               }
+                                                               
+                                                               NSDictionary *errorDic = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                                               NSArray *errorArray = [errorDic objectForKey:@"Errors"];
+                                                               //                                              NSLog(@"\n\n\nError = %@",[errorArray objectAtIndex:0]);
+
+                                                               dispatch_async(dispatch_get_main_queue(), ^{
+                                                                   UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                                                                                  message:[errorArray objectAtIndex:0]
+                                                                                                                           preferredStyle:UIAlertControllerStyleAlert];
+
+                                                                   UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                                                                                      style:UIAlertActionStyleDefault
+                                                                                                                    handler:^(UIAlertAction * action) {}];
+                                                                   [alert addAction:OKAction];
+                                                                   [self presentViewController:alert animated:YES completion:nil];
+                                                                                             });
+
+
                                                                dispatch_semaphore_signal(sem);
                                                                return;
+
                                                            }
                                                            
                                                        }];

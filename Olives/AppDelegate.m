@@ -5,8 +5,9 @@
 //  Created by Tony Tony Chopper on 5/23/16.
 //  Copyright © 2016 Thang. All rights reserved.
 //
-
+#define APIURL @"http://olive.azurewebsites.net"
 #import "AppDelegate.h"
+#import "SignalR.h"
 
 @interface AppDelegate ()
 
@@ -47,7 +48,36 @@
     [[UINavigationBar appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName : [UIColor whiteColor]}];
     self.window.rootViewController = rootViewController;
     [self.window makeKeyAndVisible];
+
+    // Connect to the service
+    SRHubConnection *hubConnection = [SRHubConnection connectionWithURLString:APIURL];
+    // Create a proxy to the chat service
+    SRHubProxy *notificationHub = [hubConnection createHubProxy:@"NotificationHub"];
+    [notificationHub on:@"broadcastNotification" perform:self selector:@selector(notificationReceived:)];
+
+    // Register for connection lifecycle events
+    [hubConnection setStarted:^{
+        NSLog(@"Connection Started");
+    }];
+
+    [hubConnection setReceived:^(NSString *message) {
+        NSLog(@"Connection Recieved Data: %@",message);
+    }];
+
+    [hubConnection setError:^(NSError *error) {
+        NSLog(@"Connection Error %@",error);
+    }];
+    // Start the connection
+    [hubConnection start];
+
+    
     return YES;
+}
+- (void)notificationReceived:(id)message
+{
+    //do something with the message
+    NSLog(@"%@",message);
+    //    txtHitCount.text = [@"There have been " stringByAppendingFormat:@"%@ views", message];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

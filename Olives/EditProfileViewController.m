@@ -5,7 +5,7 @@
 //  Created by Tony Tony Chopper on 7/22/16.
 //  Copyright © 2016 Thang. All rights reserved.
 //
-#define APIURL @"http://olive.azurewebsites.net/api/doctor?Id="
+#define APIURL @"http://olive.azurewebsites.net/api/doctor"
 #define APIURLUPLOAD @"http://olive.azurewebsites.net/api/account/avatar"
 #define ACCEPTLIMITSIZE 2000
 #import "EditProfileViewController.h"
@@ -211,7 +211,7 @@
 }
 -(void) setupGestureRecognizer {
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
-    tapGesture.cancelsTouchesInView = NO;
+    //tapGesture.cancelsTouchesInView = NO;
     [self.contentView addGestureRecognizer:tapGesture];
 }
 
@@ -271,77 +271,118 @@
     NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
     NSManagedObject *doctor = [doctorObject objectAtIndex:0];
 
+    NSString *BoundaryConstant = @"----------V2ymHFg03ehbqgZCaKO6jy";
     //setup header and body for request
     [urlRequest setHTTPMethod:@"POST"];
     [urlRequest setValue:[doctor valueForKey:@"email"] forHTTPHeaderField:@"Email"];
     [urlRequest setValue:[doctor valueForKey:@"password"]  forHTTPHeaderField:@"Password"];
     [urlRequest setValue:@"en-US" forHTTPHeaderField:@"Accept-Language"];
 
+    //set up content type for request <content both params and image data>
+    NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", BoundaryConstant];
+    [urlRequest setValue:contentType forHTTPHeaderField: @"Content-Type"];
+
+
+
+    // config body
+    NSMutableData *body = [NSMutableData data];
+    [body appendData:[[NSString stringWithFormat:@"--%@\r\n", BoundaryConstant] dataUsingEncoding:NSUTF8StringEncoding]];
+    [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"MedicalRecord\"\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+
+    [body appendData:[[NSString stringWithFormat:@"%@\r\n",@""] dataUsingEncoding:NSUTF8StringEncoding]];
+
 
     // add image data
     NSData *imgData = UIImagePNGRepresentation(pickedImage);
     NSLog(@"before-------------%lu",imgData.length /1024);
+
     UIImage *resizedImage = pickedImage;
     while (imgData.length/1024 > ACCEPTLIMITSIZE) {
 
         resizedImage = [self compressForUpload:resizedImage scale:0.9];
         imgData = UIImagePNGRepresentation(resizedImage);
     }
+
+
     NSLog(@"after-------------%lu",imgData.length /1024);
+
+
+    //create a name for image with the current time in milisec
+    NSDateFormatter *dateFormaterToUTC = [[NSDateFormatter alloc] init];
+    dateFormaterToUTC.timeStyle = NSDateFormatterNoStyle;
+    dateFormaterToUTC.dateFormat = @"MM/dd/yyyy HH:mm:ss:SSS";
+
+
+    if (imgData) {
+        [body appendData:[[NSString stringWithFormat:@"--%@\r\n", BoundaryConstant] dataUsingEncoding:NSUTF8StringEncoding]];
+        [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"Avatar\"; filename=\"%@\"\r\n",[dateFormaterToUTC stringFromDate:[NSDate date]]] dataUsingEncoding:NSUTF8StringEncoding]];
+        [body appendData:[@"Content-Type: image/png\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+        [body appendData:imgData];
+        [body appendData:[[NSString stringWithFormat:@"\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+    }
+
+    [body appendData:[[NSString stringWithFormat:@"--%@--\r\n", BoundaryConstant] dataUsingEncoding:NSUTF8StringEncoding]];
+
+    // setting the body of the post to the reqeust
+    [urlRequest setHTTPBody:body];
+
+
+
+    //    [urlRequest setHTTPBody:jsondata];
 
     dispatch_semaphore_t    sem;
     sem = dispatch_semaphore_create(0);
-    NSURLSessionUploadTask *uploadTask = [defaultSession uploadTaskWithRequest:urlRequest fromData:imgData completionHandler:
-        ^(NSData *data, NSURLResponse *response, NSError *error) {
 
-            NSHTTPURLResponse *httpResp = (NSHTTPURLResponse*) response;
-            if (!error && httpResp.statusCode == 200) {
+    NSURLSessionTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
+                                                   completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+                                  {
+                                      NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
 
-                NSError *parsJSONError = nil;
-                self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
-                if (self.responseJSONData != nil) {
-                    [self saveImageToCoreData];
-                }else{
+                                      if((long)[httpResponse statusCode] == 200  && error ==nil)
+                                      {
+                                          NSError *parsJSONError = nil;
+                                          self.responseImageData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                          if (self.responseImageData != nil) {
+                                              [self saveImageToCoreData];
+                                          }else{
 
-                }
+                                          }
+                                          //stop waiting after get response from API
+                                          dispatch_semaphore_signal(sem);
+                                      }
+                                      else{
+                                          NSError *parsJSONError = nil;
+                                          if (data ==nil) {
+                                              UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Internet Error"
+                                                                                                             message:nil
+                                                                                                      preferredStyle:UIAlertControllerStyleAlert];
+                                              UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                                                                 style:UIAlertActionStyleDefault
+                                                                                               handler:^(UIAlertAction * action) {}];
+                                              [alert addAction:OKAction];
+                                              [self presentViewController:alert animated:YES completion:nil];
+                                              dispatch_semaphore_signal(sem);
 
-                //stop waiting after get response from API
-                dispatch_semaphore_signal(sem);
+                                              return;
+                                          }
+                                          NSDictionary *errorDic = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                          NSArray *errorArray = [errorDic objectForKey:@"Errors"];
+                                          //                                              NSLog(@"\n\n\nError = %@",[errorArray objectAtIndex:0]);
 
-            } else {
-                NSError *parsJSONError = nil;
-                if (data ==nil) {
-                    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Internet Error"
-                                                                                   message:nil
-                                                                            preferredStyle:UIAlertControllerStyleAlert];
-                    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
-                                                                       style:UIAlertActionStyleDefault
-                                                                     handler:^(UIAlertAction * action) {}];
-                    [alert addAction:OKAction];
-                    [self presentViewController:alert animated:YES completion:nil];
-                    dispatch_semaphore_signal(sem);
+                                          UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                                                         message:[errorArray objectAtIndex:0]
+                                                                                                  preferredStyle:UIAlertControllerStyleAlert];
 
-                    return;
-                }
-                NSDictionary *errorDic = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
-                NSArray *errorArray = [errorDic objectForKey:@"Errors"];
-                //                                              NSLog(@"\n\n\nError = %@",[errorArray objectAtIndex:0]);
-
-                UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error"
-                                                                               message:[errorArray objectAtIndex:0]
-                                                                        preferredStyle:UIAlertControllerStyleAlert];
-
-                UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
-                                                                   style:UIAlertActionStyleDefault
-                                                                 handler:^(UIAlertAction * action) {}];
-                [alert addAction:OKAction];
-                [self presentViewController:alert animated:YES completion:nil];
-                dispatch_semaphore_signal(sem);
-                return;
-
-            }
-    }];
-    [uploadTask resume];
+                                          UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                                                             style:UIAlertActionStyleDefault
+                                                                                           handler:^(UIAlertAction * action) {}];
+                                          [alert addAction:OKAction];
+                                          [self presentViewController:alert animated:YES completion:nil];
+                                          dispatch_semaphore_signal(sem);
+                                          return;
+                                      }
+                                  }];
+    [dataTask resume];
     //start waiting until get response from API
     dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
 
@@ -351,7 +392,7 @@
 
 -(void)updateDoctorProfileToAPIWith:(NSString*)email and :(NSString*)password forDocTor:(NSString*)doctorID{
     // create url
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", APIURL,doctorID ]];
+    NSURL *url = [NSURL URLWithString:APIURL];
     NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
 
 
@@ -451,7 +492,7 @@
     //get avatar from receive url
     NSURL *url = [NSURL URLWithString:photoURL];
     NSData *doctorPhotoData = [NSData dataWithContentsOfURL:url];
-    [newDoctor setValue:doctorPhotoData  forKey:@"photoURL"];
+    [doctor setValue:doctorPhotoData  forKey:@"photoURL"];
 
     NSError *error = nil;
     // Save the object to persistent store
@@ -459,6 +500,7 @@
         NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
     }else{
         NSLog(@"Save success!");
+        self.avatar.image = [UIImage imageWithData:doctorPhotoData];
     }
 
 }
@@ -486,14 +528,28 @@
     }else{
         self.mistakeLabel.textColor = [UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0];
         self.mistakeLabel.text = @"Update successed !";
+        [self showDoneAlertView];
     }
 
 }
+
+-(void)showDoneAlertView{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Done"
+                                                                   message:@"New info have been updated!"
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+
+    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {}];
+    [alert addAction:OKAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
 - (IBAction)updateProfile:(id)sender {
     [self.activeField resignFirstResponder];
     self.mistakeLabel.textColor = [UIColor redColor];
     self.mistakeLabel.text = @"";
-    
+
     //get the current doctor data
     NSManagedObjectContext *context = [self managedObjectContext];
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];

@@ -7,6 +7,8 @@
 //
 
 #import "ForgotPasswordViewController.h"
+#define APIURL @"http://olive.azurewebsites.net/api/account/forgot?Email="
+
 
 @interface ForgotPasswordViewController ()
 @property (weak, nonatomic) IBOutlet UITextField *emailTextField;
@@ -15,6 +17,7 @@
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) UITextField *activeField;
 - (IBAction)cancelButton:(id)sender;
+- (IBAction)confirmEmailAction:(id)sender;
 
 @end
 
@@ -117,6 +120,7 @@
     self.confirmEmailButton.layer.shadowColor = [UIColor colorWithRed:0/255.0 green:150/255.0 blue:150/255.0 alpha:0.5f].CGColor;
     self.confirmEmailButton.layer.shadowOffset = CGSizeMake(0.0f, 10.0f);
     self.confirmEmailButton.layer.shadowOpacity = 0.5f;
+    self.scrollView.canCancelContentTouches = NO;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -136,5 +140,53 @@
 
 - (IBAction)cancelButton:(id)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (IBAction)confirmEmailAction:(id)sender {
+    // create url
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@", APIURL,self.emailTextField.text ]];
+    //create JSON data to post to API
+    NSError *error = nil;
+    // config session
+    NSURLSession *defaultSession = [NSURLSession sharedSession];
+
+    //create request
+    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
+
+    //setup method and body for request
+    [urlRequest setHTTPMethod:@"GET"];
+
+    dispatch_semaphore_t    sem;
+    sem = dispatch_semaphore_create(0);
+
+    NSURLSessionDataTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
+                                                       completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+                                      {
+                                          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+
+                                          if((long)[httpResponse statusCode] == 200  && error ==nil)
+                                          {
+
+                                              NSError *parsJSONError = nil;
+//                                              self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+//                                              self.canLogin = YES;
+
+
+                                              //stop waiting after get response from API
+                                              dispatch_semaphore_signal(sem);
+
+                                          }
+                                          else{
+                                              NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+                                              NSLog(@"\n\n\nError = %@",text);
+                                              dispatch_semaphore_signal(sem);
+                                              return;
+                                          }
+
+                                      }];
+    [dataTask resume];
+    //start waiting until get response from API
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+
 }
 @end

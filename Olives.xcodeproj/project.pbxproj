@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		053985C23832276282D8F463 /* libPods-OlivesTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 584EB1A6E09E223F0159D29D /* libPods-OlivesTests.a */; };
 		1502F7B31CF5F39D00663B59 /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1502F7B21CF5F39D00663B59 /* SWRevealViewController.m */; };
 		1502F7B61CF5F52500663B59 /* menu.png in Resources */ = {isa = PBXBuildFile; fileRef = 1502F7B41CF5F52500663B59 /* menu.png */; };
 		1502F7B71CF5F52500663B59 /* menu@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1502F7B51CF5F52500663B59 /* menu@2x.png */; };
@@ -119,6 +120,7 @@
 		15F6EFC11D4F9087002B166C /* PickNewMedicalRecordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15F6EFC01D4F9087002B166C /* PickNewMedicalRecordViewController.m */; };
 		15F6EFC71D4FD815002B166C /* UpdateDetailInfoMedicalRecordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15F6EFC61D4FD815002B166C /* UpdateDetailInfoMedicalRecordViewController.m */; };
 		15F6EFCA1D5097D6002B166C /* StringStringTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 15F6EFC91D5097D6002B166C /* StringStringTableViewCell.m */; };
+		765D57A11AC616F5062B5F14 /* libPods-Olives.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 13DBC58631EDD07B118CB11B /* libPods-Olives.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -181,6 +183,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		00E82364C43CC524076FEC50 /* Pods-Olives.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Olives.release.xcconfig"; path = "Pods/Target Support Files/Pods-Olives/Pods-Olives.release.xcconfig"; sourceTree = "<group>"; };
+		06B10A449CFFB0DBA15C3630 /* Pods-OlivesTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OlivesTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-OlivesTests/Pods-OlivesTests.debug.xcconfig"; sourceTree = "<group>"; };
+		13DBC58631EDD07B118CB11B /* libPods-Olives.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Olives.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1502F7B11CF5F39D00663B59 /* SWRevealViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWRevealViewController.h; sourceTree = "<group>"; };
 		1502F7B21CF5F39D00663B59 /* SWRevealViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWRevealViewController.m; sourceTree = "<group>"; };
 		1502F7B41CF5F52500663B59 /* menu.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = menu.png; sourceTree = "<group>"; };
@@ -355,6 +360,9 @@
 		15F6EFC61D4FD815002B166C /* UpdateDetailInfoMedicalRecordViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UpdateDetailInfoMedicalRecordViewController.m; sourceTree = "<group>"; };
 		15F6EFC81D5097D6002B166C /* StringStringTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringStringTableViewCell.h; sourceTree = "<group>"; };
 		15F6EFC91D5097D6002B166C /* StringStringTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StringStringTableViewCell.m; sourceTree = "<group>"; };
+		2961E629AAE9CF486C6B633C /* Pods-Olives.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Olives.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Olives/Pods-Olives.debug.xcconfig"; sourceTree = "<group>"; };
+		51C1464A687C219C81D407E6 /* Pods-OlivesTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OlivesTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-OlivesTests/Pods-OlivesTests.release.xcconfig"; sourceTree = "<group>"; };
+		584EB1A6E09E223F0159D29D /* libPods-OlivesTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OlivesTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -365,6 +373,7 @@
 				15DDAA7F1D3D676E001D4BBB /* Charts.framework in Frameworks */,
 				15E9D6FF1D06BD51006D5DD1 /* CoreData.framework in Frameworks */,
 				15DCF5A81CF385E800013F19 /* QuartzCore.framework in Frameworks */,
+				765D57A11AC616F5062B5F14 /* libPods-Olives.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -372,6 +381,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				053985C23832276282D8F463 /* libPods-OlivesTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -473,6 +483,8 @@
 				15DCF5A71CF385E800013F19 /* QuartzCore.framework */,
 				15DCF5921CF3593800013F19 /* OlivesTests */,
 				15DCF5741CF3593800013F19 /* Products */,
+				658FB860F19767A040243DCA /* Pods */,
+				B998B1B1AD1449BB7A6E0771 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -865,6 +877,26 @@
 			name = PickNewMedicalRecordCategory;
 			sourceTree = "<group>";
 		};
+		658FB860F19767A040243DCA /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				2961E629AAE9CF486C6B633C /* Pods-Olives.debug.xcconfig */,
+				00E82364C43CC524076FEC50 /* Pods-Olives.release.xcconfig */,
+				06B10A449CFFB0DBA15C3630 /* Pods-OlivesTests.debug.xcconfig */,
+				51C1464A687C219C81D407E6 /* Pods-OlivesTests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		B998B1B1AD1449BB7A6E0771 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				13DBC58631EDD07B118CB11B /* libPods-Olives.a */,
+				584EB1A6E09E223F0159D29D /* libPods-OlivesTests.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -872,10 +904,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 15DCF5981CF3593900013F19 /* Build configuration list for PBXNativeTarget "Olives" */;
 			buildPhases = (
+				D7B60FA9D95844AFF36B64C4 /* [CP] Check Pods Manifest.lock */,
 				15DCF56F1CF3593800013F19 /* Sources */,
 				15DCF5701CF3593800013F19 /* Frameworks */,
 				15DCF5711CF3593800013F19 /* Resources */,
 				15DDAA831D3D676F001D4BBB /* Embed Frameworks */,
+				05C9A5F259F511A043EA8927 /* [CP] Embed Pods Frameworks */,
+				BBFEBB8AE1B89C26BCCFAD62 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -891,9 +926,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 15DCF59B1CF3593900013F19 /* Build configuration list for PBXNativeTarget "OlivesTests" */;
 			buildPhases = (
+				D930DA9D3696C03C881EC4AF /* [CP] Check Pods Manifest.lock */,
 				15DCF58B1CF3593800013F19 /* Sources */,
 				15DCF58C1CF3593800013F19 /* Frameworks */,
 				15DCF58D1CF3593800013F19 /* Resources */,
+				36630C935E7B4E1B236FB660 /* [CP] Embed Pods Frameworks */,
+				2241DD9DDBAF25B48FE6E94A /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1044,6 +1082,99 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		05C9A5F259F511A043EA8927 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Olives/Pods-Olives-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		2241DD9DDBAF25B48FE6E94A /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-OlivesTests/Pods-OlivesTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		36630C935E7B4E1B236FB660 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-OlivesTests/Pods-OlivesTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		BBFEBB8AE1B89C26BCCFAD62 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Olives/Pods-Olives-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D7B60FA9D95844AFF36B64C4 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		D930DA9D3696C03C881EC4AF /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		15DCF56F1CF3593800013F19 /* Sources */ = {
@@ -1238,6 +1369,7 @@
 		};
 		15DCF5991CF3593900013F19 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2961E629AAE9CF486C6B633C /* Pods-Olives.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -1245,6 +1377,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = Olives/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.SelfLearning.Olives;
 				PRODUCT_NAME = Olives;
@@ -1256,6 +1389,7 @@
 		};
 		15DCF59A1CF3593900013F19 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 00E82364C43CC524076FEC50 /* Pods-Olives.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -1263,6 +1397,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = Olives/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.SelfLearning.Olives;
 				PRODUCT_NAME = Olives;
@@ -1273,6 +1408,7 @@
 		};
 		15DCF59C1CF3593900013F19 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 06B10A449CFFB0DBA15C3630 /* Pods-OlivesTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = Olives/Info.plist;
@@ -1285,6 +1421,7 @@
 		};
 		15DCF59D1CF3593900013F19 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 51C1464A687C219C81D407E6 /* Pods-OlivesTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = Olives/Info.plist;
