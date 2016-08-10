@@ -6,11 +6,12 @@
 //  Copyright © 2016 Thang. All rights reserved.
 //
 #define APIURL @"http://olive.azurewebsites.net"
+#define ROOTVIEW [[[UIApplication sharedApplication] keyWindow] rootViewController]
 #import "AppDelegate.h"
 #import "SignalR.h"
-
+#import "HomeViewController.h"
 @interface AppDelegate ()
-
+@property(strong,nonatomic) UIView *popupNotification;
 @end
 
 @implementation AppDelegate
@@ -54,7 +55,7 @@
     // Create a proxy to the chat service
     SRHubProxy *notificationHub = [hubConnection createHubProxy:@"NotificationHub"];
     [notificationHub on:@"broadcastNotification" perform:self selector:@selector(notificationReceived:)];
-
+    
     // Register for connection lifecycle events
     [hubConnection setStarted:^{
         NSLog(@"Connection Started");
@@ -64,22 +65,120 @@
         NSLog(@"Connection Recieved Data: %@",message);
     }];
 
+    [hubConnection setConnectionSlow:^{
+        NSLog(@"Connection Slow");
+    }];
+    [hubConnection setReconnecting:^{
+        NSLog(@"Connection Reconnecting");
+    }];
+    [hubConnection setReconnected:^{
+        NSLog(@"Connection Reconnected");
+    }];
+    [hubConnection setClosed:^{
+        NSLog(@"Connection Closed");
+    }];
     [hubConnection setError:^(NSError *error) {
         NSLog(@"Connection Error %@",error);
     }];
     // Start the connection
     [hubConnection start];
 
+    if ([UIApplication instancesRespondToSelector:@selector(registerUserNotificationSettings:)]){
+
+        [application registerUserNotificationSettings:[UIUserNotificationSettings
+                                                       settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|
+                                                       UIUserNotificationTypeSound categories:nil]];
+    }
+
+    UILocalNotification *locationNotification = [launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
+    if (locationNotification) {
+        // Set icon badge number to zero
+        application.applicationIconBadgeNumber = 0;
+    }
     
     return YES;
 }
 - (void)notificationReceived:(id)message
 {
     //do something with the message
-    NSLog(@"%@",message);
-    //    txtHitCount.text = [@"There have been " stringByAppendingFormat:@"%@ views", message];
+    NSError * err;
+    NSData * jsonData = [NSJSONSerialization dataWithJSONObject:message options:0 error:&err];
+    NSDictionary *messageDic = [NSJSONSerialization JSONObjectWithData:jsonData
+                                                                 options:kNilOptions
+                                                                   error:nil];
+    NSLog(@"%@",messageDic);
+
+    UILocalNotification *notification = [[UILocalNotification alloc] init];
+    notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:0];
+    notification.alertBody = [messageDic objectForKey:@"Message"];
+    notification.alertAction = @"Show me";
+    notification.timeZone = [NSTimeZone defaultTimeZone];
+    notification.soundName = UILocalNotificationDefaultSoundName;
+    notification.applicationIconBadgeNumber = [[UIApplication sharedApplication] applicationIconBadgeNumber] + 1;
+
+    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
 }
 
+-(void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
+
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat screenWidth = screenRect.size.width;
+    
+    self.popupNotification = [[UIView alloc]initWithFrame:CGRectMake(0, -64, screenWidth, 64)];
+//    self.popupNotification.backgroundColor = [UIColor colorWithRed:0/255.0 green: 0/255.0 blue:0/255.0 alpha:0.1  ];
+
+    if (!UIAccessibilityIsReduceTransparencyEnabled()) {
+        self.popupNotification.backgroundColor = [UIColor clearColor];
+
+        UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+        UIVisualEffectView *blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+        blurEffectView.frame = self.popupNotification.bounds;
+        blurEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+
+        [self.popupNotification addSubview:blurEffectView];
+    } else {
+        self.popupNotification.backgroundColor = [UIColor blackColor];
+    }
+
+
+    UIWindow *currentWindow = [UIApplication sharedApplication].keyWindow;
+    [currentWindow addSubview:self.popupNotification];
+    //create OK button
+    UIButton *okButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 64)];
+    okButton.backgroundColor =[UIColor clearColor ];
+    [okButton setTitle: notification.alertBody forState: UIControlStateNormal];
+    [okButton.titleLabel setLineBreakMode:NSLineBreakByTruncatingTail];
+    [okButton.titleLabel setNumberOfLines:1];
+    [okButton.titleLabel setFont:[UIFont fontWithName:@"Helvetica" size:16.0]];
+    [okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+
+    [okButton addTarget:self action:@selector(okButtonActionHightLight:) forControlEvents:UIControlEventTouchDown];
+    [okButton addTarget:self action:@selector(okButtonActionNormal:) forControlEvents:UIControlEventTouchUpInside];
+    [self.popupNotification addSubview:okButton];
+
+    //reload home screen if needed
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"homeScreenLoaded"]) {
+        UIStoryboard *storyboard = self.window.rootViewController.storyboard;
+        //move to home view
+        UIViewController *homeController ;
+        homeController = [storyboard instantiateViewControllerWithIdentifier:@"HomeView"];
+        AppDelegate *myAppDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+        myAppDelegate.window.rootViewController = homeController;
+        [myAppDelegate.window makeKeyAndVisible];
+    }
+    //show popup notification view
+    [UIView animateWithDuration:0.25
+                     animations:^{
+                         [self.popupNotification setFrame:CGRectMake(0, 0, screenWidth, 64)]; }
+                     completion:^(BOOL finished){
+                            
+                          }];
+    NSTimeInterval timeInterval = 5.0f; // how long your view will last before hiding
+    [NSTimer scheduledTimerWithTimeInterval:timeInterval target:self selector:@selector(hideView) userInfo:nil repeats:NO];
+
+
+    application.applicationIconBadgeNumber = 0;
+}
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
@@ -92,10 +191,12 @@
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+    application.applicationIconBadgeNumber = 0;
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    application.applicationIconBadgeNumber = 0;
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
@@ -184,4 +285,42 @@
     }
 }
 
+//action to change background color only
+-(IBAction)okButtonActionHightLight:(id)sender{
+    UIButton *button = (UIButton*)sender;
+    button.backgroundColor = [UIColor clearColor];
+}
+
+//action to call to add or update api
+-(IBAction)okButtonActionNormal:(id)sender{
+    UIButton *button = (UIButton*)sender;
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat screenWidth = screenRect.size.width;
+    button.backgroundColor = [UIColor clearColor];
+    [UIView animateWithDuration:0.25
+                          delay:0 options:UIViewAnimationOptionTransitionCurlUp
+                     animations:^{[self.popupNotification setFrame:CGRectMake(0, -64, screenWidth, 64)];}
+                     completion:^(BOOL finished){
+                     }];
+
+    UIStoryboard *storyboard = self.window.rootViewController.storyboard;
+    //move to home view
+    UIViewController *homeController ;
+    homeController = [storyboard instantiateViewControllerWithIdentifier:@"HomeView"];
+    AppDelegate *myAppDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    myAppDelegate.window.rootViewController = homeController;
+
+    [myAppDelegate.window makeKeyAndVisible];
+
+}
+-(void) hideView {
+
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat screenWidth = screenRect.size.width;
+    [UIView animateWithDuration:0.25
+                          delay:0 options:UIViewAnimationOptionTransitionCurlUp
+                     animations:^{[self.popupNotification setFrame:CGRectMake(0, -64, screenWidth, 64)];}
+                     completion:^(BOOL finished){
+                     }];
+}
 @end

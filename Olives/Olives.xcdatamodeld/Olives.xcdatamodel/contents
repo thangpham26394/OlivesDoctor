@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="10174" systemVersion="15G31" minimumToolsVersion="Automatic">
+    <entity name="Addiction" syncable="YES">
+        <attribute name="cause" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="created" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="lastModified" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="note" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="owner" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="Appointment" syncable="YES">
         <attribute name="appointmentID" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="dateCreated" optional="YES" attributeType="String" syncable="YES"/>
@@ -98,6 +106,7 @@
     </entity>
     <elements>
         <element name="Appointment" positionX="-306" positionY="63" width="128" height="255"/>
+        <element name="Diary" positionX="-288" positionY="126" width="128" height="135"/>
         <element name="DoctorInfo" positionX="-315" positionY="-36" width="128" height="225"/>
         <element name="ExperimentNotes" positionX="-297" positionY="117" width="128" height="165"/>
         <element name="MedicalCategories" positionX="-297" positionY="99" width="128" height="75"/>
@@ -105,6 +114,6 @@
         <element name="MedicalRecord" positionX="-288" positionY="135" width="128" height="165"/>
         <element name="PatientInfo" positionX="-306" positionY="108" width="128" height="195"/>
         <element name="Prescriptions" positionX="-306" positionY="108" width="128" height="195"/>
-        <element name="Diary" positionX="-288" positionY="126" width="128" height="135"/>
+        <element name="Addiction" positionX="-297" positionY="117" width="128" height="135"/>
     </elements>
 </model>

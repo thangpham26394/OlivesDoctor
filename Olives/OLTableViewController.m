@@ -66,15 +66,15 @@
     // Configure the cell...
     if (indexPath.row ==0) {
         cell = [tableView dequeueReusableCellWithIdentifier:@"homeCell" forIndexPath:indexPath];
-        cell.image.image = [UIImage imageNamed: @"homeicon.png"];
+        cell.image.image = [UIImage imageNamed: @"Home.png"];
         cell.descriptionLabel.text = @"Home";
     }else if (indexPath.row ==1) {
         cell = [tableView dequeueReusableCellWithIdentifier:@"patientCell" forIndexPath:indexPath];
-        cell.image.image = [UIImage imageNamed: @"patienticon.jpg"];
+        cell.image.image = [UIImage imageNamed: @"MyPatient.png"];
         cell.descriptionLabel.text = @"My Patients";
     }else if (indexPath.row==2){
         cell = [tableView dequeueReusableCellWithIdentifier:@"appointmentCell" forIndexPath:indexPath];
-        cell.image.image = [UIImage imageNamed: @"appointmenticon.png"];
+        cell.image.image = [UIImage imageNamed: @"appointment.png"];
         cell.descriptionLabel.text = @"Appointments";
     }else if(indexPath.row ==3){
         cell = [tableView dequeueReusableCellWithIdentifier:@"loanCell" forIndexPath:indexPath];
@@ -83,11 +83,11 @@
     }
     else if(indexPath.row ==4){
         cell = [tableView dequeueReusableCellWithIdentifier:@"editCell" forIndexPath:indexPath];
-        cell.image.image = [UIImage imageNamed: @"settingicon.png"];
+        cell.image.image = [UIImage imageNamed: @"setting.png"];
         cell.descriptionLabel.text = @"Edit Profile";
     }else {
         cell = [tableView dequeueReusableCellWithIdentifier:@"outCell" forIndexPath:indexPath];
-        cell.image.image = [UIImage imageNamed: @"logouticon.png"];
+        cell.image.image = [UIImage imageNamed: @"Logout.png"];
         cell.descriptionLabel.text = @"Out";
     }
 

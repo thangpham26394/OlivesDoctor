@@ -617,13 +617,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Olives/AppDelegate.m"
-            timestampString = "492382601.172622"
+            filePath = "Olives/ShowDetailInfoMedicalRecordTableViewController.m"
+            timestampString = "492541558.699916"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "79"
-            endingLineNumber = "79"
-            landmarkName = "-notificationReceived:"
+            startingLineNumber = "45"
+            endingLineNumber = "45"
+            landmarkName = "-loadInfoFromCoredata"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -633,13 +633,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Olives/EditProfileViewController.m"
-            timestampString = "492383416.262555"
+            filePath = "Olives/HomeViewController.m"
+            timestampString = "492557806.374914"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "219"
-            endingLineNumber = "219"
-            landmarkName = "-handleTapGesture:"
+            startingLineNumber = "227"
+            endingLineNumber = "227"
+            landmarkName = "-handleMessageTapGesture:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

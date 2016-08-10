@@ -479,9 +479,12 @@
         [self calendarView:self.calendar dateSelected:selectedDate];
     }
 
+
     if (self.segmentControlView.selectedSegmentIndex ==1) {
         [self.addNewAppointmentBarButton setEnabled:NO];
-         [self.pendingListTableView reloadData];
+        [self.pendingListTableView setHidden:NO];
+        [self.pendingListTableView reloadData];
+
     }
 
 
@@ -501,11 +504,15 @@
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"firstLoadAppointment"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 
-
+    if (self.isShowNotification) {
+        self.segmentControlView.selectedSegmentIndex =1;
+    }else{
+        [self.pendingListTableView setHidden:YES];
+    }
 
     self.isShowingPendingFromDoctor = NO;
     self.isShowingPendingFromPatient = NO;
-    [self.pendingListTableView setHidden:YES];
+
     self.markedDayList = [[NSMutableArray alloc] init];
 
     //setup listAppointMentInDayTableView

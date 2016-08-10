@@ -10,5 +10,5 @@
 #import "VRGCalendarView.h"
 
 @interface AppointmentViewController : UIViewController <VRGCalendarViewDelegate>
-
+@property(assign,nonatomic) BOOL isShowNotification;
 @end

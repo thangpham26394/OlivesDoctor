@@ -9,5 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface HomeViewController : UIViewController
-
+@property (weak, nonatomic) IBOutlet UILabel *badgeAppointmentLabel;
+@property (weak, nonatomic) IBOutlet UILabel *badgeMessageLabel;
+@property (weak, nonatomic) IBOutlet UILabel *badgeMedicalRecordLabel;
 @end

@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface AlgeryTableViewController : UITableViewController
-
+@property(strong,nonatomic) NSString *selectedPatientID;
 @end

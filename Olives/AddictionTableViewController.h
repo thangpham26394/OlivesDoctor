@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface AddictionTableViewController : UITableViewController
-
+@property(strong,nonatomic) NSString *selectedPatientID;
 @end
