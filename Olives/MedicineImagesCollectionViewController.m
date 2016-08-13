@@ -311,6 +311,9 @@ static NSString * const reuseIdentifier = @"medicineImageCell";
     self.prescriptionImages = [[NSMutableArray alloc]init];
 
     [self loadPartnerFromCoredata];
+    if (self.selectedPartnerID !=nil) {
+        self.partner = @"77";//self.selectedPartnerID;
+    }
     [self downloadPrescriptionImageFromAPI];
     NSArray *imageArray = [self.responseJSONData objectForKey:@"PrescriptionImages"];
 

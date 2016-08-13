@@ -5,8 +5,9 @@
 //  Created by Tony Tony Chopper on 8/8/16.
 //  Copyright © 2016 Thang. All rights reserved.
 //
-#define APIURL @"http://olive.azurewebsites.net/api/medical/record/filter"
+#define APIURL @"http://olive.azurewebsites.net/api/allergy/filter"
 #import "AlgeryTableViewController.h"
+#import "AlgeryTableViewCell.h"
 #import <CoreData/CoreData.h>
 
 
@@ -30,7 +31,8 @@
 -(void)saveAlgeryToCoreData{
 
     //get the medical record of specific patient which data was returned from API
-    self.algeryArray = [self.responseJSONData objectForKey:@"Algery"];
+    self.algeryArray = [self.responseJSONData objectForKey:@"Allergies"];
+
 
     //delete all the current medical record of selected patient from coredata
     NSManagedObjectContext *context = [self managedObjectContext];
@@ -43,7 +45,7 @@
         for (int index=0; index < algeryObject.count; index++) {
             algery = [algeryObject objectAtIndex:index];
             if ([[algery valueForKey:@"ownerID"] isEqual:self.selectedPatientID]) {
-                [context deleteObject:algery];//only delete addiction that belong to selected Patient
+                [context deleteObject:algery];//only delete algery that belong to selected Patient
                 NSLog(@"Delete Algery success!");
             }
         }
@@ -53,7 +55,8 @@
     for (int index=0; index<self.algeryArray.count;index++) {
         NSDictionary *algeryDic = [self.algeryArray objectAtIndex:index];
 
-        NSString *addictionID = [algeryDic objectForKey:@"Id"];
+        NSString *algeryID = [algeryDic objectForKey:@"Id"];
+        NSString *name = [algeryDic objectForKey:@"Name"];
         NSString *cause = [algeryDic objectForKey:@"Cause"];
         NSString *note = [algeryDic objectForKey:@"Note"];
         NSString *created = [algeryDic objectForKey:@"Created"];
@@ -62,15 +65,16 @@
 
 
         //create new medical record object
-        NSManagedObject *newAddiction = [NSEntityDescription insertNewObjectForEntityForName:@"Addictions" inManagedObjectContext:context];
+        NSManagedObject *newAlgery = [NSEntityDescription insertNewObjectForEntityForName:@"Algery" inManagedObjectContext:context];
 
         //set value for each attribute of new patient before save to core data
-        [newAddiction setValue: [NSString stringWithFormat:@"%@", addictionID] forKey:@"Id"];
-        [newAddiction setValue: [NSString stringWithFormat:@"%@", cause] forKey:@"Cause"];
-        [newAddiction setValue: [NSString stringWithFormat:@"%@", note] forKey:@"Note"];
-        [newAddiction setValue: [NSString stringWithFormat:@"%@", created] forKey:@"Created"];
-        [newAddiction setValue: [NSString stringWithFormat:@"%@", lastModified] forKey:@"LastModified"];
-        [newAddiction setValue: [NSString stringWithFormat:@"%@", owner] forKey:@"Owner"];
+        [newAlgery setValue: [NSString stringWithFormat:@"%@", algeryID] forKey:@"algeryID"];
+        [newAlgery setValue: [NSString stringWithFormat:@"%@", name] forKey:@"name"];
+        [newAlgery setValue: [NSString stringWithFormat:@"%@", cause] forKey:@"cause"];
+        [newAlgery setValue: [NSString stringWithFormat:@"%@", note] forKey:@"note"];
+        [newAlgery setValue: [NSString stringWithFormat:@"%@", created] forKey:@"created"];
+        [newAlgery setValue: [NSString stringWithFormat:@"%@", lastModified] forKey:@"lastModified"];
+        [newAlgery setValue: [NSString stringWithFormat:@"%@", owner] forKey:@"ownerID"];
 
 
         NSError *error = nil;
@@ -87,6 +91,30 @@
 #pragma mark - Connect to API function
 
 -(void)loadAlgeryFromCoreDataWhenAPIFail{
+    NSMutableArray *algeryArrayForFailAPI = [[NSMutableArray alloc]init];
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Algery"];
+    NSMutableArray *algeryObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *algery;
+    for (int index =0; index<algeryObject.count; index++) {
+        //get each patient in coredata
+        algery = [algeryObject objectAtIndex:index];
+        if ([[algery valueForKey:@"ownerID"] isEqual:self.selectedPatientID]) {
+            NSDictionary *algeryDic = [NSDictionary dictionaryWithObjectsAndKeys:
+                                           [algery valueForKey:@"algeryID" ],@"Id",
+                                           [algery valueForKey:@"ownerID" ],@"Owner",
+                                           [algery valueForKey:@"name" ],@"Name",
+                                           [algery valueForKey:@"cause" ],@"Cause",
+                                           [algery valueForKey:@"note" ],@"Note",
+                                           [algery valueForKey:@"created" ],@"Created",
+                                           [algery valueForKey:@"lastModified" ],@"LastModified",
+
+                                           nil];
+            [algeryArrayForFailAPI addObject:algeryDic];
+        }
+
+    }
+    self.algeryArray = (NSArray*)algeryArrayForFailAPI;
 
 }
 
@@ -164,6 +192,11 @@
     
 }
 
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    [self loadAlgeryDataFromAPI];
+    [self.tableView reloadData];
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -183,22 +216,24 @@
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 0;
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 0;
+    return self.algeryArray.count;
 }
 
-/*
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
-    
+    AlgeryTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"algeryCell" forIndexPath:indexPath];
+    NSDictionary *algeryDic = [self.algeryArray objectAtIndex:indexPath.row];
+    cell.algeryNameLabel.text = [algeryDic objectForKey:@"Name"];
+    cell.algeryCauseLabel.text = [algeryDic objectForKey:@"Cause"];
+    cell.algeryNoteLabel.text = [algeryDic objectForKey:@"Note"];;
     // Configure the cell...
-    
     return cell;
 }
-*/
+
 
 /*
 // Override to support conditional editing of the table view.

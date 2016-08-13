@@ -188,6 +188,7 @@
     {
         MedicineImagesCollectionViewController * medicineImageColectionViewcontroller = [segue destinationViewController];
         medicineImageColectionViewcontroller.selectedPrescriptionID = [self.selectedPrescription objectForKey:@"Id"];
+        medicineImageColectionViewcontroller.selectedPartnerID = self.selectedPatientID;
 
     }
     if ([[segue identifier] isEqualToString:@"editMedicineInfo"])

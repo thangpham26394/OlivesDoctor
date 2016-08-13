@@ -10,4 +10,5 @@
 
 @interface MedicineTableViewController : UITableViewController
 @property(strong,nonatomic) NSString *selectedPrescriptionID;
+@property(strong,nonatomic) NSString *selectedPatientID;
 @end

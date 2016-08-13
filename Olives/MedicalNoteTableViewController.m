@@ -5,7 +5,7 @@
 //  Created by Tony Tony Chopper on 7/31/16.
 //  Copyright © 2016 Thang. All rights reserved.
 //
-
+#define APIURL @"http://olive.azurewebsites.net/api/medical/record"
 #import "MedicalNoteTableViewController.h"
 #import "ShowDetailInfoMedicalRecordTableViewController.h"
 #import "MedicalRecordPresctiptionTableViewController.h"
@@ -19,6 +19,8 @@
 @property (weak, nonatomic) IBOutlet UITextView *noteView;
 @property(assign,nonatomic) CGFloat noteViewHeight;
 @property(strong,nonatomic) NSString* medicalNote;
+@property (weak, nonatomic) IBOutlet UILabel *timeLabel;
+@property (weak, nonatomic) IBOutlet UILabel *medicalRecordNameLabel;
 
 @end
 
@@ -81,12 +83,36 @@
 
 }
 
+#pragma mark handle api connection
+-(void)editMedicalRecordToAPI{
+    
+}
+
+
+
+#pragma mark view controller
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setupGestureRecognizer];
     NSLog(@"%@",self.medicalRecordDic);
-}
+
+
+    NSString *time = [self.medicalRecordDic objectForKey:@"Time"];
+
+
+    NSDateFormatter * dateFormatterToLocal= [[NSDateFormatter alloc] init];
+    [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
+    [dateFormatterToLocal setDateFormat:@"MM/dd/yyyy"];
+
+    NSDate *timeDate = [NSDate dateWithTimeIntervalSince1970:[time doubleValue]/1000];
+
+    NSDate *timeDateLocal = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:timeDate]];
+
+
+    self.timeLabel.text = [NSString stringWithFormat:@"%@",[dateFormatterToLocal stringFromDate:timeDateLocal]];
+    self.medicalRecordNameLabel.text = @"name here";
+ }
 
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -121,9 +147,9 @@
 //        return 45;
 //    }
 //}
-//- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-//    return 2;
-//}
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 6;
+}
 //
 //- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 //    NSLog(@"FFFFFFFFFF %ld",(long)section);
@@ -134,8 +160,14 @@
 //    }
 //
 //}
-//
-//
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == 5) {
+    }
+}
+
+
+
 //- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 //    UITableViewCell *cell;
 //    if (indexPath.section ==0) {

@@ -244,8 +244,7 @@
             NSLog(@"Save Appointment success!");
         }
     }
-    
-    
+
 }
 /*
  load from coredata when API fail to display data in pending table
@@ -1117,6 +1116,9 @@
         }
 
         self.idOfSelectedAppointmentToviewDetail = [NSString stringWithFormat:@"%@",[appointmentDic objectForKey:@"Id"]];
+        NSTimeInterval fromDateTimeInterval = [[appointmentDic objectForKey:@"From"] doubleValue]/1000;
+        NSDate *fromDate = [NSDate dateWithTimeIntervalSince1970:fromDateTimeInterval];
+        self.chosenDate = [dateFormatter stringFromDate:fromDate];
         [self performSegueWithIdentifier:@"showDetalAppointment" sender:self];
         [self.listAppointMentInDayTableView deselectRowAtIndexPath:indexPath animated:YES];
     }
@@ -1140,6 +1142,7 @@
         TimePickerViewController *timePickerController = [segue destinationViewController];
         // Pass any objects to the view controller here, like...
         timePickerController.appointmentID = self.idOfSelectedAppointmentToviewDetail;
+        timePickerController.chosenDate = self.chosenDate;
         if (self.segmentControlView.selectedSegmentIndex ==0) {
             timePickerController.segmentUsing = @"Calendar";
             if (self.isActiveAppointment) {

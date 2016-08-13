@@ -119,6 +119,14 @@
 		15FA33C01D59D86400423421 /* Logout.png in Resources */ = {isa = PBXBuildFile; fileRef = 15FA33BB1D59D86400423421 /* Logout.png */; };
 		15FA33C11D59D86400423421 /* MyPatient.png in Resources */ = {isa = PBXBuildFile; fileRef = 15FA33BC1D59D86400423421 /* MyPatient.png */; };
 		15FA33C21D59D86400423421 /* setting.png in Resources */ = {isa = PBXBuildFile; fileRef = 15FA33BD1D59D86400423421 /* setting.png */; };
+		15FA33CB1D5C5EF900423421 /* ShowNotificationTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15FA33CA1D5C5EF900423421 /* ShowNotificationTableViewController.m */; };
+		15FA33CF1D5CCFC500423421 /* ManagePatientViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15FA33CE1D5CCFC500423421 /* ManagePatientViewController.m */; };
+		15FA33D21D5CD54F00423421 /* WaitForAcceptTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 15FA33D11D5CD54F00423421 /* WaitForAcceptTableViewCell.m */; };
+		15FA33D81D5CD8C100423421 /* CurrentPatientTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 15FA33D71D5CD8C100423421 /* CurrentPatientTableViewCell.m */; };
+		15FA33DC1D5CEE6C00423421 /* ViewDetailPatientInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15FA33DB1D5CEE6C00423421 /* ViewDetailPatientInfoViewController.m */; };
+		15FA33DF1D5DDEEC00423421 /* NotificationTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 15FA33DE1D5DDEEC00423421 /* NotificationTableViewCell.m */; };
+		15FA33E31D5F213300423421 /* MoreInfoTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15FA33E21D5F213300423421 /* MoreInfoTableViewController.m */; };
+		15FA33E91D5F2B2B00423421 /* AlgeryTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 15FA33E81D5F2B2B00423421 /* AlgeryTableViewCell.m */; };
 		765D57A11AC616F5062B5F14 /* libPods-Olives.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 13DBC58631EDD07B118CB11B /* libPods-Olives.a */; };
 /* End PBXBuildFile section */
 
@@ -358,6 +366,22 @@
 		15FA33BB1D59D86400423421 /* Logout.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Logout.png; sourceTree = "<group>"; };
 		15FA33BC1D59D86400423421 /* MyPatient.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MyPatient.png; sourceTree = "<group>"; };
 		15FA33BD1D59D86400423421 /* setting.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = setting.png; sourceTree = "<group>"; };
+		15FA33C91D5C5EF900423421 /* ShowNotificationTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShowNotificationTableViewController.h; sourceTree = "<group>"; };
+		15FA33CA1D5C5EF900423421 /* ShowNotificationTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShowNotificationTableViewController.m; sourceTree = "<group>"; };
+		15FA33CD1D5CCFC500423421 /* ManagePatientViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagePatientViewController.h; sourceTree = "<group>"; };
+		15FA33CE1D5CCFC500423421 /* ManagePatientViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManagePatientViewController.m; sourceTree = "<group>"; };
+		15FA33D01D5CD54F00423421 /* WaitForAcceptTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaitForAcceptTableViewCell.h; sourceTree = "<group>"; };
+		15FA33D11D5CD54F00423421 /* WaitForAcceptTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WaitForAcceptTableViewCell.m; sourceTree = "<group>"; };
+		15FA33D61D5CD8C100423421 /* CurrentPatientTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CurrentPatientTableViewCell.h; sourceTree = "<group>"; };
+		15FA33D71D5CD8C100423421 /* CurrentPatientTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CurrentPatientTableViewCell.m; sourceTree = "<group>"; };
+		15FA33DA1D5CEE6C00423421 /* ViewDetailPatientInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewDetailPatientInfoViewController.h; sourceTree = "<group>"; };
+		15FA33DB1D5CEE6C00423421 /* ViewDetailPatientInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewDetailPatientInfoViewController.m; sourceTree = "<group>"; };
+		15FA33DD1D5DDEEC00423421 /* NotificationTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationTableViewCell.h; sourceTree = "<group>"; };
+		15FA33DE1D5DDEEC00423421 /* NotificationTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotificationTableViewCell.m; sourceTree = "<group>"; };
+		15FA33E11D5F213300423421 /* MoreInfoTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoreInfoTableViewController.h; sourceTree = "<group>"; };
+		15FA33E21D5F213300423421 /* MoreInfoTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MoreInfoTableViewController.m; sourceTree = "<group>"; };
+		15FA33E71D5F2B2B00423421 /* AlgeryTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlgeryTableViewCell.h; sourceTree = "<group>"; };
+		15FA33E81D5F2B2B00423421 /* AlgeryTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlgeryTableViewCell.m; sourceTree = "<group>"; };
 		2961E629AAE9CF486C6B633C /* Pods-Olives.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Olives.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Olives/Pods-Olives.debug.xcconfig"; sourceTree = "<group>"; };
 		51C1464A687C219C81D407E6 /* Pods-OlivesTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OlivesTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-OlivesTests/Pods-OlivesTests.release.xcconfig"; sourceTree = "<group>"; };
 		584EB1A6E09E223F0159D29D /* libPods-OlivesTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OlivesTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -423,6 +447,8 @@
 				15BF12AF1D5880E800728456 /* BloodPressure */,
 				15BF12AB1D5880CF00728456 /* AlgeryInfo */,
 				15BF12A71D58809B00728456 /* AddictionInfo */,
+				15FA33E11D5F213300423421 /* MoreInfoTableViewController.h */,
+				15FA33E21D5F213300423421 /* MoreInfoTableViewController.m */,
 			);
 			name = MoreInfo;
 			sourceTree = "<group>";
@@ -682,6 +708,7 @@
 		15E8C4DE1D3AE5260056E8AE /* MainMenu */ = {
 			isa = PBXGroup;
 			children = (
+				15FA33C51D5C5ED100423421 /* NotificationTableView */,
 				15F0106A1D4A84A4001663CE /* MoneyManagement */,
 				15E75A361CF756EB00A985E7 /* PatientsTableViewController.h */,
 				15E75A371CF756EB00A985E7 /* PatientsTableViewController.m */,
@@ -715,6 +742,7 @@
 		15E8C4E01D3AE5880056E8AE /* PatientDetails */ = {
 			isa = PBXGroup;
 			children = (
+				15FA33CC1D5CCFA700423421 /* ManagePatient */,
 				15BF12A31D58809300728456 /* MoreInfo */,
 				15EB738F1D3E110500C6284A /* MedicalRecordCategory */,
 				15E8C4DD1D3AE5010056E8AE /* ImportantInfo */,
@@ -799,6 +827,14 @@
 		15F01D3B1CF81DA600EAAF9B /* TableViewCell */ = {
 			isa = PBXGroup;
 			children = (
+				15FA33E71D5F2B2B00423421 /* AlgeryTableViewCell.h */,
+				15FA33E81D5F2B2B00423421 /* AlgeryTableViewCell.m */,
+				15FA33DD1D5DDEEC00423421 /* NotificationTableViewCell.h */,
+				15FA33DE1D5DDEEC00423421 /* NotificationTableViewCell.m */,
+				15FA33D61D5CD8C100423421 /* CurrentPatientTableViewCell.h */,
+				15FA33D71D5CD8C100423421 /* CurrentPatientTableViewCell.m */,
+				15FA33D01D5CD54F00423421 /* WaitForAcceptTableViewCell.h */,
+				15FA33D11D5CD54F00423421 /* WaitForAcceptTableViewCell.m */,
 				15BF126F1D5679F200728456 /* StringDoubleTableViewCell.h */,
 				15BF12701D5679F200728456 /* StringDoubleTableViewCell.m */,
 				15F6EFC81D5097D6002B166C /* StringStringTableViewCell.h */,
@@ -872,6 +908,34 @@
 				15F6EFC01D4F9087002B166C /* PickNewMedicalRecordViewController.m */,
 			);
 			name = PickNewMedicalRecordCategory;
+			sourceTree = "<group>";
+		};
+		15FA33C51D5C5ED100423421 /* NotificationTableView */ = {
+			isa = PBXGroup;
+			children = (
+				15FA33C91D5C5EF900423421 /* ShowNotificationTableViewController.h */,
+				15FA33CA1D5C5EF900423421 /* ShowNotificationTableViewController.m */,
+			);
+			name = NotificationTableView;
+			sourceTree = "<group>";
+		};
+		15FA33CC1D5CCFA700423421 /* ManagePatient */ = {
+			isa = PBXGroup;
+			children = (
+				15FA33D91D5CEE4200423421 /* ViewDetailPatientInfo */,
+				15FA33CD1D5CCFC500423421 /* ManagePatientViewController.h */,
+				15FA33CE1D5CCFC500423421 /* ManagePatientViewController.m */,
+			);
+			name = ManagePatient;
+			sourceTree = "<group>";
+		};
+		15FA33D91D5CEE4200423421 /* ViewDetailPatientInfo */ = {
+			isa = PBXGroup;
+			children = (
+				15FA33DA1D5CEE6C00423421 /* ViewDetailPatientInfoViewController.h */,
+				15FA33DB1D5CEE6C00423421 /* ViewDetailPatientInfoViewController.m */,
+			);
+			name = ViewDetailPatientInfo;
 			sourceTree = "<group>";
 		};
 		658FB860F19767A040243DCA /* Pods */ = {
@@ -1177,12 +1241,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				15FA33E31D5F213300423421 /* MoreInfoTableViewController.m in Sources */,
 				15EA05DF1D3F7AF100FDB449 /* AppointmentDetailTableViewCell.m in Sources */,
 				15F6EFB91D4F46E9002B166C /* MedicalRecordNoteDetailTableViewController.m in Sources */,
 				15F6EFC71D4FD815002B166C /* UpdateDetailInfoMedicalRecordViewController.m in Sources */,
 				1502F7B31CF5F39D00663B59 /* SWRevealViewController.m in Sources */,
 				15E8C4EF1D3AE8D40056E8AE /* MedicalRecordDetailTableViewController.m in Sources */,
 				15E5860E1D4E44D700C6F468 /* VerifyNewPasswordViewController.m in Sources */,
+				15FA33DC1D5CEE6C00423421 /* ViewDetailPatientInfoViewController.m in Sources */,
 				15BF12671D5516E900728456 /* AddOrUpdateMedicineViewController.m in Sources */,
 				15BF12741D567E0B00728456 /* ExperimentNoteGeneralTableViewController.m in Sources */,
 				15F0105A1D48B914001663CE /* ChangePasswordViewController.m in Sources */,
@@ -1190,6 +1256,7 @@
 				1567353E1D19522A00392ADA /* HomeViewController.m in Sources */,
 				15DCF57B1CF3593800013F19 /* AppDelegate.m in Sources */,
 				15EF10E81D4D272A00456636 /* MedicalNoteTableViewController.m in Sources */,
+				15FA33D21D5CD54F00423421 /* WaitForAcceptTableViewCell.m in Sources */,
 				15BF12711D5679F200728456 /* StringDoubleTableViewCell.m in Sources */,
 				15BF12B41D5886EA00728456 /* BloodPresureViewController.m in Sources */,
 				15F010651D4A6E19001663CE /* MoneyManagementViewController.m in Sources */,
@@ -1197,6 +1264,8 @@
 				15E9D6F91D06B3D6006D5DD1 /* VRGCalendarView.m in Sources */,
 				15E9D6EE1D06A99C006D5DD1 /* AppointmentViewController.m in Sources */,
 				15E9D6FC1D06B3D6006D5DD1 /* NSDate+convenience.m in Sources */,
+				15FA33DF1D5DDEEC00423421 /* NotificationTableViewCell.m in Sources */,
+				15FA33CB1D5C5EF900423421 /* ShowNotificationTableViewController.m in Sources */,
 				15F542C21D40C8C8003A61F0 /* MedicinesCollectionReusableView.m in Sources */,
 				15E7E4871D53CE6400B405EB /* AddNewPrescriptionViewController.m in Sources */,
 				15E8C4F31D3AEB290056E8AE /* MedicalRecordImagesCollectionViewController.m in Sources */,
@@ -1215,6 +1284,7 @@
 				15BF12B71D5886FC00728456 /* BloodSugarViewController.m in Sources */,
 				15E586031D4DF4C300C6F468 /* MedicalRecordPresctiptionTableViewController.m in Sources */,
 				15EB73951D3E114D00C6284A /* MedicalRecordTableViewController.m in Sources */,
+				15FA33E91D5F2B2B00423421 /* AlgeryTableViewCell.m in Sources */,
 				15E5860A1D4E311200C6F468 /* SignUpViewController.m in Sources */,
 				15BF12BA1D58870C00728456 /* HeartBeatViewController.m in Sources */,
 				15DCF5A61CF3820F00013F19 /* OLTableViewController.m in Sources */,
@@ -1223,8 +1293,10 @@
 				15BF126E1D56744100728456 /* MedicalRecordExperimentNoteTableViewController.m in Sources */,
 				15F542C51D40D51D003A61F0 /* MedicineTableViewController.m in Sources */,
 				15F01D3E1CF81DC700EAAF9B /* PatientTableViewCell.m in Sources */,
+				15FA33CF1D5CCFC500423421 /* ManagePatientViewController.m in Sources */,
 				15E76B7A1D2F9BA80028EFEB /* AppointmentViewDetailViewController.m in Sources */,
 				15F542BB1D40BCE1003A61F0 /* PrescriptionViewController.m in Sources */,
+				15FA33D81D5CD8C100423421 /* CurrentPatientTableViewCell.m in Sources */,
 				15E8C4E81D3AE7150056E8AE /* DoctorNoteTableViewController.m in Sources */,
 				15F6EFC11D4F9087002B166C /* PickNewMedicalRecordViewController.m in Sources */,
 				15F010531D47F114001663CE /* MedicineTableViewCell.m in Sources */,

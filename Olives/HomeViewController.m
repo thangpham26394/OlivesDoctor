@@ -6,11 +6,12 @@
 //  Copyright © 2016 Thang. All rights reserved.
 //
 #define API_NOTIFICATION_URL @"http://olive.azurewebsites.net/api/notification/filter"
-#define API_NOTIFICATION_SEEN_URL @"http://olive.azurewebsites.net/api/notification/filter"
+
 #import "HomeViewController.h"
 #import "SWRevealViewController.h"
 #import "SignalR.h"
-#import "AppointmentViewController.h"
+#import "ShowNotificationTableViewController.h"
+#import "ManagePatientViewController.h"
 #import <CoreData/CoreData.h>
 
 @interface HomeViewController ()
@@ -25,8 +26,10 @@
 @property (weak, nonatomic) IBOutlet UIImageView *patientRequestImage;
 @property (weak, nonatomic) IBOutlet UIImageView *appointmentImage;
 @property (weak, nonatomic) IBOutlet UIImageView *serviceImage;
-
-
+@property (strong,nonatomic) NSMutableArray *appointmentNotiArray;
+@property (strong,nonatomic) NSMutableArray *medicalNotiArray;
+@property (strong,nonatomic) NSMutableArray *messageNotiArray;
+@property (strong,nonatomic) NSMutableArray *requestlNotiArray;
 @property (strong,nonatomic) NSDictionary *responseJSONData;
 @property (strong,nonatomic) NSArray *notificationArray;
 
@@ -53,8 +56,8 @@
     NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
 
 
-    sessionConfig.timeoutIntervalForRequest = 5.0;
-    sessionConfig.timeoutIntervalForResource = 5.0;
+//    sessionConfig.timeoutIntervalForRequest = 5.0;
+//    sessionConfig.timeoutIntervalForResource = 5.0;
 
     //NSURLSession *defaultSession = [NSURLSession sharedSession];
     NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:sessionConfig];
@@ -75,7 +78,7 @@
     [urlRequest setValue:[doctor valueForKey:@"password"]  forHTTPHeaderField:@"Password"];
     [urlRequest setValue:@"en-US" forHTTPHeaderField:@"Accept-Language"];
     [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-
+    [urlRequest setTimeoutInterval:5];
     NSDictionary *account = @{
                               @"IsSeen":@"False",
                               @"Sort":@"0",
@@ -119,23 +122,24 @@
 
 -(void)allocateNotificationToView{
     self.notificationArray = [self.responseJSONData objectForKey:@"Notifications"];
-    NSMutableArray *appointmentNoti = [[NSMutableArray alloc]init];
-    NSMutableArray *meicalRecordNoti = [[NSMutableArray alloc] init];
+
+    self.appointmentNotiArray = [[NSMutableArray alloc]init];
+    self.medicalNotiArray = [[NSMutableArray alloc] init];
 
 
     for (int index =0; index<self.notificationArray.count; index++) {
         NSDictionary *currentNotiDic = self.notificationArray[index];
         //check if current noti is belong to which subview
         if ([[NSString stringWithFormat:@"%@", [currentNotiDic objectForKey:@"Topic"] ]  isEqual:@"0"] ) {
-            [appointmentNoti addObject:currentNotiDic];
+            [self.appointmentNotiArray addObject:currentNotiDic];
         }else{
-            [meicalRecordNoti addObject:currentNotiDic];
+            [self.medicalNotiArray addObject:currentNotiDic];
         }
     }
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.badgeAppointmentLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)appointmentNoti.count ];
-        self.badgeMedicalRecordLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)meicalRecordNoti.count ];
+        self.badgeAppointmentLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)self.appointmentNotiArray.count ];
+        self.badgeMedicalRecordLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)self.medicalNotiArray.count ];
     });
 
 
@@ -198,13 +202,15 @@
     //set up tap gesture for each view
     [self setupAppointmentGestureRecognizer];
     [self setupMessageGestureRecognizer];
+    [self setupMedicaRecordGestureRecognizer];
+    [self setupPatientRequestGestureRecognizer];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
+#pragma mark handle tapgesture
 -(void) setupAppointmentGestureRecognizer {
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleAppointmentTapGesture:)];
     //tapGesture.cancelsTouchesInView = NO;
@@ -212,9 +218,30 @@
 }
 
 - (void)handleAppointmentTapGesture:(UIPanGestureRecognizer *)recognizer{
-    [self performSegueWithIdentifier:@"showAppointmentNotification" sender:self];
+    [self performSegueWithIdentifier:@"showAppointmentNoti" sender:self];
     //tell api that all appointment notification has been seen
+}
 
+-(void) setupMedicaRecordGestureRecognizer {
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleMedicalRecordTapGesture:)];
+    //tapGesture.cancelsTouchesInView = NO;
+    [self.serviceNotiView addGestureRecognizer:tapGesture];
+}
+
+- (void)handleMedicalRecordTapGesture:(UIPanGestureRecognizer *)recognizer{
+    [self performSegueWithIdentifier:@"medicalRecordNoti" sender:self];
+    //tell api that all appointment notification has been seen
+}
+
+-(void) setupPatientRequestGestureRecognizer {
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handlePatientRequestTapGesture:)];
+    //tapGesture.cancelsTouchesInView = NO;
+    [self.patientRequestNotiView addGestureRecognizer:tapGesture];
+}
+
+- (void)handlePatientRequestTapGesture:(UIPanGestureRecognizer *)recognizer{
+    [self performSegueWithIdentifier:@"showNewRequestNotification" sender:self];
+    //tell api that all appointment notification has been seen
 }
 
 -(void) setupMessageGestureRecognizer {
@@ -227,14 +254,41 @@
     self.badgeMessageLabel.text = @"hi";
 }
 
+
+
+
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([[segue identifier] isEqualToString:@"showAppointmentNotification"])
+    //show notification about appointment
+    if ([[segue identifier] isEqualToString:@"showAppointmentNoti"])
     {
-        AppointmentViewController *appointmentView = [segue destinationViewController];
-        appointmentView.isShowNotification = YES;
+        ShowNotificationTableViewController *appointmentView = [segue destinationViewController];
+        appointmentView.notifictionDataArray = (NSArray*)self.appointmentNotiArray;
+        appointmentView.notificationType = 2;
+    }
+    //show notification about medical Record
+    if ([[segue identifier] isEqualToString:@"medicalRecordNoti"])
+    {
+        ShowNotificationTableViewController *appointmentView = [segue destinationViewController];
+        appointmentView.notifictionDataArray = (NSArray*)self.medicalNotiArray;
+        appointmentView.notificationType = 3;
+    }
+    //show notification about new message
+    if ([[segue identifier] isEqualToString:@"newMessageNoti"])
+    {
+        ShowNotificationTableViewController *appointmentView = [segue destinationViewController];
+        appointmentView.notifictionDataArray = (NSArray*)self.messageNotiArray;
+        appointmentView.notificationType = 0;
+    }
+    //show notification about patient request array
+    if ([[segue identifier] isEqualToString:@"showNewRequestNotification"])
+    {
+        ManagePatientViewController *patientRequestView = [segue destinationViewController];
+//        patientRequestView.notifictionDataArray = (NSArray*)self.requestlNotiArray;
+        patientRequestView.isNotificationView = YES;
     }
 }
 

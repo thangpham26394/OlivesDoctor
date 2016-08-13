@@ -55,6 +55,7 @@
                                            [experimentNote valueForKey:@"info" ],@"Info",
                                            [experimentNote valueForKey:@"createdDate" ],@"Created",
                                            [experimentNote valueForKey:@"lastModified" ],@"LastModified",
+                                           [experimentNote valueForKey:@"time" ],@"Time",
                                            nil];
             [experimentArrayForFailAPI addObject:experimentDic];
         }
@@ -94,7 +95,7 @@
         NSString *info = [prescriptionDic objectForKey:@"Info"];
         NSString *createdDate = [prescriptionDic objectForKey:@"Created"];
         NSString *lastModified = [prescriptionDic objectForKey:@"LastModified"];
-
+        NSString *time = [prescriptionDic objectForKey:@"Time"];
 
         //create new patient object
         NSManagedObject *newExperiment = [NSEntityDescription insertNewObjectForEntityForName:@"ExperimentNotes" inManagedObjectContext:context];
@@ -107,7 +108,7 @@
         [newExperiment setValue: [NSString stringWithFormat:@"%@", info] forKey:@"info"];
         [newExperiment setValue: [NSString stringWithFormat:@"%@", createdDate] forKey:@"createdDate"];
         [newExperiment setValue: [NSString stringWithFormat:@"%@", lastModified] forKey:@"lastModified"];
-
+        [newExperiment setValue: [NSString stringWithFormat:@"%@", time] forKey:@"time"];
 
         NSError *error = nil;
         // Save the object to persistent store
@@ -225,7 +226,7 @@
         [formatter setLocale:[NSLocale systemLocale]];
         [formatter setDateFormat:@"MM/dd/yyyy"];
 
-        NSTimeInterval dateTimeInterval = [[prescriptionDic objectForKey:@"Created"] doubleValue]/1000;
+        NSTimeInterval dateTimeInterval = [[prescriptionDic objectForKey:@"Time"] doubleValue]/1000;
         NSDate *createdDate = [NSDate dateWithTimeIntervalSince1970:dateTimeInterval];
         NSString *timeCreate = [formatter stringFromDate:createdDate];
 

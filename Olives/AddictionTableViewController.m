@@ -5,7 +5,7 @@
 //  Created by Tony Tony Chopper on 8/8/16.
 //  Copyright © 2016 Thang. All rights reserved.
 //
-#define APIURL @"http://olive.azurewebsites.net/api/medical/record/filter"
+#define APIURL @"http://olive.azurewebsites.net/api/addiction/filter"
 #import "AddictionTableViewController.h"
 #import <CoreData/CoreData.h>
 
@@ -44,7 +44,7 @@
 
         for (int index=0; index < addictionObject.count; index++) {
             addiction = [addictionObject objectAtIndex:index];
-            if ([[addiction valueForKey:@"ownerID"] isEqual:self.selectedPatientID]) {
+            if ([[addiction valueForKey:@"owner"] isEqual:self.selectedPatientID]) {
                 [context deleteObject:addiction];//only delete addiction that belong to selected Patient
                 NSLog(@"Delete Addiction success!");
             }
@@ -65,15 +65,15 @@
 
 
         //create new medical record object
-        NSManagedObject *newAddiction = [NSEntityDescription insertNewObjectForEntityForName:@"Addictions" inManagedObjectContext:context];
+        NSManagedObject *newAddiction = [NSEntityDescription insertNewObjectForEntityForName:@"Addiction" inManagedObjectContext:context];
 
         //set value for each attribute of new patient before save to core data
-        [newAddiction setValue: [NSString stringWithFormat:@"%@", addictionID] forKey:@"Id"];
-        [newAddiction setValue: [NSString stringWithFormat:@"%@", cause] forKey:@"Cause"];
-        [newAddiction setValue: [NSString stringWithFormat:@"%@", note] forKey:@"Note"];
-        [newAddiction setValue: [NSString stringWithFormat:@"%@", created] forKey:@"Created"];
-        [newAddiction setValue: [NSString stringWithFormat:@"%@", lastModified] forKey:@"LastModified"];
-        [newAddiction setValue: [NSString stringWithFormat:@"%@", owner] forKey:@"Owner"];
+        [newAddiction setValue: [NSString stringWithFormat:@"%@", addictionID] forKey:@"id"];
+        [newAddiction setValue: [NSString stringWithFormat:@"%@", cause] forKey:@"cause"];
+        [newAddiction setValue: [NSString stringWithFormat:@"%@", note] forKey:@"note"];
+        [newAddiction setValue: [NSString stringWithFormat:@"%@", created] forKey:@"created"];
+        [newAddiction setValue: [NSString stringWithFormat:@"%@", lastModified] forKey:@"lastModified"];
+        [newAddiction setValue: [NSString stringWithFormat:@"%@", owner] forKey:@"owner"];
 
 
         NSError *error = nil;
@@ -87,11 +87,35 @@
 
 }
 
+-(void)loadAddictionFromCoreDataWhenAPIFail{
+    NSMutableArray *addictionArrayForFailAPI = [[NSMutableArray alloc]init];
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Addiction"];
+    NSMutableArray *addictionObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *addiction;
+    for (int index =0; index<addictionObject.count; index++) {
+        //get each patient in coredata
+        addiction = [addictionObject objectAtIndex:index];
+        if ([[addiction valueForKey:@"owner"] isEqual:self.selectedPatientID]) {
+            NSDictionary *addictionDic = [NSDictionary dictionaryWithObjectsAndKeys:
+                                          [addiction valueForKey:@"id" ],@"Id",
+                                          [addiction valueForKey:@"owner" ],@"Owner",
+                                          [addiction valueForKey:@"cause" ],@"Cause",
+                                          [addiction valueForKey:@"note" ],@"Note",
+                                          [addiction valueForKey:@"created" ],@"Created",
+                                          [addiction valueForKey:@"lastModified" ],@"LastModified",
+
+                                          nil];
+            [addictionArrayForFailAPI addObject:addictionDic];
+        }
+
+    }
+    self.addictionArray = (NSArray*)addictionArrayForFailAPI;
+}
+
 #pragma mark - Connect to API function
 
--(void)loadAddictionFromCoreDataWhenAPIFail{
 
-}
 
 -(void)loadAddictionDataFromAPI{
 
@@ -167,7 +191,11 @@
     
 }
 
-
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    [self loadAddictionDataFromAPI];
+    [self.tableView reloadData];
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];

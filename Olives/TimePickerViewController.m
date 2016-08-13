@@ -237,6 +237,7 @@
 
     //check if current view is for add new an appointment or edit an appointment
     if (self.appointmentID == nil) {
+
         //add new
         self.heightForDisplayMakerNote.constant = 0; //hide the textview display maker note
         [self.editOrAceptAppointment setHidden:YES];
@@ -248,6 +249,68 @@
 
         [self.dateTimePickerFrom setDate:date];
         [self.dateTimePickerTo setDate:date];
+
+    }else if (self.isNotificationView){
+
+        //if this view is used to show notification
+        [self.editOrAceptAppointment setTitle:@"Accept" forState:UIControlStateNormal];
+        self.dateTimePickerFrom.userInteractionEnabled = NO;
+        self.dateTimePickerTo.userInteractionEnabled = NO;
+        [self.editOrAceptAppointment setHidden:NO];
+        [self.cancelButton setHidden:NO];
+        NSDictionary *selectedAppointment = [self getAppointmentFromID:self.appointmentID];
+        NSString *patientId;
+        //check if dater or maker is doctor
+        NSManagedObjectContext *context = [self managedObjectContext];
+        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+        NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+        NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+
+        if ([[doctor valueForKey:@"doctorID"] isEqual:[NSString stringWithFormat:@"%@",[[selectedAppointment objectForKey:@"Dater"] objectForKey:@"Id"]]]) {
+            //if doctor is dater then patient is maker
+            self.selectedPatientName.text = [NSString stringWithFormat:@"%@ %@",[[selectedAppointment objectForKey:@"Maker"] objectForKey:@"FirstName"],[[selectedAppointment objectForKey:@"Maker"] objectForKey:@"LastName"]];
+            patientId = [[selectedAppointment objectForKey:@"Maker"] objectForKey:@"Id"];
+        }else{
+            //patient is dater
+            self.selectedPatientName.text = [NSString stringWithFormat:@"%@ %@",[[selectedAppointment objectForKey:@"Dater"] objectForKey:@"FirstName"],[[selectedAppointment objectForKey:@"Dater"] objectForKey:@"LastName"]];
+            patientId = [[selectedAppointment objectForKey:@"Dater"] objectForKey:@"Id"];
+        }
+        self.makerNoteTextView.text = [selectedAppointment objectForKey:@"Note"];
+        self.noteLabel.text =   [selectedAppointment objectForKey:@"LastModifiedNote"];
+        //set up dateformater to local time
+        NSDateFormatter * dateFormatToLocal = [[NSDateFormatter alloc] init];
+        [dateFormatToLocal setTimeZone:[NSTimeZone systemTimeZone]];
+        [dateFormatToLocal setLocale:[NSLocale systemLocale]];
+        [dateFormatToLocal setDateFormat:@"MM/dd/yyyy HH:mm:ss:SSS"];
+
+
+        NSDate *fromDate = [NSDate dateWithTimeIntervalSince1970:[[selectedAppointment objectForKey:@"From"] doubleValue] /1000];
+        NSDate *toDate = [NSDate dateWithTimeIntervalSince1970:[[selectedAppointment objectForKey:@"To"] doubleValue] /1000];
+
+        fromDate = [dateFormatToLocal dateFromString:[dateFormatToLocal stringFromDate:fromDate]];
+        toDate = [dateFormatToLocal dateFromString:[dateFormatToLocal stringFromDate:toDate]];
+        self.dateTimePickerFrom.date = fromDate;
+        self.dateTimePickerTo.date = toDate;
+
+        //get patient infor from coredata
+        fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"PatientInfo"];
+        NSMutableArray *patientObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+        NSManagedObject *patient;
+
+        for (int index = 0; index<patientObject.count; index++) {
+            patient = [patientObject objectAtIndex:index];
+            //check if current patient is patient in appointment
+            if ([[patient valueForKey:@"patientId"] isEqual:patientId]) {
+                self.selectedPatientAvatar.image = [UIImage imageWithData:[patient valueForKey:@"photo"]];
+                self.selectedPatientPhone.text  = [patient valueForKey:@"phone"];
+                self.selectedPatientAddress.text = [patient valueForKey:@"address"];
+                self.selectedPatientEmail.text= [patient valueForKey:@"email"];
+                //self.customerAddressLabel.text = [patient valueForKey:@"email"];
+            }
+        }
+
+
+
     }else{
         //edit an appointment
         //check if appointment selected is from patient or doctor
@@ -264,7 +327,7 @@
             [self.editOrAceptAppointment setHidden:NO];
             [self.cancelButton setHidden:NO];
         }else{
-            //appointment is note active anymore
+            //appointment is not active anymore
             [self.editOrAceptAppointment setHidden:YES];
             [self.cancelButton setHidden:YES];
             [self.sendButton setHidden:YES];
@@ -370,12 +433,55 @@
     NSError *error = nil;
     NSData *jsondata = [NSJSONSerialization dataWithJSONObject:body options:NSJSONWritingPrettyPrinted error:&error];
     [urlRequest setHTTPBody:jsondata];
+
+    dispatch_semaphore_t    sem;
+    sem = dispatch_semaphore_create(0);
     NSURLSessionDataTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
                                                        completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
                                       {
+                                          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+
+                                          if((long)[httpResponse statusCode] == 200  && error ==nil)
+                                          {
+                                              //stop waiting after get response from API
+                                              dispatch_semaphore_signal(sem);
+                                          }
+                                          else{
+                                              NSError *parsJSONError = nil;
+                                              if (data ==nil) {
+                                                  UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Internet Error"
+                                                                                                                 message:nil
+                                                                                                          preferredStyle:UIAlertControllerStyleAlert];
+                                                  UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                                                                     style:UIAlertActionStyleDefault
+                                                                                                   handler:^(UIAlertAction * action) {}];
+                                                  [alert addAction:OKAction];
+                                                  [self presentViewController:alert animated:YES completion:nil];
+                                                  dispatch_semaphore_signal(sem);
+
+                                                  return;
+                                              }
+                                              NSDictionary *errorDic = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                              NSArray *errorArray = [errorDic objectForKey:@"Errors"];
+                                              //                                              NSLog(@"\n\n\nError = %@",[errorArray objectAtIndex:0]);
+
+                                              UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                                                             message:[errorArray objectAtIndex:0]
+                                                                                                      preferredStyle:UIAlertControllerStyleAlert];
+
+                                              UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                                                                 style:UIAlertActionStyleDefault
+                                                                                               handler:^(UIAlertAction * action) {}];
+                                              [alert addAction:OKAction];
+                                              [self presentViewController:alert animated:YES completion:nil];
+                                              dispatch_semaphore_signal(sem);
+                                              return;
+                                          }
+
                                       }];
     [dataTask resume];
-
+    //start waiting until get response from API
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
 }
 
 -(void)sendRequestEditAppointmentToAPI{
@@ -682,7 +788,10 @@
     if ([self.dateTimePickerFrom.date timeIntervalSince1970] > [self.dateTimePickerTo.date timeIntervalSince1970]) {
         [self showAlertViewForError:@"Time start should be sooner than time end!"];
     }else{
-        if ([self.segmentUsing isEqual:@"PendingFromPatient"]) {
+        if (self.isNotificationView) {
+            [self showAlertViewWhenSendAccept];
+        }
+        else if ([self.segmentUsing isEqual:@"PendingFromPatient"]) {
             [self showAlertViewWhenSendAccept];
         }else{
             [self showAlertViewWhenSendEdit];

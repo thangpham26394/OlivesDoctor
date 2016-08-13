@@ -8,6 +8,15 @@
         <attribute name="note" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="owner" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="Algery" syncable="YES">
+        <attribute name="algeryID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="cause" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="created" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="lastModified" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="note" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="ownerID" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="Appointment" syncable="YES">
         <attribute name="appointmentID" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="dateCreated" optional="YES" attributeType="String" syncable="YES"/>
@@ -55,6 +64,7 @@
         <attribute name="medicalRecordID" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="ownerID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="time" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="MedicalCategories" syncable="YES">
         <attribute name="medicalCategoryID" optional="YES" attributeType="String" syncable="YES"/>
@@ -105,15 +115,16 @@
         <attribute name="to" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
+        <element name="Addiction" positionX="-297" positionY="117" width="128" height="135"/>
         <element name="Appointment" positionX="-306" positionY="63" width="128" height="255"/>
         <element name="Diary" positionX="-288" positionY="126" width="128" height="135"/>
         <element name="DoctorInfo" positionX="-315" positionY="-36" width="128" height="225"/>
-        <element name="ExperimentNotes" positionX="-297" positionY="117" width="128" height="165"/>
+        <element name="ExperimentNotes" positionX="-297" positionY="117" width="128" height="180"/>
         <element name="MedicalCategories" positionX="-297" positionY="99" width="128" height="75"/>
         <element name="MedicalNotes" positionX="-297" positionY="117" width="128" height="165"/>
         <element name="MedicalRecord" positionX="-288" positionY="135" width="128" height="165"/>
         <element name="PatientInfo" positionX="-306" positionY="108" width="128" height="195"/>
         <element name="Prescriptions" positionX="-306" positionY="108" width="128" height="195"/>
-        <element name="Addiction" positionX="-297" positionY="117" width="128" height="135"/>
+        <element name="Algery" positionX="-288" positionY="126" width="128" height="150"/>
     </elements>
 </model>

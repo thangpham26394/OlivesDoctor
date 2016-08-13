@@ -13,6 +13,7 @@
 #import "PatientDetailsViewController.h"
 #import "MedicalRecordTableViewController.h"
 #import "PrescriptionViewController.h"
+#import "MoreInfoTableViewController.h"
 #import <CoreData/CoreData.h>
 @interface PatientsTableViewController ()
 //@property (weak, nonatomic) IBOutlet UIBarButtonItem *menuButton;
@@ -355,9 +356,11 @@
         PatientDetailsViewController * patientDetail = [tabBar.viewControllers objectAtIndex:1];
         MedicalRecordTableViewController *medicalRecord = [tabBar.viewControllers objectAtIndex:2];
         PrescriptionViewController *prescription = [tabBar.viewControllers objectAtIndex:3];
+        MoreInfoTableViewController *moreInfoTableView = [tabBar.viewControllers objectAtIndex:4];
         patientDetail.selectedPatientID = [NSString stringWithFormat:@"%@",[self.selectedPatient objectForKey:@"Id"]];
         medicalRecord.selectedPatientID= [NSString stringWithFormat:@"%@",[self.selectedPatient objectForKey:@"Id"]];
         prescription.selectedPatientID = [NSString stringWithFormat:@"%@",[self.selectedPatient objectForKey:@"Id"]];
+        moreInfoTableView.selectedPatientID = [NSString stringWithFormat:@"%@",[self.selectedPatient objectForKey:@"Id"]];
         tabBar.selectedIndex = 1;
     }
 

@@ -10,4 +10,5 @@
 
 @interface MedicineImagesCollectionViewController : UICollectionViewController<UIImagePickerControllerDelegate>
 @property(strong,nonatomic) NSString *selectedPrescriptionID;
+@property(strong,nonatomic) NSString *selectedPartnerID;
 @end

@@ -15,6 +15,9 @@
 @interface MedicalRecordDetailTableViewController ()
 @property(strong,nonatomic) NSDictionary *selectedMedicalRecord;
 @property (strong,nonatomic) NSDictionary *responseJSONData;
+@property(strong,nonatomic) UITextField *stringTextField;
+@property(strong,nonatomic) UIDatePicker *experimentDatePicker;
+@property(strong,nonatomic) UIView *popupView;
 - (IBAction)createNewMedicalRecord:(id)sender;
 @end
 
@@ -105,7 +108,7 @@
     dateFormaterToUTC.timeStyle = NSDateFormatterNoStyle;
     dateFormaterToUTC.dateFormat = @"MM/dd/yyyy HH:mm:ss:SSS";
     [dateFormaterToUTC setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
-    NSDate *createdDate = [dateFormaterToUTC dateFromString:[dateFormaterToUTC stringFromDate:[NSDate date]]];
+    NSDate *createdDate = [dateFormaterToUTC dateFromString:[dateFormaterToUTC stringFromDate:self.experimentDatePicker.date]];
     NSTimeInterval createdDateTimeInterval = [createdDate timeIntervalSince1970];
 
     NSDictionary *account = @{
@@ -282,6 +285,145 @@
 }
 */
 
+-(void)showPopUpView{
+    // show popup view here
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat screenWidth = screenRect.size.width;
+    CGFloat screenHeight = screenRect.size.height;
+
+
+    self.popupView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
+    self.popupView.backgroundColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.5];
+
+    UIView *myView = [[UIView alloc]initWithFrame:CGRectMake(20, 150, screenWidth-40, 280)];
+    myView.backgroundColor = [UIColor colorWithRed:230/255.0 green:230/255.0 blue:230/255.0 alpha:1.0];
+    myView.layer.cornerRadius = 10.0f;
+
+    //create OK button
+    UIButton *okButton = [[UIButton alloc] initWithFrame:CGRectMake((screenWidth-40)/2,240, (screenWidth-40)/2, 40)];
+    okButton.backgroundColor = [UIColor whiteColor];
+    [okButton setTitle: @"OK" forState: UIControlStateNormal];
+    [okButton.titleLabel setFont:[UIFont fontWithName:@"Helvetica" size:16.0]];
+    [okButton setTitleColor:[UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0] forState:UIControlStateNormal];
+
+    UIBezierPath *maskPathOK = [UIBezierPath bezierPathWithRoundedRect:okButton.bounds byRoundingCorners:(UIRectCornerBottomRight) cornerRadii:CGSizeMake(10.0, 10.0)];
+    CAShapeLayer *maskLayerOK = [[CAShapeLayer alloc] init];
+    maskLayerOK.frame = self.popupView.bounds;
+    maskLayerOK.path  = maskPathOK.CGPath;
+    okButton.layer.mask = maskLayerOK;
+    [okButton addTarget:self action:@selector(okButtonActionHightLight:) forControlEvents:UIControlEventTouchDown];
+    [okButton addTarget:self action:@selector(okButtonActionNormal:) forControlEvents:UIControlEventTouchUpInside];
+
+
+
+    //create cancel button
+    UIButton *cancelButton = [[UIButton alloc] initWithFrame:CGRectMake(0,240, (screenWidth-40)/2-1, 40)];
+    cancelButton.backgroundColor = [UIColor whiteColor];
+    [cancelButton setTitle: @"Cancel" forState: UIControlStateNormal];
+    [cancelButton.titleLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:16.0]];
+    [cancelButton setTitleColor:[UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0] forState:UIControlStateNormal];
+
+    UIBezierPath *maskPathCancel = [UIBezierPath bezierPathWithRoundedRect:cancelButton.bounds byRoundingCorners:(UIRectCornerBottomLeft) cornerRadii:CGSizeMake(10.0, 10.0)];
+
+    CAShapeLayer *maskLayerCancel = [[CAShapeLayer alloc] init];
+    maskLayerCancel.frame = self.popupView.bounds;
+    maskLayerCancel.path  = maskPathCancel.CGPath;
+    cancelButton.layer.mask = maskLayerCancel;
+    [cancelButton addTarget:self action:@selector(cancelButtonActionHightLight:) forControlEvents:UIControlEventTouchDown];
+    [cancelButton addTarget:self action:@selector(cancelButtonActionNormal:) forControlEvents:UIControlEventTouchUpInside];
+
+
+    //Title Label
+    UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(0,20, (screenWidth-40), 40)];
+    [titleLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:20.0]];
+    titleLabel.textAlignment = NSTextAlignmentCenter;
+    [titleLabel setTextColor:[UIColor blackColor]];
+    titleLabel.text = @"Edit medical record";
+
+    //top content View
+    UIView *topContentView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, screenWidth-40, 239)];
+    topContentView.backgroundColor = [UIColor whiteColor];
+    UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:topContentView.bounds byRoundingCorners:(UIRectCornerTopLeft | UIRectCornerTopRight) cornerRadii:CGSizeMake(10.0, 10.0)];
+    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+    maskLayer.frame = self.popupView.bounds;
+    maskLayer.path  = maskPath.CGPath;
+    topContentView.layer.mask = maskLayer;
+
+    //text Field for string
+    self.stringTextField = [[UITextField alloc]initWithFrame:CGRectMake(70, 100, screenWidth-130, 30)];
+    [self.stringTextField  setBackgroundColor:[UIColor colorWithRed:240/255.0 green:240/255.0 blue:240/255.0 alpha:1.0]];
+    self.stringTextField .layer.cornerRadius = 5.0f;
+
+
+
+
+    //name Label
+    UILabel *nameLabel = [[UILabel alloc]initWithFrame:CGRectMake(10,100, 50, 30)];
+    [nameLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:15.0]];
+    nameLabel.textAlignment = NSTextAlignmentCenter;
+    [nameLabel setTextColor:[UIColor blackColor]];
+    nameLabel.text = @"Name";
+
+
+    //name Label
+    UILabel *timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(10,140, 50, 30)];
+    [timeLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:15.0]];
+    timeLabel.textAlignment = NSTextAlignmentCenter;
+    [timeLabel setTextColor:[UIColor blackColor]];
+    timeLabel.text = @"Time";
+
+    self.experimentDatePicker = [[UIDatePicker alloc]initWithFrame:CGRectMake(10,165, screenWidth-80, 60)];
+    self.experimentDatePicker.datePickerMode = UIDatePickerModeDate;
+
+
+    [topContentView addSubview:timeLabel];
+    [topContentView addSubview:self.experimentDatePicker];
+    [topContentView addSubview:titleLabel];
+    [topContentView addSubview:self.stringTextField ];
+    [topContentView addSubview:nameLabel];
+    [myView addSubview:topContentView];
+    [myView addSubview:okButton];
+    [myView addSubview:cancelButton];
+
+    [self.popupView addSubview:myView];
+    UIWindow *currentWindow = [UIApplication sharedApplication].keyWindow;
+    [currentWindow addSubview:self.popupView];
+
+
+}
+
+-(IBAction)okButtonActionHightLight:(id)sender{
+    UIButton *button = (UIButton*)sender;
+    button.backgroundColor = [UIColor lightGrayColor];
+}
+-(IBAction)cancelButtonActionHightLight:(id)sender{
+    UIButton *button = (UIButton*)sender;
+    button.backgroundColor = [UIColor lightGrayColor];
+}
+
+//action to call to add or update api
+-(IBAction)okButtonActionNormal:(id)sender{
+    UIButton *button = (UIButton*)sender;
+    button.backgroundColor = [UIColor whiteColor];
+    [self.stringTextField resignFirstResponder];
+    [self createMedicalRecordDataToAPI];
+    [self.tableView reloadData];
+    [UIView animateWithDuration:0.5
+                     animations:^{self.popupView .alpha = 0.0;}
+                     completion:^(BOOL finished){ [self.popupView removeFromSuperview]; }];
+}
+//dissmiss popup view
+-(IBAction)cancelButtonActionNormal:(id)sender{
+    UIButton *button = (UIButton*)sender;
+    button.backgroundColor = [UIColor whiteColor];
+    [self.stringTextField resignFirstResponder];
+    NSLog(@"Cancel ACtion");
+    [UIView animateWithDuration:0.5
+                     animations:^{self.popupView .alpha = 0.0;}
+                     completion:^(BOOL finished){ [self.popupView removeFromSuperview]; }];
+}
+
+
 
 #pragma mark - Navigation
 
@@ -299,7 +441,7 @@
 
 
 - (IBAction)createNewMedicalRecord:(id)sender {
-    [self createMedicalRecordDataToAPI];
-    [self.tableView reloadData];
+    [self showPopUpView];
+    
 }
 @end

@@ -14,4 +14,5 @@
 @property(strong,nonatomic) NSString *appointmentID;
 @property(strong,nonatomic) NSString *segmentUsing;
 @property(assign,nonatomic) BOOL isActiveAppointment;
+@property(assign,nonatomic) BOOL isNotificationView;
 @end

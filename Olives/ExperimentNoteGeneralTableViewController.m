@@ -17,7 +17,7 @@
 @property (strong,nonatomic) NSDictionary *selectedExperimentNote;
 @property(strong,nonatomic) UIView *popupView;
 @property(strong,nonatomic) UITextField *stringTextField;
-
+@property(strong,nonatomic) UIDatePicker *experimentDatePicker;
 @end
 
 @implementation ExperimentNoteGeneralTableViewController
@@ -97,7 +97,7 @@
         NSString *info = [experimentNoteDic objectForKey:@"Info"];
         NSString *createdDate = [experimentNoteDic objectForKey:@"Created"];
         NSString *lastModified = [experimentNoteDic objectForKey:@"LastModified"];
-
+        NSString *time = [experimentNoteDic objectForKey:@"Time"];
 
         //create new patient object
         NSManagedObject *newExperiment = [NSEntityDescription insertNewObjectForEntityForName:@"ExperimentNotes" inManagedObjectContext:context];
@@ -110,7 +110,7 @@
         [newExperiment setValue: [NSString stringWithFormat:@"%@", info] forKey:@"info"];
         [newExperiment setValue: [NSString stringWithFormat:@"%@", createdDate] forKey:@"createdDate"];
         [newExperiment setValue: [NSString stringWithFormat:@"%@", lastModified] forKey:@"lastModified"];
-
+        [newExperiment setValue: [NSString stringWithFormat:@"%@", time] forKey:@"time"];
 
         NSError *error = nil;
         // Save the object to persistent store
@@ -142,6 +142,7 @@
                                            [experimentNote valueForKey:@"createdDate" ],@"Created",
                                            [experimentNote valueForKey:@"creatorID" ],@"Creator",
                                            [experimentNote valueForKey:@"lastModified" ],@"LastModified",
+                                           [experimentNote valueForKey:@"time" ],@"Time",
                                            nil];
             [experimentArrayForFailAPI addObject:experimentDic];
         }
@@ -182,10 +183,19 @@
     [urlRequest setValue:@"en-US" forHTTPHeaderField:@"Accept-Language"];
     [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     //create JSON data to post to API
+    // dateformater to convert to UTC time zone
+    NSDateFormatter *dateFormaterToUTC = [[NSDateFormatter alloc] init];
+    dateFormaterToUTC.timeStyle = NSDateFormatterNoStyle;
+    dateFormaterToUTC.dateFormat = @"MM/dd/yyyy HH:mm:ss:SSS";
+    [dateFormaterToUTC setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
 
+    NSDate *setDate = self.experimentDatePicker.date;
+    NSDate *convertDate = [dateFormaterToUTC dateFromString:[dateFormaterToUTC stringFromDate:setDate]];
+    NSTimeInterval experimentTimeInterval = [convertDate timeIntervalSince1970];
     NSDictionary *account = @{
                               @"Name":experimentNoteName,
                               @"MedicalRecord":self.medicalRecordID,
+                              @"Time":[NSString stringWithFormat:@"%f",experimentTimeInterval*1000],
                               };
     NSError *error = nil;
     NSData *jsondata = [NSJSONSerialization dataWithJSONObject:account options:NSJSONWritingPrettyPrinted error:&error];
@@ -347,12 +357,12 @@
     self.popupView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
     self.popupView.backgroundColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.5];
 
-    UIView *myView = [[UIView alloc]initWithFrame:CGRectMake(20, 150, screenWidth-40, 200)];
+    UIView *myView = [[UIView alloc]initWithFrame:CGRectMake(20, 150, screenWidth-40, 280)];
     myView.backgroundColor = [UIColor colorWithRed:230/255.0 green:230/255.0 blue:230/255.0 alpha:1.0];
     myView.layer.cornerRadius = 10.0f;
 
     //create OK button
-    UIButton *okButton = [[UIButton alloc] initWithFrame:CGRectMake((screenWidth-40)/2,160, (screenWidth-40)/2, 40)];
+    UIButton *okButton = [[UIButton alloc] initWithFrame:CGRectMake((screenWidth-40)/2,240, (screenWidth-40)/2, 40)];
     okButton.backgroundColor = [UIColor whiteColor];
     [okButton setTitle: @"OK" forState: UIControlStateNormal];
     [okButton.titleLabel setFont:[UIFont fontWithName:@"Helvetica" size:16.0]];
@@ -369,7 +379,7 @@
 
 
     //create cancel button
-    UIButton *cancelButton = [[UIButton alloc] initWithFrame:CGRectMake(0,160, (screenWidth-40)/2-1, 40)];
+    UIButton *cancelButton = [[UIButton alloc] initWithFrame:CGRectMake(0,240, (screenWidth-40)/2-1, 40)];
     cancelButton.backgroundColor = [UIColor whiteColor];
     [cancelButton setTitle: @"Cancel" forState: UIControlStateNormal];
     [cancelButton.titleLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:16.0]];
@@ -393,7 +403,7 @@
     titleLabel.text = @"Add new experiment note";
 
     //top content View
-    UIView *topContentView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, screenWidth-40, 159)];
+    UIView *topContentView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, screenWidth-40, 239)];
     topContentView.backgroundColor = [UIColor whiteColor];
     UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:topContentView.bounds byRoundingCorners:(UIRectCornerTopLeft | UIRectCornerTopRight) cornerRadii:CGSizeMake(10.0, 10.0)];
     CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
@@ -417,12 +427,19 @@
     nameLabel.text = @"Name";
 
 
+    //name Label
+    UILabel *timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(10,140, 50, 30)];
+    [timeLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:15.0]];
+    timeLabel.textAlignment = NSTextAlignmentCenter;
+    [timeLabel setTextColor:[UIColor blackColor]];
+    timeLabel.text = @"Time";
+
+    self.experimentDatePicker = [[UIDatePicker alloc]initWithFrame:CGRectMake(10,165, screenWidth-80, 60)];
+    self.experimentDatePicker.datePickerMode = UIDatePickerModeDate;
 
 
-
-
-
-
+    [topContentView addSubview:timeLabel];
+    [topContentView addSubview:self.experimentDatePicker];
     [topContentView addSubview:titleLabel];
     [topContentView addSubview:self.stringTextField ];
     [topContentView addSubview:nameLabel];
