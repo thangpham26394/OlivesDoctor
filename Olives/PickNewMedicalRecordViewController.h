@@ -8,7 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface PickNewMedicalRecordViewController : UIViewController<UIPickerViewDataSource, UIPickerViewDelegate>
+@interface PickNewMedicalRecordViewController : UIViewController
 @property (strong,nonatomic) NSDictionary *selectedCategory;
 @property(assign,nonatomic) BOOL didAddCategory;
+@property(assign,nonatomic) BOOL isEditMedicalRecord;
 @end

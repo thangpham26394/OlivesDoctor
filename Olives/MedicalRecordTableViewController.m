@@ -17,7 +17,9 @@
 @property (strong,nonatomic) NSArray *medicalRecordArray;
 @property (strong,nonatomic) NSArray *selectedMedicalRecord;
 @property (strong,nonatomic)NSDictionary *selectedCategory;
-
+@property (strong,nonatomic) UIView *backgroundView;
+@property (strong,nonatomic) UIActivityIndicatorView *  activityIndicator ;
+@property (strong,nonatomic) UIWindow *currentWindow;
 @end
 
 @implementation MedicalRecordTableViewController
@@ -39,7 +41,22 @@
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
     self.medicalCategoryArray = [[NSMutableArray alloc]init];
+
+    //start animation
+    [self.currentWindow addSubview:self.backgroundView];
+    [self.activityIndicator startAnimating];
+
     [self loadMedicalRecordDataFromAPI];
+
+    //stop animation
+    [self.activityIndicator stopAnimating];
+    [self.backgroundView removeFromSuperview];
+
+
+
+
+
+
     //check if there is new catagory added
 
     NSData *dictionaryData = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"BrandNewCategoryOfId%@",self.selectedPatientID]];
@@ -70,11 +87,18 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
+    //set up for indicator view
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat screenWidth = screenRect.size.width;
+    CGFloat screenHeight = screenRect.size.height;
+
+    self.backgroundView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
+    self.backgroundView.backgroundColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.5];
+    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    self.activityIndicator.center = CGPointMake(self.backgroundView .frame.size.width/2, self.backgroundView .frame.size.height/2);
+    [self.backgroundView  addSubview:self.activityIndicator];
+    self.currentWindow = [UIApplication sharedApplication].keyWindow;
     
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -202,6 +226,7 @@
         NSString *time = [medicalRecordDic objectForKey:@"Time"];
         NSString *createdDate = [medicalRecordDic objectForKey:@"Created"];
         NSString *lastModified = [medicalRecordDic objectForKey:@"LastModified"];
+        NSString *name = [medicalRecordDic objectForKey:@"Name"];
 
         BOOL isAlreadyHave = NO;
         //check if new category already have or not
@@ -229,6 +254,7 @@
         [newMedicalRecord setValue: [NSString stringWithFormat:@"%@", time] forKey:@"time"];
         [newMedicalRecord setValue: [NSString stringWithFormat:@"%@", createdDate] forKey:@"createdDate"];
         [newMedicalRecord setValue: [NSString stringWithFormat:@"%@", lastModified] forKey:@"lastModified"];
+        [newMedicalRecord setValue: [NSString stringWithFormat:@"%@", name] forKey:@"name"];
 
         NSError *error = nil;
         // Save the object to persistent store
@@ -334,6 +360,7 @@
                                               [medicalRecord valueForKey:@"time" ],@"Time",
                                               [medicalRecord valueForKey:@"createdDate" ],@"Created",
                                               [medicalRecord valueForKey:@"lastModified" ],@"LastModified",
+                                              [medicalRecord valueForKey:@"name" ],@"Name",
                                               nil];
             [medicalRecordForFailAPiArray addObject:medicalRecordDic];
         }
@@ -361,12 +388,8 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"medicalCategoryCell" ];
-    if(cell == nil)
-    {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1  reuseIdentifier:@"medicalCategoryCell"];
-
-    }
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"medicalCategoryCell"forIndexPath:indexPath];
+    
     // Configure the cell...
     cell.textLabel.text = [self.medicalCategoryArray[indexPath.row] objectForKey:@"Name"];
     //cell.detailTextLabel.text = @"details";

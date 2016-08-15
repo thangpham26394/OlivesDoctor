@@ -183,7 +183,12 @@
 
                                                                NSError *parsJSONError = nil;
                                                                self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
-                                                               self.canLogin = YES;
+                                                               if (self.responseJSONData !=nil) {
+                                                                   self.canLogin = YES;
+                                                               }else{
+                                                                   self.canLogin = NO;
+                                                               }
+
 
 
                                                                //stop waiting after get response from API
@@ -298,12 +303,17 @@
     [newDoctor setValue: [NSString stringWithFormat:@"%@", doctorAddress] forKey:@"address"];
 
     //get avatar from receive url
-    NSURL *url = [NSURL URLWithString:doctorPhoto];
-    NSData *doctorPhotoData = [NSData dataWithContentsOfURL:url];
+
+    NSData *doctorPhotoData;
+    if ((id)doctorPhoto != [NSNull null])  {
+        NSURL *url = [NSURL URLWithString:doctorPhoto];
+        doctorPhotoData = [NSData dataWithContentsOfURL:url];
+    }else{
+        doctorPhotoData = UIImagePNGRepresentation([UIImage imageNamed:@"nullAvatar"]);
+    }
+
 
     [newDoctor setValue:doctorPhotoData  forKey:@"photoURL"];
-
-
 
 
     NSError *error = nil;

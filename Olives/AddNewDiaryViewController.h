@@ -10,4 +10,5 @@
 
 @interface AddNewDiaryViewController : UIViewController
 @property (strong,nonatomic) NSDictionary *selectedDiary;
+@property(strong,nonatomic) NSString *selectedPatientID;
 @end

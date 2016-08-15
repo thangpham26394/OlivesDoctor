@@ -18,6 +18,10 @@
 @property (strong,nonatomic) NSMutableArray *currentPrescription;
 @property (strong,nonatomic) NSMutableArray *historyPrescription;
 @property (strong,nonatomic) NSDictionary *selectedPrescription;
+@property (strong,nonatomic) UIView *backgroundView;
+@property (strong,nonatomic) UIActivityIndicatorView *  activityIndicator ;
+@property (strong,nonatomic) UIWindow *currentWindow;
+
 - (IBAction)changeSegment:(id)sender;
 
 @end
@@ -213,9 +217,20 @@
     self.navigationController.topViewController.navigationItem.rightBarButtonItem = rightBarButton;
 //    [rightBarButton setEnabled:NO];
 
+
+    //start animation
+    [self.currentWindow addSubview:self.backgroundView];
+    [self.activityIndicator startAnimating];
+
     [self loadPatienttDataFromAPI];
     [self.currentTableView reloadData];
     [self.historyTableView reloadData];
+
+    //stop animation
+    [self.activityIndicator stopAnimating];
+    [self.backgroundView removeFromSuperview];
+
+
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -224,6 +239,18 @@
     [self.historyTableView setHidden:YES];
     self.currentTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     self.historyTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+
+    //set up for indicator view
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat screenWidth = screenRect.size.width;
+    CGFloat screenHeight = screenRect.size.height;
+
+    self.backgroundView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
+    self.backgroundView.backgroundColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.5];
+    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    self.activityIndicator.center = CGPointMake(self.backgroundView .frame.size.width/2, self.backgroundView .frame.size.height/2);
+    [self.backgroundView  addSubview:self.activityIndicator];
+    self.currentWindow = [UIApplication sharedApplication].keyWindow;
 
 }
 

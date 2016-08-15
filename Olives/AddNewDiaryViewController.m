@@ -19,6 +19,11 @@
 @property (weak, nonatomic) IBOutlet UITextView *noteTextView;
 @property (weak, nonatomic) IBOutlet UIButton *saveButton;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentViewHeight;
+
+@property (strong,nonatomic) UIView *backgroundView;
+@property (strong,nonatomic) UIActivityIndicatorView *  activityIndicator ;
+@property (strong,nonatomic) UIWindow *currentWindow;
+
 - (IBAction)addOrUpdateDiarryAction:(id)sender;
 @property (strong,nonatomic) NSDictionary *responseJSONData;
 @end
@@ -228,6 +233,7 @@
     NSDictionary *account = @{
                               @"Time":[NSString stringWithFormat:@"%f",dateTimeUNIX*1000],
                               @"Note":self.noteTextView.text,
+                              @"Target" : self.selectedPatientID
                               };
     NSError *error = nil;
     NSData *jsondata = [NSJSONSerialization dataWithJSONObject:account options:NSJSONWritingPrettyPrinted error:&error];
@@ -397,9 +403,20 @@
 
         dateTime = [dateFormatToLocal dateFromString:[dateFormatToLocal stringFromDate:dateTime]];
         self.timePicker.date = dateTime;
-        
-        
     }
+
+    //set up for indicator view
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat screenWidth = screenRect.size.width;
+    CGFloat screenHeight = screenRect.size.height;
+
+    self.backgroundView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
+    self.backgroundView.backgroundColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.5];
+    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    self.activityIndicator.center = CGPointMake(self.backgroundView .frame.size.width/2, self.backgroundView .frame.size.height/2);
+    [self.backgroundView  addSubview:self.activityIndicator];
+    self.currentWindow = [UIApplication sharedApplication].keyWindow;
+
 }
 
 - (void)didReceiveMemoryWarning {
@@ -419,6 +436,11 @@
 */
 
 - (IBAction)addOrUpdateDiarryAction:(id)sender {
+    //start animation
+    [self.currentWindow addSubview:self.backgroundView];
+    [self.activityIndicator startAnimating];
+
+
     if (self.selectedDiary !=nil) {
         //this view is used for edit prescription
         [self editDiaryAPI];
@@ -426,6 +448,11 @@
         //this view is used for add new prescription
         [self addNewDiaryNoteAPI];
     }
+
+    //stop animation
+    [self.activityIndicator stopAnimating];
+    [self.backgroundView removeFromSuperview];
+
     [self.navigationController popViewControllerAnimated:YES];
 }
 @end

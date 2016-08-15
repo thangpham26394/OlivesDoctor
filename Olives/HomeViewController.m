@@ -6,6 +6,7 @@
 //  Copyright © 2016 Thang. All rights reserved.
 //
 #define API_NOTIFICATION_URL @"http://olive.azurewebsites.net/api/notification/filter"
+#define API_NOTIFICATION_PUT_URL @"http://olive.azurewebsites.net/api/notification/seen?Id="
 
 #import "HomeViewController.h"
 #import "SWRevealViewController.h"
@@ -32,6 +33,9 @@
 @property (strong,nonatomic) NSMutableArray *requestlNotiArray;
 @property (strong,nonatomic) NSDictionary *responseJSONData;
 @property (strong,nonatomic) NSArray *notificationArray;
+@property (strong,nonatomic) UIView *backgroundView;
+@property (strong,nonatomic) UIActivityIndicatorView *  activityIndicator ;
+@property (strong,nonatomic) UIWindow *currentWindow;
 
 @end
 
@@ -48,6 +52,71 @@
 
 
 #pragma mark - Connect to API function
+
+-(void)putSeenNotificationDataToAPIWithTopic:(NSInteger) topic{
+
+    // create url
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%ld", API_NOTIFICATION_PUT_URL,(long)topic ]];
+    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+
+
+    //    sessionConfig.timeoutIntervalForRequest = 5.0;
+    //    sessionConfig.timeoutIntervalForResource = 5.0;
+
+    //NSURLSession *defaultSession = [NSURLSession sharedSession];
+    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:sessionConfig];
+    //create request
+    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
+
+    //get doctor email and password from coredata
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+
+    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+
+
+    //setup header and body for request
+    [urlRequest setHTTPMethod:@"POST"];
+    [urlRequest setValue:[doctor valueForKey:@"email"] forHTTPHeaderField:@"Email"];
+    [urlRequest setValue:[doctor valueForKey:@"password"]  forHTTPHeaderField:@"Password"];
+    [urlRequest setValue:@"en-US" forHTTPHeaderField:@"Accept-Language"];
+    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [urlRequest setTimeoutInterval:5];
+
+    dispatch_semaphore_t    sem;
+    sem = dispatch_semaphore_create(0);
+
+    NSURLSessionDataTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
+                                                       completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+                                      {
+                                          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+
+                                          if((long)[httpResponse statusCode] == 200  && error ==nil)
+                                          {
+                                              NSError *parsJSONError = nil;
+                                              self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                              if (self.responseJSONData != nil) {
+                                              }else{
+                                              }
+
+                                              //stop waiting after get response from API
+                                              dispatch_semaphore_signal(sem);
+                                          }
+                                          else{
+                                              NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+                                              NSLog(@"\n\n\nError = %@",text);
+                                              dispatch_semaphore_signal(sem);
+                                              return;
+                                          }
+                                      }];
+    [dataTask resume];
+    //start waiting until get response from API
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    
+}
+
+
 
 -(void)loadNotificationDataFromAPI{
 
@@ -82,6 +151,7 @@
     NSDictionary *account = @{
                               @"IsSeen":@"False",
                               @"Sort":@"0",
+                              @"Mode":@"1"
                               };
     NSError *error = nil;
     NSData *jsondata = [NSJSONSerialization dataWithJSONObject:account options:NSJSONWritingPrettyPrinted error:&error];
@@ -125,14 +195,17 @@
 
     self.appointmentNotiArray = [[NSMutableArray alloc]init];
     self.medicalNotiArray = [[NSMutableArray alloc] init];
-
+    self.requestlNotiArray = [[NSMutableArray alloc] init];
 
     for (int index =0; index<self.notificationArray.count; index++) {
         NSDictionary *currentNotiDic = self.notificationArray[index];
         //check if current noti is belong to which subview
         if ([[NSString stringWithFormat:@"%@", [currentNotiDic objectForKey:@"Topic"] ]  isEqual:@"0"] ) {
             [self.appointmentNotiArray addObject:currentNotiDic];
-        }else{
+        }else if ([[NSString stringWithFormat:@"%@", [currentNotiDic objectForKey:@"Topic"] ]  isEqual:@"7"] ){
+            [self.requestlNotiArray addObject:currentNotiDic];
+        }
+        else{
             [self.medicalNotiArray addObject:currentNotiDic];
         }
     }
@@ -140,6 +213,7 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         self.badgeAppointmentLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)self.appointmentNotiArray.count ];
         self.badgeMedicalRecordLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)self.medicalNotiArray.count ];
+        self.badgeRequestLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)self.requestlNotiArray.count ];
     });
 
 
@@ -154,7 +228,18 @@
     [super viewDidAppear:animated];
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"homeScreenLoaded"];
     [[NSUserDefaults standardUserDefaults] synchronize];
+
+    //start animation
+    [self.currentWindow addSubview:self.backgroundView];
+    [self.activityIndicator startAnimating];
+
     [self loadNotificationDataFromAPI];
+
+    //stop animation
+    [self.activityIndicator stopAnimating];
+    [self.backgroundView removeFromSuperview];
+
+
 }
 
 
@@ -204,6 +289,18 @@
     [self setupMessageGestureRecognizer];
     [self setupMedicaRecordGestureRecognizer];
     [self setupPatientRequestGestureRecognizer];
+
+    //set up for indicator view
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat screenWidth = screenRect.size.width;
+    CGFloat screenHeight = screenRect.size.height;
+
+    self.backgroundView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
+    self.backgroundView.backgroundColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.5];
+    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    self.activityIndicator.center = CGPointMake(self.backgroundView .frame.size.width/2, self.backgroundView .frame.size.height/2);
+    [self.backgroundView  addSubview:self.activityIndicator];
+    self.currentWindow = [UIApplication sharedApplication].keyWindow;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -242,6 +339,7 @@
 - (void)handlePatientRequestTapGesture:(UIPanGestureRecognizer *)recognizer{
     [self performSegueWithIdentifier:@"showNewRequestNotification" sender:self];
     //tell api that all appointment notification has been seen
+
 }
 
 -(void) setupMessageGestureRecognizer {
@@ -251,7 +349,7 @@
 }
 
 - (void)handleMessageTapGesture:(UIPanGestureRecognizer *)recognizer{
-    self.badgeMessageLabel.text = @"hi";
+    [self performSegueWithIdentifier:@"showChatNoti" sender:self];
 }
 
 
@@ -277,7 +375,7 @@
         appointmentView.notificationType = 3;
     }
     //show notification about new message
-    if ([[segue identifier] isEqualToString:@"newMessageNoti"])
+    if ([[segue identifier] isEqualToString:@"showChatNoti"])
     {
         ShowNotificationTableViewController *appointmentView = [segue destinationViewController];
         appointmentView.notifictionDataArray = (NSArray*)self.messageNotiArray;

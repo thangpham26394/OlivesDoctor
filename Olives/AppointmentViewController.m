@@ -39,6 +39,13 @@
 @property(strong,nonatomic) NSString *idOfSelectedAppointmentToviewDetail;
 @property(strong,nonatomic) VRGCalendarView *calendar;
 @property(assign,nonatomic) BOOL isActiveAppointment;
+
+@property (strong,nonatomic) UIView *backgroundView;
+@property (strong,nonatomic) UIActivityIndicatorView *  activityIndicator ;
+@property (strong,nonatomic) UIWindow *currentWindow;
+
+
+
 @end
 
 
@@ -463,9 +470,21 @@
     self.appointmentsForExpired = [[NSArray alloc]init];
     self.appointmentsForPending = [[NSArray alloc]init];
 
+
+
+    //start animation
+    [self.currentWindow addSubview:self.backgroundView];
+    [self.activityIndicator startAnimating];
+
     //call function connect to API to get data for pending Table
     [self loadAppointmentDataFromAPIWithStatus:1]; //pending
     [self loadAppointmentDataFromAPIWithStatus:4];//expired
+
+    //stop animation
+    [self.activityIndicator stopAnimating];
+    [self.backgroundView removeFromSuperview];
+
+
 
 
     int month = [[NSUserDefaults standardUserDefaults] doubleForKey:@"currentMonth"];
@@ -550,6 +569,18 @@
     [self.calendarView addSubview:self.calendar];
 
     [self.calendarView  layoutIfNeeded];
+
+    //set up for indicator view
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat screenWidth = screenRect.size.width;
+    CGFloat screenHeight = screenRect.size.height;
+
+    self.backgroundView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
+    self.backgroundView.backgroundColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.5];
+    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    self.activityIndicator.center = CGPointMake(self.backgroundView .frame.size.width/2, self.backgroundView .frame.size.height/2);
+    [self.backgroundView  addSubview:self.activityIndicator];
+    self.currentWindow = [UIApplication sharedApplication].keyWindow;
 }
 
 
@@ -647,9 +678,18 @@
 
     NSTimeInterval unixMaxDate = [maxDate timeIntervalSince1970];
 
-
+    //start animation
+    [self.currentWindow addSubview:self.backgroundView];
+    [self.activityIndicator startAnimating];
 
     [self loadAppointmentDataFromAPIFrom:[NSString stringWithFormat:@"%f",unixMinDate*1000] and:[NSString stringWithFormat:@"%f",unixMaxDate*1000]];
+
+    //stop animation
+    [self.activityIndicator stopAnimating];
+    [self.backgroundView removeFromSuperview];
+
+
+
 
     [[NSUserDefaults standardUserDefaults] setInteger:month forKey:@"currentMonth"];
     [[NSUserDefaults standardUserDefaults] setDouble:targetHeight forKey:@"targetHeight"];

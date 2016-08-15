@@ -12,4 +12,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *badgeAppointmentLabel;
 @property (weak, nonatomic) IBOutlet UILabel *badgeMessageLabel;
 @property (weak, nonatomic) IBOutlet UILabel *badgeMedicalRecordLabel;
+@property (weak, nonatomic) IBOutlet UILabel *badgeRequestLabel;
+
 @end

@@ -10,10 +10,12 @@
 #import "MedicalRecordTableViewController.h"
 #import <CoreData/CoreData.h>
 @interface PickNewMedicalRecordViewController ()
-@property (weak, nonatomic) IBOutlet UIPickerView *categoryPickerView;
 
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong,nonatomic) NSArray *categoryArray;
 @property (strong,nonatomic) NSDictionary *responseJSONData;
+@property (weak, nonatomic) IBOutlet UIButton *choseButton;
+@property (assign,nonatomic) BOOL isAlreadySelected;
 - (IBAction)choseCategoryButton:(id)sender;
 @end
 
@@ -195,17 +197,19 @@
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
     [self loadMedicalRecordCategoryDataFromAPI];
-    [self.categoryPickerView reloadAllComponents];
+    [self.tableView reloadData];
 }
 
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-//    self.categoryArray = @[@"Item 1", @"Item 2", @"Item 3", @"Item 4", @"Item 5", @"Item 6",@"Item 1", @"Item 2", @"Item 3", @"Item 4", @"Item 5", @"Item 6",@"Item 1", @"Item 2", @"Item 3", @"Item 4", @"Item 5", @"Item 6",@"Item 1", @"Item 2", @"Item 3", @"Item 4", @"Item 5", @"Item 6",@"Item 1", @"Item 2", @"Item 3", @"Item 4", @"Item 5", @"Item 6"];
-    self.categoryPickerView.dataSource = self;
-    self.categoryPickerView.delegate = self;
     self.didAddCategory = NO;
+    self.tableView.layer.cornerRadius = 10.0f;
+
+    self.choseButton.backgroundColor = [UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0];
+    [self.choseButton.layer setCornerRadius:self.choseButton.frame.size.height/2+1];
+    self.isAlreadySelected = NO;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -213,31 +217,43 @@
     // Dispose of any resources that can be recreated.
 }
 
-// The number of columns of data
-- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
-{
+
+
+
+
+
+#pragma mark - Table view data source
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
 
-
-// The number of rows of data
-- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
-{
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return self.categoryArray.count;
 }
 
-// The data to return for the row and component (column) that's being passed in
-- (NSString*)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
-{
-    return [self.categoryArray[row] objectForKey:@"Name"];
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"categoryCell" forIndexPath:indexPath];
+
+    // Configure the cell...
+    cell.textLabel.text = [self.categoryArray[indexPath.row] objectForKey:@"Name"];
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    cell.preservesSuperviewLayoutMargins = NO;
+    cell.separatorInset = UIEdgeInsetsZero;
+    cell.layoutMargins = UIEdgeInsetsZero;
+    return cell;
 }
 
-// Catpure the picker view selection
-- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
-{
-
-    self.selectedCategory = self.categoryArray[row];
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    // get the selected category
+    self.selectedCategory = self.categoryArray[indexPath.row];
+    self.isAlreadySelected = YES;
 }
+
+
+
 
 
 #pragma mark - Navigation
@@ -255,7 +271,24 @@
 
 
 - (IBAction)choseCategoryButton:(id)sender {
-    //[self performSegueWithIdentifier:@"addNewCategory" sender:self];
-    self.didAddCategory = YES;
+    if (self.isAlreadySelected) {
+        if (self.isEditMedicalRecord) {
+            [self performSegueWithIdentifier:@"unwindToMedicalRecord" sender:self];
+        }else{
+            self.didAddCategory = YES;
+            [self performSegueWithIdentifier:@"addNewCategory" sender:self];
+        }
+    }else{
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Select fail"
+                                                                       message:@"You need to choose at least 1 medical record first! "
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                           style:UIAlertActionStyleDefault
+                                                         handler:^(UIAlertAction * action) {}];
+        [alert addAction:OKAction];
+        [self presentViewController:alert animated:YES completion:nil];
+    }
+
+
 }
 @end

@@ -81,7 +81,7 @@
         NSLog(@"Connection Error %@",error);
     }];
     // Start the connection
-    [hubConnection start];
+//    [hubConnection start];
 
     if ([UIApplication instancesRespondToSelector:@selector(registerUserNotificationSettings:)]){
 

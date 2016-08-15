@@ -20,6 +20,7 @@
 #import "MedicineImagesCollectionViewController.h"
 #import "MedicalRecordExperimentNoteTableViewController.h"
 #import "AddNewMedicalNoteViewController.h"
+#import "ChatViewController.h"
 #import <CoreData/CoreData.h>
 
 
@@ -27,6 +28,7 @@
 @property (strong,nonatomic) NSDictionary *responseJSONDataForPendingList ;
 @property (strong,nonatomic)NSDictionary *selectedNotification;
 @property (strong,nonatomic)NSDictionary *selectedAppointment;
+@property (strong,nonatomic)NSDictionary *selectedChatNoti;
 @property (strong,nonatomic)NSDictionary *selectedMedicalRecord;
 @property (strong,nonatomic)NSDictionary *selectedPrescription;
 @property (strong,nonatomic)NSDictionary *selectedMedicalNote;
@@ -370,25 +372,25 @@
     self.selectedNotification = [self.notifictionDataArray objectAtIndex:indexPath.row];
     //if selected notification field is appointment notification
     if (self.notificationType == 0) {
-        // get the selected notification
-        self.selectedAppointment = [self loadAppointmentDataFromAPIWithID:[self.selectedNotification objectForKey:@"Record"]];
+        // get the selected notification chat
+        self.selectedChatNoti = [self loadAppointmentDataFromAPIWithID:[self.selectedNotification objectForKey:@"Record"]];
         self.selectedPatientID = [self.selectedNotification objectForKey:@"Broadcaster"];
-        [self performSegueWithIdentifier:@"showDetailAppointmentNoti" sender:self];
+        [self performSegueWithIdentifier:@"showChatWithPatientNoti" sender:self];
     }
-    if (self.notificationType == 1) {
-        // get the selected notification
-        self.selectedAppointment = [self loadAppointmentDataFromAPIWithID:[self.selectedNotification objectForKey:@"Record"]];
-        self.selectedPatientID = [self.selectedNotification objectForKey:@"Broadcaster"];
-        [self performSegueWithIdentifier:@"showDetailAppointmentNoti" sender:self];
-    }
+//    if (self.notificationType == 1) {
+//        // get the selected notification
+//        self.selectedAppointment = [self loadAppointmentDataFromAPIWithID:[self.selectedNotification objectForKey:@"Record"]];
+//        self.selectedPatientID = [self.selectedNotification objectForKey:@"Broadcaster"];
+//        [self performSegueWithIdentifier:@"showDetailAppointmentNoti" sender:self];
+//    }
     if (self.notificationType == 2) {
-        // get the selected notification
+        // get the selected notification appointment
         self.selectedAppointment = [self loadAppointmentDataFromAPIWithID:[self.selectedNotification objectForKey:@"Record"]];
         self.selectedPatientID = [self.selectedNotification objectForKey:@"Broadcaster"];
         [self performSegueWithIdentifier:@"showDetailAppointmentNoti" sender:self];
     }
     if (self.notificationType == 3) {
-        // get the selected notification
+        // get the selected notification medical record
 
         self.selectedPatientID = [self.selectedNotification objectForKey:@"Broadcaster"];
 
@@ -880,6 +882,15 @@
         addNewMedicalNoteViewcontroller.selectedMedicalNote = [self.selectedMedicalNote objectForKey:@"MedicalNote"];
 
     }
+
+    //show notification about chat message
+    if ([[segue identifier] isEqualToString:@"showChatWithPatientNoti"])
+    {
+        ChatViewController * chatViewController = [segue destinationViewController];
+//        chatTableViewController.selectedMedicalNote = [self.selectedMedicalNote objectForKey:@"MedicalNote"];
+
+    }
+
 }
 
 

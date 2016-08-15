@@ -14,6 +14,12 @@
 		1502F7BB1CF60FC200663B59 /* imagesbar.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 1502F7BA1CF60FC200663B59 /* imagesbar.jpeg */; };
 		1567353E1D19522A00392ADA /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1567353D1D19522A00392ADA /* HomeViewController.m */; };
 		156735411D1C408700392ADA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1567353F1D1C408700392ADA /* Main.storyboard */; };
+		156A3FB51D5F813A001EED7D /* EditMedicalRecordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 156A3FB41D5F813A001EED7D /* EditMedicalRecordViewController.m */; };
+		156A3FC51D606DD0001EED7D /* nullAvatar.png in Resources */ = {isa = PBXBuildFile; fileRef = 156A3FC41D606DD0001EED7D /* nullAvatar.png */; };
+		156A3FD41D6134DD001EED7D /* ChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 156A3FD31D6134DD001EED7D /* ChatViewController.m */; };
+		156A3FD71D614028001EED7D /* ChatDateTimeTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 156A3FD61D614028001EED7D /* ChatDateTimeTableViewCell.m */; };
+		156A3FDA1D614040001EED7D /* ChatMessageSendTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 156A3FD91D614040001EED7D /* ChatMessageSendTableViewCell.m */; };
+		156A3FDD1D614051001EED7D /* ChatMessageReceiveTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 156A3FDC1D614051001EED7D /* ChatMessageReceiveTableViewCell.m */; };
 		15BF12671D5516E900728456 /* AddOrUpdateMedicineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BF12661D5516E900728456 /* AddOrUpdateMedicineViewController.m */; };
 		15BF126A1D56462800728456 /* AddNewMedicalNoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BF12691D56462800728456 /* AddNewMedicalNoteViewController.m */; };
 		15BF126E1D56744100728456 /* MedicalRecordExperimentNoteTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BF126D1D56744100728456 /* MedicalRecordExperimentNoteTableViewController.m */; };
@@ -201,6 +207,17 @@
 		1567353C1D19522A00392ADA /* HomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeViewController.h; sourceTree = "<group>"; };
 		1567353D1D19522A00392ADA /* HomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeViewController.m; sourceTree = "<group>"; };
 		156735401D1C408700392ADA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		156A3FB31D5F813A001EED7D /* EditMedicalRecordViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditMedicalRecordViewController.h; sourceTree = "<group>"; };
+		156A3FB41D5F813A001EED7D /* EditMedicalRecordViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditMedicalRecordViewController.m; sourceTree = "<group>"; };
+		156A3FC41D606DD0001EED7D /* nullAvatar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nullAvatar.png; sourceTree = "<group>"; };
+		156A3FD21D6134DD001EED7D /* ChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatViewController.h; sourceTree = "<group>"; };
+		156A3FD31D6134DD001EED7D /* ChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatViewController.m; sourceTree = "<group>"; };
+		156A3FD51D614028001EED7D /* ChatDateTimeTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatDateTimeTableViewCell.h; sourceTree = "<group>"; };
+		156A3FD61D614028001EED7D /* ChatDateTimeTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatDateTimeTableViewCell.m; sourceTree = "<group>"; };
+		156A3FD81D614040001EED7D /* ChatMessageSendTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatMessageSendTableViewCell.h; sourceTree = "<group>"; };
+		156A3FD91D614040001EED7D /* ChatMessageSendTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatMessageSendTableViewCell.m; sourceTree = "<group>"; };
+		156A3FDB1D614051001EED7D /* ChatMessageReceiveTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatMessageReceiveTableViewCell.h; sourceTree = "<group>"; };
+		156A3FDC1D614051001EED7D /* ChatMessageReceiveTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatMessageReceiveTableViewCell.m; sourceTree = "<group>"; };
 		15BF12651D5516E900728456 /* AddOrUpdateMedicineViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddOrUpdateMedicineViewController.h; sourceTree = "<group>"; };
 		15BF12661D5516E900728456 /* AddOrUpdateMedicineViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddOrUpdateMedicineViewController.m; sourceTree = "<group>"; };
 		15BF12681D56462800728456 /* AddNewMedicalNoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddNewMedicalNoteViewController.h; sourceTree = "<group>"; };
@@ -419,6 +436,15 @@
 			name = SWRevealViewController;
 			sourceTree = "<group>";
 		};
+		156A3FC81D612A39001EED7D /* ChatView */ = {
+			isa = PBXGroup;
+			children = (
+				156A3FD21D6134DD001EED7D /* ChatViewController.h */,
+				156A3FD31D6134DD001EED7D /* ChatViewController.m */,
+			);
+			name = ChatView;
+			sourceTree = "<group>";
+		};
 		15BF12611D5516B700728456 /* AddOrUpdateMedicine */ = {
 			isa = PBXGroup;
 			children = (
@@ -562,6 +588,7 @@
 		15DCF5AC1CF4A52200013F19 /* image */ = {
 			isa = PBXGroup;
 			children = (
+				156A3FC41D606DD0001EED7D /* nullAvatar.png */,
 				15FA33B91D59D86400423421 /* appointment.png */,
 				15FA33BA1D59D86400423421 /* Home.png */,
 				15FA33BB1D59D86400423421 /* Logout.png */,
@@ -691,6 +718,8 @@
 				15E8C4EE1D3AE8D40056E8AE /* MedicalRecordDetailTableViewController.m */,
 				15EF10E61D4D272A00456636 /* MedicalNoteTableViewController.h */,
 				15EF10E71D4D272A00456636 /* MedicalNoteTableViewController.m */,
+				156A3FB31D5F813A001EED7D /* EditMedicalRecordViewController.h */,
+				156A3FB41D5F813A001EED7D /* EditMedicalRecordViewController.m */,
 			);
 			name = MedicalRecordDetails;
 			sourceTree = "<group>";
@@ -708,6 +737,7 @@
 		15E8C4DE1D3AE5260056E8AE /* MainMenu */ = {
 			isa = PBXGroup;
 			children = (
+				156A3FC81D612A39001EED7D /* ChatView */,
 				15FA33C51D5C5ED100423421 /* NotificationTableView */,
 				15F0106A1D4A84A4001663CE /* MoneyManagement */,
 				15E75A361CF756EB00A985E7 /* PatientsTableViewController.h */,
@@ -827,6 +857,12 @@
 		15F01D3B1CF81DA600EAAF9B /* TableViewCell */ = {
 			isa = PBXGroup;
 			children = (
+				156A3FD51D614028001EED7D /* ChatDateTimeTableViewCell.h */,
+				156A3FD61D614028001EED7D /* ChatDateTimeTableViewCell.m */,
+				156A3FD81D614040001EED7D /* ChatMessageSendTableViewCell.h */,
+				156A3FD91D614040001EED7D /* ChatMessageSendTableViewCell.m */,
+				156A3FDB1D614051001EED7D /* ChatMessageReceiveTableViewCell.h */,
+				156A3FDC1D614051001EED7D /* ChatMessageReceiveTableViewCell.m */,
 				15FA33E71D5F2B2B00423421 /* AlgeryTableViewCell.h */,
 				15FA33E81D5F2B2B00423421 /* AlgeryTableViewCell.m */,
 				15FA33DD1D5DDEEC00423421 /* NotificationTableViewCell.h */,
@@ -1122,6 +1158,7 @@
 				15F0A63E1D1E77E100A32848 /* screen1.jpg in Resources */,
 				15FA33C01D59D86400423421 /* Logout.png in Resources */,
 				15F0A63F1D1E77E100A32848 /* patientlist.jpg in Resources */,
+				156A3FC51D606DD0001EED7D /* nullAvatar.png in Resources */,
 				15FA33BE1D59D86400423421 /* appointment.png in Resources */,
 				15FA33C21D59D86400423421 /* setting.png in Resources */,
 				156735411D1C408700392ADA /* Main.storyboard in Resources */,
@@ -1244,6 +1281,7 @@
 				15FA33E31D5F213300423421 /* MoreInfoTableViewController.m in Sources */,
 				15EA05DF1D3F7AF100FDB449 /* AppointmentDetailTableViewCell.m in Sources */,
 				15F6EFB91D4F46E9002B166C /* MedicalRecordNoteDetailTableViewController.m in Sources */,
+				156A3FDD1D614051001EED7D /* ChatMessageReceiveTableViewCell.m in Sources */,
 				15F6EFC71D4FD815002B166C /* UpdateDetailInfoMedicalRecordViewController.m in Sources */,
 				1502F7B31CF5F39D00663B59 /* SWRevealViewController.m in Sources */,
 				15E8C4EF1D3AE8D40056E8AE /* MedicalRecordDetailTableViewController.m in Sources */,
@@ -1251,6 +1289,7 @@
 				15FA33DC1D5CEE6C00423421 /* ViewDetailPatientInfoViewController.m in Sources */,
 				15BF12671D5516E900728456 /* AddOrUpdateMedicineViewController.m in Sources */,
 				15BF12741D567E0B00728456 /* ExperimentNoteGeneralTableViewController.m in Sources */,
+				156A3FB51D5F813A001EED7D /* EditMedicalRecordViewController.m in Sources */,
 				15F0105A1D48B914001663CE /* ChangePasswordViewController.m in Sources */,
 				15F6EFCA1D5097D6002B166C /* StringStringTableViewCell.m in Sources */,
 				1567353E1D19522A00392ADA /* HomeViewController.m in Sources */,
@@ -1262,6 +1301,7 @@
 				15F010651D4A6E19001663CE /* MoneyManagementViewController.m in Sources */,
 				15BF126A1D56462800728456 /* AddNewMedicalNoteViewController.m in Sources */,
 				15E9D6F91D06B3D6006D5DD1 /* VRGCalendarView.m in Sources */,
+				156A3FD41D6134DD001EED7D /* ChatViewController.m in Sources */,
 				15E9D6EE1D06A99C006D5DD1 /* AppointmentViewController.m in Sources */,
 				15E9D6FC1D06B3D6006D5DD1 /* NSDate+convenience.m in Sources */,
 				15FA33DF1D5DDEEC00423421 /* NotificationTableViewCell.m in Sources */,
@@ -1274,11 +1314,13 @@
 				15BF129E1D57BDDD00728456 /* AddNewDiaryViewController.m in Sources */,
 				15EB44BB1D34F80C00C489A2 /* TimePickerViewController.m in Sources */,
 				15BF12AE1D5880DF00728456 /* AlgeryTableViewController.m in Sources */,
+				156A3FDA1D614040001EED7D /* ChatMessageSendTableViewCell.m in Sources */,
 				15E8C4FE1D3B70970056E8AE /* DoctorNoteTableViewCell.m in Sources */,
 				15E9D6FD1D06B3D6006D5DD1 /* UIColor+expanded.m in Sources */,
 				15DDAA8A1D3D6924001D4BBB /* ImportantInfoChartViewController.m in Sources */,
 				15F010691D4A82B2001663CE /* MoneyDetailsViewController.m in Sources */,
 				15F542CC1D410A2D003A61F0 /* MedicineImagesCollectionViewController.m in Sources */,
+				156A3FD71D614028001EED7D /* ChatDateTimeTableViewCell.m in Sources */,
 				15E9D6FB1D06B3D6006D5DD1 /* NSMutableArray+convenience.m in Sources */,
 				15E9D7071D0812DD006D5DD1 /* ForgotPasswordViewController.m in Sources */,
 				15BF12B71D5886FC00728456 /* BloodSugarViewController.m in Sources */,

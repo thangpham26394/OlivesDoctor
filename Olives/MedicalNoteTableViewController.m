@@ -12,6 +12,7 @@
 #import "MedicalRecordNoteDetailTableViewController.h"
 #import "MedicalRecordImagesCollectionViewController.h"
 #import "ExperimentNoteGeneralTableViewController.h"
+#import "EditMedicalRecordViewController.h"
 #import <CoreData/CoreData.h>
 
 
@@ -61,32 +62,30 @@
                                       [medicalCategory valueForKey:@"name" ],@"Name",
                                       nil];
             }
-
-            NSDictionary *medicalRecordDic = [NSDictionary dictionaryWithObjectsAndKeys:
-                                              [medicalRecord valueForKey:@"medicalRecordID" ],@"Id",
-                                              [medicalRecord valueForKey:@"ownerID" ],@"Owner",
-                                              [medicalRecord valueForKey:@"creatorID" ],@"Creator",
-                                              medicalCategoryDic,@"Category",
-                                              [medicalRecord valueForKey:@"info" ],@"Info",
-                                              [medicalRecord valueForKey:@"time" ],@"Time",
-                                              [medicalRecord valueForKey:@"createdDate" ],@"Created",
-                                              [medicalRecord valueForKey:@"lastModified" ],@"LastModified",
-                                              nil];
-
-            if ([[medicalRecord valueForKey:@"medicalRecordID" ] isEqual:[NSString stringWithFormat:@"%@",[self.medicalRecordDic objectForKey:@"Id"]]]) {
-                self.medicalRecordDic = medicalRecordDic;
-            }
-            
         }
-        
-    }
 
+        NSDictionary *medicalRecordDic = [NSDictionary dictionaryWithObjectsAndKeys:
+                                          [medicalRecord valueForKey:@"medicalRecordID" ],@"Id",
+                                          [medicalRecord valueForKey:@"ownerID" ],@"Owner",
+                                          [medicalRecord valueForKey:@"creatorID" ],@"Creator",
+                                          medicalCategoryDic,@"Category",
+                                          [medicalRecord valueForKey:@"info" ],@"Info",
+                                          [medicalRecord valueForKey:@"time" ],@"Time",
+                                          [medicalRecord valueForKey:@"name" ],@"Name",
+                                          [medicalRecord valueForKey:@"createdDate" ],@"Created",
+                                          [medicalRecord valueForKey:@"lastModified" ],@"LastModified",
+
+                                          nil];
+
+        if ([[medicalRecord valueForKey:@"medicalRecordID" ] isEqual:[NSString stringWithFormat:@"%@",[self.medicalRecordDic objectForKey:@"Id"]]]) {
+            self.medicalRecordDic = medicalRecordDic;
+        }
+
+    }
 }
 
 #pragma mark handle api connection
--(void)editMedicalRecordToAPI{
-    
-}
+
 
 
 
@@ -99,7 +98,7 @@
 
 
     NSString *time = [self.medicalRecordDic objectForKey:@"Time"];
-
+    NSString *name = [self.medicalRecordDic objectForKey:@"Name"];
 
     NSDateFormatter * dateFormatterToLocal= [[NSDateFormatter alloc] init];
     [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
@@ -111,13 +110,36 @@
 
 
     self.timeLabel.text = [NSString stringWithFormat:@"%@",[dateFormatterToLocal stringFromDate:timeDateLocal]];
-    self.medicalRecordNameLabel.text = @"name here";
+    if ((id)name != [NSNull null] && ![name isEqual:[NSString stringWithFormat:@"<null>"]])  {
+        self.medicalRecordNameLabel.text = name;
+    }else{
+        self.medicalRecordNameLabel.text = @"no name";
+    }
+
  }
 
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     [self reloadDataFromCoreData];
+    NSString *time = [self.medicalRecordDic objectForKey:@"Time"];
+    NSString *name = [self.medicalRecordDic objectForKey:@"Name"];
+
+    NSDateFormatter * dateFormatterToLocal= [[NSDateFormatter alloc] init];
+    [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
+    [dateFormatterToLocal setDateFormat:@"MM/dd/yyyy"];
+
+    NSDate *timeDate = [NSDate dateWithTimeIntervalSince1970:[time doubleValue]/1000];
+
+    NSDate *timeDateLocal = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:timeDate]];
+
+
+    self.timeLabel.text = [NSString stringWithFormat:@"%@",[dateFormatterToLocal stringFromDate:timeDateLocal]];
+    if ((id)name != [NSNull null] && ![name isEqual:[NSString stringWithFormat:@"<null>"]])  {
+        self.medicalRecordNameLabel.text = name;
+    }else{
+        self.medicalRecordNameLabel.text = @"no name";
+    }
     self.navigationController.topViewController.title=@"Details";
 }
 
@@ -163,6 +185,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 5) {
+        [self performSegueWithIdentifier:@"editMedicalRecord" sender:self];
     }
 }
 
@@ -251,6 +274,13 @@
     {
         ExperimentNoteGeneralTableViewController *medicalRecordExperimentNote= [segue destinationViewController];
         medicalRecordExperimentNote.medicalRecordID = [self.medicalRecordDic objectForKey:@"Id"];
+
+    }
+    if ([[segue identifier] isEqualToString:@"editMedicalRecord"])
+    {
+        EditMedicalRecordViewController *editMedicalRecord= [segue destinationViewController];
+        editMedicalRecord.medicalRecordDic = self.medicalRecordDic;
+        editMedicalRecord.currentCategoryID = [[self.medicalRecordDic objectForKey:@"Category"] objectForKey:@"Id"];
 
     }
 

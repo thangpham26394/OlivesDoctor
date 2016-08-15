@@ -33,6 +33,59 @@
     return context;
 }
 
+-(void)reloadDataFromCoreData{
+    //get the newest medical record data which have just saved to coredata
+    NSMutableArray *medicalRecordArray = [[NSMutableArray alloc]init];
+
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"MedicalRecord"];
+    NSMutableArray *medicalRecordObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *medicalRecord;
+
+    for (int index =0; index<medicalRecordObject.count; index++) {
+        //get each patient in coredata
+        medicalRecord = [medicalRecordObject objectAtIndex:index];
+        //get medical record category
+        NSFetchRequest *fetchRequestCategory = [[NSFetchRequest alloc] initWithEntityName:@"MedicalCategories"];
+        NSMutableArray *medicalCategoryObject = [[context executeFetchRequest:fetchRequestCategory error:nil] mutableCopy];
+        NSManagedObject *medicalCategory;
+        NSDictionary *medicalCategoryDic;
+
+        for (int i=0; i<medicalCategoryObject.count; i++) {
+            medicalCategory = [medicalCategoryObject objectAtIndex:i];
+            //check if the current medical category id is equal with medical record id
+            if ([[medicalCategory valueForKey:@"medicalCategoryID"] isEqual:[medicalRecord valueForKey:@"categoryID" ]]) {
+                medicalCategoryDic = [NSDictionary dictionaryWithObjectsAndKeys:
+                                      [medicalCategory valueForKey:@"medicalCategoryID" ],@"Id",
+                                      [medicalCategory valueForKey:@"name" ],@"Name",
+                                      nil];
+            }
+        }
+
+        NSDictionary *medicalRecordDic = [NSDictionary dictionaryWithObjectsAndKeys:
+                                          [medicalRecord valueForKey:@"medicalRecordID" ],@"Id",
+                                          [medicalRecord valueForKey:@"ownerID" ],@"Owner",
+                                          [medicalRecord valueForKey:@"creatorID" ],@"Creator",
+                                          medicalCategoryDic,@"Category",
+                                          [medicalRecord valueForKey:@"info" ],@"Info",
+                                          [medicalRecord valueForKey:@"time" ],@"Time",
+                                          [medicalRecord valueForKey:@"name" ],@"Name",
+                                          [medicalRecord valueForKey:@"createdDate" ],@"Created",
+                                          [medicalRecord valueForKey:@"lastModified" ],@"LastModified",
+
+                                          nil];
+
+//        if ([[medicalRecord valueForKey:@"medicalRecordID" ] isEqual:[NSString stringWithFormat:@"%@",[self.medicalRecordDic objectForKey:@"Id"]]]) {
+//            self.medicalRecordDic = medicalRecordDic;
+//        }
+        [medicalRecordArray addObject:medicalRecordDic];
+
+    }
+
+    self.medicalRecordArray = medicalRecordArray;
+}
+
+
 -(void)saveMedicalRecordToCoreData{
     //get the medical record of specific patient which data was returned from API
     NSDictionary *newMedicalRecordDic = [self.responseJSONData objectForKey:@"MedicalRecord"];
@@ -45,7 +98,7 @@
     NSString *info = [newMedicalRecordDic objectForKey:@"Info"];
     NSString *time = [newMedicalRecordDic objectForKey:@"Time"];
     NSString *createdDate = [newMedicalRecordDic objectForKey:@"Created"];
-
+    NSString *name = [newMedicalRecordDic objectForKey:@"Name"];
 
 
     NSManagedObjectContext *context = [self managedObjectContext];
@@ -59,7 +112,7 @@
     [newMedicalRecord setValue: [NSString stringWithFormat:@"%@", info] forKey:@"info"];
     [newMedicalRecord setValue: [NSString stringWithFormat:@"%@", time] forKey:@"time"];
     [newMedicalRecord setValue: [NSString stringWithFormat:@"%@", createdDate] forKey:@"createdDate"];
-
+    [newMedicalRecord setValue: [NSString stringWithFormat:@"%@", name] forKey:@"name"];
 
     NSError *error = nil;
     // Save the object to persistent store
@@ -115,6 +168,7 @@
                               @"Owner" :self.selectedPatientID,
                               @"Category":[self.selectedCategory objectForKey:@"Id"],
                               @"Time":[NSString stringWithFormat:@"%f",createdDateTimeInterval*1000],
+                              @"Name":self.stringTextField.text,
                               };
     NSError *error = nil;
     NSData *jsondata = [NSJSONSerialization dataWithJSONObject:account options:NSJSONWritingPrettyPrinted error:&error];
@@ -182,6 +236,8 @@
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
     self.navigationController.topViewController.title=@"MedicalRecord";
+    [self reloadDataFromCoreData];
+    [self.tableView reloadData];
 }
 
 //-(void)viewWillDisappear:(BOOL)animated{
@@ -223,7 +279,14 @@
     }
     // Configure the cell...
     NSDictionary *dic = [self.medicalRecordArray objectAtIndex:indexPath.row];
+    NSString *name = [dic objectForKey:@"Name"];
     NSString *time = [dic objectForKey:@"Time"];
+
+    if ((id)name != [NSNull null] && ![name isEqual:[NSString stringWithFormat:@"<null>"]])  {
+        cell.textLabel.text = name;
+    }else{
+        cell.textLabel.text = @"no name";
+    }
 
 
     NSDateFormatter * dateFormatterToLocal= [[NSDateFormatter alloc] init];
@@ -234,7 +297,7 @@
 
     NSDate *timeDateLocal = [dateFormatterToLocal dateFromString:[dateFormatterToLocal stringFromDate:timeDate]];
 
-    cell.textLabel.text = [NSString stringWithFormat:@"%@",[dateFormatterToLocal stringFromDate:timeDateLocal]];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",[dateFormatterToLocal stringFromDate:timeDateLocal]];
     //cell.detailTextLabel.text = @"details";
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     cell.preservesSuperviewLayoutMargins = NO;
@@ -338,7 +401,7 @@
     [titleLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:20.0]];
     titleLabel.textAlignment = NSTextAlignmentCenter;
     [titleLabel setTextColor:[UIColor blackColor]];
-    titleLabel.text = @"Edit medical record";
+    titleLabel.text = @"New medical record";
 
     //top content View
     UIView *topContentView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, screenWidth-40, 239)];

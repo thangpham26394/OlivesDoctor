@@ -18,6 +18,9 @@
 @property (strong,nonatomic) NSMutableArray *diaryArray;
 @property (strong,nonatomic) NSDictionary *selectedDiary;
 @property (assign,nonatomic) BOOL apiDeleted;
+@property (strong,nonatomic) UIView *backgroundView;
+@property (strong,nonatomic) UIActivityIndicatorView *  activityIndicator ;
+@property (strong,nonatomic) UIWindow *currentWindow;
 @end
 
 @implementation DoctorNoteTableViewController
@@ -168,6 +171,7 @@
     //create JSON data to post to API
     NSDictionary *account = @{
                               @"Sort" : @"0",
+                              @"Target":self.selectedPatientID,
                               };
     NSError *error = nil;
     NSData *jsondata = [NSJSONSerialization dataWithJSONObject:account options:NSJSONWritingPrettyPrinted error:&error];
@@ -251,18 +255,37 @@
 
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
+
+    
     self.apiDeleted = NO;
+
+    //start animation
+    [self.currentWindow addSubview:self.backgroundView];
+    [self.activityIndicator startAnimating];
+
     [self loadDiaryFromAPI];
     [self.tableView reloadData];
+
+    //stop animation
+    [self.activityIndicator stopAnimating];
+    [self.backgroundView removeFromSuperview];
+
+
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    //set up for indicator view
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat screenWidth = screenRect.size.width;
+    CGFloat screenHeight = screenRect.size.height;
+
+    self.backgroundView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
+    self.backgroundView.backgroundColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.5];
+    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    self.activityIndicator.center = CGPointMake(self.backgroundView .frame.size.width/2, self.backgroundView .frame.size.height/2);
+    [self.backgroundView  addSubview:self.activityIndicator];
+    self.currentWindow = [UIApplication sharedApplication].keyWindow;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -371,8 +394,18 @@
                                                              NSLog(@"OK Action!");
 
                                                              NSDictionary *deleteDiary = [self.diaryArray objectAtIndex:indexPath.row];
+
+                                                             //start animation
+                                                             [self.currentWindow addSubview:self.backgroundView];
+                                                             [self.activityIndicator startAnimating];
+
                                                              //call api to delete in server
                                                              [self deleteDiaryAPI:[deleteDiary objectForKey:@"Id"]];
+                                                             
+                                                             //stop animation
+                                                             [self.activityIndicator stopAnimating];
+                                                             [self.backgroundView removeFromSuperview];
+
                                                              if (self.apiDeleted) {
                                                                  //delete in category array
                                                                  [self.diaryArray removeObjectAtIndex:indexPath.row];
@@ -421,7 +454,15 @@
     {
         AddNewDiaryViewController * addNewDiaryViewcontroller = [segue destinationViewController];
         addNewDiaryViewcontroller.selectedDiary = self.selectedDiary;
+        addNewDiaryViewcontroller.selectedPatientID = self.selectedPatientID;
         
+    }
+
+    if ([[segue identifier] isEqualToString:@"addNewDiary"])
+    {
+        AddNewDiaryViewController * addNewDiaryViewcontroller = [segue destinationViewController];
+        addNewDiaryViewcontroller.selectedPatientID = self.selectedPatientID;
+
     }
 }
 

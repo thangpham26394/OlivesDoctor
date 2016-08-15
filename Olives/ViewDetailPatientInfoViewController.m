@@ -32,12 +32,21 @@
 
     [self.noteTextView setEditable:NO];
     self.noteTextView.layer.cornerRadius = 5.0f;
-
+    UIImage *img;
     NSData *data = [self.selectedPatient objectForKey:@"Photo"];
-    UIImage *img = [[UIImage alloc] initWithData:data];
+    if (data !=nil) {
+        img = [[UIImage alloc] initWithData:data];
+    }else{
+        img = [UIImage imageNamed:@"nullAvatar"];
+    }
+
     self.avatar.image = img; //set avatar
-    self.nameLabel.text = [NSString stringWithFormat:@"%@%@", [self.selectedPatient objectForKey:@"FirstName"] ,[self.selectedPatient objectForKey:@"LastName"] ];
-    NSString *birthdayString = [self.selectedPatient objectForKey:@"Birthday"];
+
+    NSDictionary *patientDic = [self.selectedPatient objectForKey:@"Source"];
+
+    self.nameLabel.text = [NSString stringWithFormat:@"%@%@", [patientDic objectForKey:@"FirstName"] ,[patientDic objectForKey:@"LastName"] ];
+
+    NSString *birthdayString = [patientDic objectForKey:@"Birthday"];
     //convert time interval to NSDate type
     NSDate *birthdayUNIXDate = [NSDate dateWithTimeIntervalSince1970:[birthdayString doubleValue]/1000];
     NSDateFormatter * dateFormatterToLocal = [[NSDateFormatter alloc] init];
@@ -45,17 +54,35 @@
     [dateFormatterToLocal setDateFormat:@"MM-dd-yyyy"];
     
     self.birthdayTextField.text = [dateFormatterToLocal stringFromDate:birthdayUNIXDate];
-    self.phoneTextField.text = [self.selectedPatient objectForKey:@"Phone"];
-    self.addressTextField.text = [self.selectedPatient objectForKey:@"Address"];
-    self.weightTextField.text = [self.selectedPatient objectForKey:@"Weight"];
-    self.heightTextField.text = [self.selectedPatient objectForKey:@"Height"];
+    if ([patientDic objectForKey:@"Phone"] != [NSNull null]) {
+        self.phoneTextField.text = [patientDic objectForKey:@"Phone"];
+    }
+
+    if ([patientDic objectForKey:@"Address"] != [NSNull null]) {
+        self.addressTextField.text = [patientDic objectForKey:@"Address"];
+    }
+
+    if ([patientDic objectForKey:@"Weight"] != [NSNull null]) {
+        self.weightTextField.text = [patientDic objectForKey:@"Weight"];
+    }
+
+    if ([patientDic objectForKey:@"Height"] != [NSNull null]) {
+        self.heightTextField.text = [patientDic objectForKey:@"Height"];
+    }
+
+    if ([patientDic objectForKey:@"Note"] != [NSNull null]) {
+        self.noteTextView.text = [patientDic objectForKey:@"Note"];
+    }
+
+
+
 
     self.birthdayTextField.userInteractionEnabled = NO;
     self.phoneTextField.userInteractionEnabled = NO;
     self.addressTextField.userInteractionEnabled = NO;
     self.weightTextField.userInteractionEnabled = NO;
     self.heightTextField.userInteractionEnabled = NO;
-
+    self.noteTextView.userInteractionEnabled = NO;
 }
 
 - (void)didReceiveMemoryWarning {

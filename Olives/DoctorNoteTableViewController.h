@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface DoctorNoteTableViewController : UITableViewController
-
+@property(strong,nonatomic) NSString *selectedPatientID;
 @end

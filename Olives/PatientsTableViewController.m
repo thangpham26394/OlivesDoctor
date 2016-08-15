@@ -14,6 +14,7 @@
 #import "MedicalRecordTableViewController.h"
 #import "PrescriptionViewController.h"
 #import "MoreInfoTableViewController.h"
+#import "DoctorNoteTableViewController.h"
 #import <CoreData/CoreData.h>
 @interface PatientsTableViewController ()
 //@property (weak, nonatomic) IBOutlet UIBarButtonItem *menuButton;
@@ -22,7 +23,7 @@
 @property (strong,nonatomic) NSDictionary *responseJSONData;
 @property(assign,nonatomic) BOOL connectToAPISuccess;
 @property(strong,nonatomic) NSDictionary *selectedPatient;
-
+@property (strong,nonatomic) UIView *backgroundView;
 -(IBAction)cancel:(id)sender;
 @end
 
@@ -107,6 +108,7 @@
                                           }
                                       }];
     [dataTask resume];
+
     //start waiting until get response from API
     dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
 
@@ -150,8 +152,15 @@
         [newPatient setValue: [NSString stringWithFormat:@"%@", birthday] forKey:@"birthday"];
         [newPatient setValue: [NSString stringWithFormat:@"%@", phone] forKey:@"phone"];
         //get avatar from receive url
-        NSURL *url = [NSURL URLWithString:photo];
-        NSData *patientPhotoData = [NSData dataWithContentsOfURL:url];
+        NSData *patientPhotoData;
+        if ((id)photo != [NSNull null])  {
+            NSURL *url = [NSURL URLWithString:photo];
+            patientPhotoData = [NSData dataWithContentsOfURL:url];
+        }else{
+            patientPhotoData = UIImagePNGRepresentation([UIImage imageNamed:@"nullAvatar"]);
+        }
+
+
         [newPatient setValue:patientPhotoData  forKey:@"photo"];
         [newPatient setValue: [NSString stringWithFormat:@"%@", address] forKey:@"address"];
         [newPatient setValue: [NSString stringWithFormat:@"%@", email] forKey:@"email"];
@@ -198,13 +207,32 @@
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
     self.patientArray = [[NSArray alloc]init];
+
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat screenWidth = screenRect.size.width;
+    CGFloat screenHeight = screenRect.size.height;
+
+    self.backgroundView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
+    self.backgroundView.backgroundColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.5];
+    UIActivityIndicatorView *  activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    activityIndicator.center = CGPointMake(self.backgroundView .frame.size.width/2, self.backgroundView .frame.size.height/2);
+    [self.backgroundView  addSubview:activityIndicator];
+    UIWindow *currentWindow = [UIApplication sharedApplication].keyWindow;
+    [currentWindow addSubview:self.backgroundView];
+
+    [activityIndicator startAnimating];
     [self loadPatienttDataFromAPI];
+    [activityIndicator stopAnimating];
+    [self.backgroundView removeFromSuperview];
+
 
     [self.tableView reloadData];
+
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     //call API to get Patient data
 
     self.isAddNewAppointment = NO;
@@ -280,8 +308,17 @@
 
     NSData *data;
     if (self.connectToAPISuccess) {
-        NSURL *url = [NSURL URLWithString:[self.patientArray[indexPath.row] objectForKey:@"Photo"]];
-        data  = [NSData dataWithContentsOfURL:url];
+        NSString * photo = [self.patientArray[indexPath.row] objectForKey:@"Photo"];
+//        NSURL *url = [NSURL URLWithString:[self.patientArray[indexPath.row] objectForKey:@"Photo"]];
+//        data  = [NSData dataWithContentsOfURL:url];
+
+
+        if ((id)photo != [NSNull null])  {
+            NSURL *url = [NSURL URLWithString:photo];
+            data = [NSData dataWithContentsOfURL:url];
+        }else{
+            data = UIImagePNGRepresentation([UIImage imageNamed:@"nullAvatar"]);
+        }
 
     }else{
         data = [self.patientArray[indexPath.row] objectForKey:@"Photo"];
@@ -357,10 +394,12 @@
         MedicalRecordTableViewController *medicalRecord = [tabBar.viewControllers objectAtIndex:2];
         PrescriptionViewController *prescription = [tabBar.viewControllers objectAtIndex:3];
         MoreInfoTableViewController *moreInfoTableView = [tabBar.viewControllers objectAtIndex:4];
+        DoctorNoteTableViewController *diaryView = [tabBar.viewControllers objectAtIndex:0];
         patientDetail.selectedPatientID = [NSString stringWithFormat:@"%@",[self.selectedPatient objectForKey:@"Id"]];
         medicalRecord.selectedPatientID= [NSString stringWithFormat:@"%@",[self.selectedPatient objectForKey:@"Id"]];
         prescription.selectedPatientID = [NSString stringWithFormat:@"%@",[self.selectedPatient objectForKey:@"Id"]];
         moreInfoTableView.selectedPatientID = [NSString stringWithFormat:@"%@",[self.selectedPatient objectForKey:@"Id"]];
+        diaryView.selectedPatientID = [NSString stringWithFormat:@"%@",[self.selectedPatient objectForKey:@"Id"]];
         tabBar.selectedIndex = 1;
     }
 
