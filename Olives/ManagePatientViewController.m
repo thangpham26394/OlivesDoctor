@@ -553,7 +553,7 @@
         if ([[segue identifier] isEqualToString:@"showPatientInfo"])
         {
             ViewDetailPatientInfoViewController *detailPatientInfo = [segue destinationViewController];
-            detailPatientInfo.selectedPatient = self.selectedPatient;
+            detailPatientInfo.currentPatientID = [[self.selectedPatient objectForKey:@"Source"] objectForKey:@"Id"];
         }
     }else{
         if ([[segue identifier] isEqualToString:@"showPatientInfo"])

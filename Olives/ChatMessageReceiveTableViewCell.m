@@ -13,7 +13,8 @@
 - (void)awakeFromNib {
     [super awakeFromNib];
     // Initialization code
-    self.message.userInteractionEnabled = NO;
+    self.bgCardView.layer.cornerRadius = 10.0f;
+    [self.bgCardView.layer setMasksToBounds:NO];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

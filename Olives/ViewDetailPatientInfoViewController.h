@@ -10,4 +10,5 @@
 
 @interface ViewDetailPatientInfoViewController : UIViewController
 @property(strong,nonatomic) NSDictionary *selectedPatient;
+@property(strong,nonatomic) NSString *currentPatientID;
 @end

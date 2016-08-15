@@ -109,6 +109,7 @@
     self.contentViewHeight.constant = [[UIScreen mainScreen] bounds].size.height - [UIApplication sharedApplication].statusBarFrame.size.height - self.navigationController.navigationBar.frame.size.height;
 //    [self.tableView setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
     [self updateTableContentInset];
+    [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
 }
 
 - (void)updateTableContentInset {
@@ -137,7 +138,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 3;//self.notifictionDataArray.count;
+    return 5;//self.notifictionDataArray.count;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -145,9 +146,9 @@
     if (indexPath.row ==0) {
         return 30;
     }else if (indexPath.row == 1){
-        return 80;
+        return 100;
     }else{
-        return 80;
+        return 100;
     }
 
 }
@@ -156,18 +157,16 @@
 
     if (indexPath.row ==0) {
         ChatDateTimeTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:@"dateTimeCell" forIndexPath:indexPath];
-
         return cell;
-    }else if (indexPath.row == 1){
+    }else if (indexPath.row%2 == 1){
         ChatMessageSendTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:@"receiveCell" forIndexPath:indexPath];
-
+        cell.messageLabel.text = @"Hi! are you busy right now?";
         return cell;
     }else{
         ChatMessageReceiveTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:@"sendCell" forIndexPath:indexPath];
-
+        cell.messageLabel.text = @"Not really! Is there anything i can help !?";
         return cell;
     }
-
 
 }
 

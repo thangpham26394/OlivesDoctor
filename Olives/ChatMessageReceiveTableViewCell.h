@@ -9,7 +9,12 @@
 #import <UIKit/UIKit.h>
 
 @interface ChatMessageReceiveTableViewCell : UITableViewCell
-@property (weak, nonatomic) IBOutlet UIImageView *backgroundImage;
-@property (weak, nonatomic) IBOutlet UITextView *message;
+
+@property (weak, nonatomic) IBOutlet UIView *bgCardView;
+@property (weak, nonatomic) IBOutlet UILabel *messageLabel;
+
+@property (weak, nonatomic) IBOutlet UILabel *timeLabel;
+
+
 
 @end
