@@ -9,6 +9,9 @@
 #import "MoreInfoTableViewController.h"
 #import "AddictionTableViewController.h"
 #import "AlgeryTableViewController.h"
+#import "HeartBeatViewController.h"
+#import "BloodSugarViewController.h"
+#import "BloodPresureViewController.h"
 @interface MoreInfoTableViewController ()
 
 @end
@@ -103,6 +106,24 @@
         AlgeryTableViewController *algeryTableViewController = [segue destinationViewController];
         // Pass any objects to the view controller here, like...
         algeryTableViewController.selectedPatientID = self.selectedPatientID;
+    }
+    if ([[segue identifier] isEqualToString:@"showHeartBeat"])
+    {
+        HeartBeatViewController *heartBeatViewController = [segue destinationViewController];
+        // Pass any objects to the view controller here, like...
+        heartBeatViewController.selectedPatientID = self.selectedPatientID;
+    }
+    if ([[segue identifier] isEqualToString:@"showBloodSugar"])
+    {
+        BloodSugarViewController *bloodSugarViewController = [segue destinationViewController];
+        // Pass any objects to the view controller here, like...
+        bloodSugarViewController.selectedPatientID = self.selectedPatientID;
+    }
+    if ([[segue identifier] isEqualToString:@"showBloodPressure"])
+    {
+        BloodPresureViewController *bloodPressureViewController = [segue destinationViewController];
+        // Pass any objects to the view controller here, like...
+        bloodPressureViewController.selectedPatientID = self.selectedPatientID;
     }
 }
 

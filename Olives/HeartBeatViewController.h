@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface HeartBeatViewController : UIViewController
-
+@property(strong,nonatomic) NSString *selectedPatientID;
 @end

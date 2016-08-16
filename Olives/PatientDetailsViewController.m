@@ -8,6 +8,7 @@
 #define APIURL @"http://olive.azurewebsites.net/api/medical/experiment/filter"
 #import "PatientDetailsViewController.h"
 #import "ImportantInfoChartViewController.h"
+#import "ChatViewController.h"
 #import <CoreData/CoreData.h>
 @interface PatientDetailsViewController ()
 
@@ -387,6 +388,12 @@
     {
         ImportantInfoChartViewController *importantChartView = [segue destinationViewController];
         importantChartView.displayDataDic = self.selectedDataDic;
+    }
+
+    if ([[segue identifier] isEqualToString:@"showChatWithPatient"])
+    {
+        ChatViewController *chatView = [segue destinationViewController];
+        chatView.selectedPatientID = self.selectedPatientID;
     }
 }
 

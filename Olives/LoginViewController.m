@@ -19,9 +19,11 @@
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIView *contentView;
-
+@property (strong,nonatomic) UIView *backgroundView;
+@property (strong,nonatomic) UIActivityIndicatorView *  activityIndicator;
 @property (strong,nonatomic) NSDictionary *responseJSONData ;
 @property BOOL canLogin;
+
 -(IBAction)loginButton:(id)sender;
 
 @property (strong,nonatomic) NSData * returnData;
@@ -51,6 +53,28 @@
     [self.activeField resignFirstResponder];
     return YES;
 }
+
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat screenWidth = screenRect.size.width;
+    CGFloat screenHeight = screenRect.size.height;
+
+    self.backgroundView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
+    self.backgroundView.backgroundColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.5];
+
+    //setup indicator view
+    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    self.activityIndicator.center = CGPointMake(self.backgroundView .frame.size.width/2, self.backgroundView .frame.size.height/2);
+    [self.backgroundView  addSubview:self.activityIndicator];
+
+
+
+    
+    
+}
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -147,7 +171,8 @@
     [self.activeField resignFirstResponder];
 }
 
--(IBAction)loginButton:(id)sender{
+#pragma handle API connection
+-(void)loginAPI{
     // create url
     NSURL *url = [NSURL URLWithString:APIURL];
     //create JSON data to post to API
@@ -174,69 +199,69 @@
     sem = dispatch_semaphore_create(0);
 
     NSURLSessionDataTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
-                    completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
-                                                    {
-                                                           NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+                                                       completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+                                      {
+                                          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
 
-                                                           if((long)[httpResponse statusCode] == 200  && error ==nil)
-                                                           {
+                                          if((long)[httpResponse statusCode] == 200  && error ==nil)
+                                          {
 
-                                                               NSError *parsJSONError = nil;
-                                                               self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
-                                                               if (self.responseJSONData !=nil) {
-                                                                   self.canLogin = YES;
-                                                               }else{
-                                                                   self.canLogin = NO;
-                                                               }
-
-
-
-                                                               //stop waiting after get response from API
-                                                               dispatch_semaphore_signal(sem);
-
-                                                           }
-                                                           else{
-                                                               self.canLogin = NO;
-                                                               NSError *parsJSONError = nil;
-                                                               if (data ==nil) {
-                                                                   dispatch_async(dispatch_get_main_queue(), ^{
-                                                                       UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Internet Error"
-                                                                                                                                      message:nil
-                                                                                                                               preferredStyle:UIAlertControllerStyleAlert];
-                                                                       UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
-                                                                                                                          style:UIAlertActionStyleDefault
-                                                                                                                        handler:^(UIAlertAction * action) {}];
-                                                                       [alert addAction:OKAction];
-                                                                       [self presentViewController:alert animated:YES completion:nil];
-                                                                                                 });
-
-                                                                   dispatch_semaphore_signal(sem);
-                                                                   return;
-                                                               }
-                                                               
-                                                               NSDictionary *errorDic = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
-                                                               NSArray *errorArray = [errorDic objectForKey:@"Errors"];
-                                                               //                                              NSLog(@"\n\n\nError = %@",[errorArray objectAtIndex:0]);
-
-                                                               dispatch_async(dispatch_get_main_queue(), ^{
-                                                                   UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error"
-                                                                                                                                  message:[errorArray objectAtIndex:0]
-                                                                                                                           preferredStyle:UIAlertControllerStyleAlert];
-
-                                                                   UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
-                                                                                                                      style:UIAlertActionStyleDefault
-                                                                                                                    handler:^(UIAlertAction * action) {}];
-                                                                   [alert addAction:OKAction];
-                                                                   [self presentViewController:alert animated:YES completion:nil];
-                                                                                             });
+                                              NSError *parsJSONError = nil;
+                                              self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                              if (self.responseJSONData !=nil) {
+                                                  self.canLogin = YES;
+                                              }else{
+                                                  self.canLogin = NO;
+                                              }
 
 
-                                                               dispatch_semaphore_signal(sem);
-                                                               return;
 
-                                                           }
-                                                           
-                                                       }];
+                                              //stop waiting after get response from API
+                                              dispatch_semaphore_signal(sem);
+
+                                          }
+                                          else{
+                                              self.canLogin = NO;
+                                              NSError *parsJSONError = nil;
+                                              if (data ==nil) {
+                                                  dispatch_async(dispatch_get_main_queue(), ^{
+                                                      UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Internet Error"
+                                                                                                                     message:nil
+                                                                                                              preferredStyle:UIAlertControllerStyleAlert];
+                                                      UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                                                                         style:UIAlertActionStyleDefault
+                                                                                                       handler:^(UIAlertAction * action) {}];
+                                                      [alert addAction:OKAction];
+                                                      [self presentViewController:alert animated:YES completion:nil];
+                                                  });
+
+                                                  dispatch_semaphore_signal(sem);
+                                                  return;
+                                              }
+
+                                              NSDictionary *errorDic = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                              NSArray *errorArray = [errorDic objectForKey:@"Errors"];
+                                              //                                              NSLog(@"\n\n\nError = %@",[errorArray objectAtIndex:0]);
+
+                                              dispatch_async(dispatch_get_main_queue(), ^{
+                                                  UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                                                                 message:[errorArray objectAtIndex:0]
+                                                                                                          preferredStyle:UIAlertControllerStyleAlert];
+
+                                                  UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                                                                     style:UIAlertActionStyleDefault
+                                                                                                   handler:^(UIAlertAction * action) {}];
+                                                  [alert addAction:OKAction];
+                                                  [self presentViewController:alert animated:YES completion:nil];
+                                              });
+
+
+                                              dispatch_semaphore_signal(sem);
+                                              return;
+
+                                          }
+
+                                      }];
     [dataTask resume];
     //start waiting until get response from API
     dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
@@ -251,10 +276,25 @@
         //perform segue to move to homescreen
         [self performSegueWithIdentifier: @"loginSegue" sender: self];
     }else{
-//        [self setLoginStatusToBeNO];
+        //        [self setLoginStatusToBeNO];
 
     }
 
+}
+
+-(IBAction)loginButton:(id)sender{
+    UIWindow *currentWindow = [UIApplication sharedApplication].keyWindow;
+    [currentWindow addSubview:self.backgroundView];
+    [currentWindow bringSubviewToFront:self.backgroundView];
+    [self.activityIndicator startAnimating];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self loginAPI];
+            [self.activityIndicator stopAnimating];
+            [self.backgroundView removeFromSuperview];
+        });
+    });
 
 }
 

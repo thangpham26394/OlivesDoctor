@@ -5,12 +5,17 @@
 //  Created by Tony Tony Chopper on 8/11/16.
 //  Copyright © 2016 Thang. All rights reserved.
 //
-#define APIURL_SEEN_NOTIFICATION @"http://olive.azurewebsites.net/api/notification/seen?Id="
+
 #define APIURL_GET_APPOINTMENT @"http://olive.azurewebsites.net/api/appointment?Id="
 #define APIURL_GET_MEDICALRECORD @"http://olive.azurewebsites.net/api/medical/record?Id="
 #define APIURL_GET_PRESCRIPTION @"http://olive.azurewebsites.net/api/medical/prescription?Id="
 #define APIURL_GET_MEDICALNOTE @"http://olive.azurewebsites.net/api/medical/note?Id="
 #define APIURL_GET_PATIENT @"http://olive.azurewebsites.net/api/patient?Id="
+#define API_MESSAGE_SEEN_URL @"http://olive.azurewebsites.net/api/message/seen"
+
+
+
+
 
 #import "ShowNotificationTableViewController.h"
 #import "TimePickerViewController.h"
@@ -35,6 +40,7 @@
 @property (strong,nonatomic)NSDictionary *selectedMedicalNote;
 @property (strong,nonatomic)NSMutableArray *broadcasterArray;
 @property (strong,nonatomic) NSString* selectedPatientID;
+@property (strong,nonatomic) NSDictionary *responseJSONData;
 @end
 
 @implementation ShowNotificationTableViewController
@@ -453,12 +459,15 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+
     self.selectedNotification = [self.notifictionDataArray objectAtIndex:indexPath.row];
-    //if selected notification field is appointment notification
+    //if selected notification field is chat notification
     if (self.notificationType == 0) {
         // get the selected notification chat
-
         self.selectedPatientID = [[[self.broadcasterArray objectAtIndex:indexPath.row ] objectForKey:@"lastestNoti"]objectForKey:@"Broadcaster"];
+        [self putSeenMessageDataToAPIWithPatientID:self.selectedPatientID];
+        [self.broadcasterArray removeObjectAtIndex:indexPath.row];
+        [self.tableView reloadData];
         [self performSegueWithIdentifier:@"showChatWithPatientNoti" sender:self];
     }
 
@@ -556,6 +565,80 @@
 */
 #pragma mark - handle API connection
 
+
+
+
+
+-(void)putSeenMessageDataToAPIWithPatientID:(NSString *) patientID{
+
+    // create url
+    NSURL *url = [NSURL URLWithString:API_MESSAGE_SEEN_URL];
+    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+    //    sessionConfig.timeoutIntervalForRequest = 5.0;
+    //    sessionConfig.timeoutIntervalForResource = 5.0;
+
+    //NSURLSession *defaultSession = [NSURLSession sharedSession];
+    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:sessionConfig];
+    //create request
+    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
+
+    //get doctor email and password from coredata
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+
+    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+
+
+    //setup header and body for request
+    [urlRequest setHTTPMethod:@"POST"];
+    [urlRequest setValue:[doctor valueForKey:@"email"] forHTTPHeaderField:@"Email"];
+    [urlRequest setValue:[doctor valueForKey:@"password"]  forHTTPHeaderField:@"Password"];
+    [urlRequest setValue:@"en-US" forHTTPHeaderField:@"Accept-Language"];
+    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [urlRequest setTimeoutInterval:10];
+
+    //create JSON data to post to API
+    NSDictionary *account = @{
+                              @"Partner" :  patientID,
+                              };
+    NSError *error = nil;
+    NSData *jsondata = [NSJSONSerialization dataWithJSONObject:account options:NSJSONWritingPrettyPrinted error:&error];
+    [urlRequest setHTTPBody:jsondata];
+
+    dispatch_semaphore_t    sem;
+    sem = dispatch_semaphore_create(0);
+
+    NSURLSessionDataTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
+                                                       completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+                                      {
+                                          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+
+                                          if((long)[httpResponse statusCode] == 200  && error ==nil)
+                                          {
+                                              NSError *parsJSONError = nil;
+                                              self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                              if (self.responseJSONData != nil) {
+                                              }else{
+                                              }
+
+                                              //stop waiting after get response from API
+                                              dispatch_semaphore_signal(sem);
+                                          }
+                                          else{
+                                              NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+                                              NSLog(@"\n\n\nError = %@",text);
+                                              dispatch_semaphore_signal(sem);
+                                              return;
+                                          }
+                                      }];
+    [dataTask resume];
+    //start waiting until get response from API
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    
+}
+
+
 -(void)getCurrentPatientAPIWithID:(NSString*)patientID{
     // create url
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",APIURL_GET_PATIENT,patientID]];
@@ -617,62 +700,6 @@
 }
 
 
--(void)putSeenNotificationToAPIWithID:(NSString *)notificationID{
-    // create url
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", APIURL_SEEN_NOTIFICATION,notificationID ]];
-
-    // config session
-    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
-    sessionConfig.timeoutIntervalForRequest = 5.0;
-    sessionConfig.timeoutIntervalForResource = 5.0;
-    // config session
-    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:sessionConfig];
-    //create request
-    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
-
-    //get the current doctor data
-    NSManagedObjectContext *context = [self managedObjectContext];
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
-    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
-    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
-    NSString *email = [doctor valueForKey:@"email"];
-    NSString *password = [doctor valueForKey:@"password"];
-
-    //setup header and body for request
-    [urlRequest setHTTPMethod:@"PUT"];
-    [urlRequest setValue:email forHTTPHeaderField:@"Email"];
-    [urlRequest setValue:password forHTTPHeaderField:@"Password"];
-    [urlRequest setValue:@"en-US" forHTTPHeaderField:@"Accept-Language"];
-    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-
-    dispatch_semaphore_t    sem;
-    sem = dispatch_semaphore_create(0);
-    NSURLSessionDataTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
-                                                       completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
-                                      {
-                                          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
-
-                                          if((long)[httpResponse statusCode] == 200  && error ==nil)
-                                          {
-                                              NSError *parsJSONError = nil;
-                                              self.responseJSONDataForPendingList = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
-                                              if (self.responseJSONDataForPendingList != nil) {
-                                              }else{
-                                              }
-                                              //stop waiting after get response from API
-                                              dispatch_semaphore_signal(sem);
-                                          }
-                                          else{
-                                              NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
-                                              NSLog(@"\n\n\nError = %@",text);
-                                              dispatch_semaphore_signal(sem);
-                                              return;
-                                          }
-                                      }];
-    [dataTask resume];
-    //start waiting until get response from API
-    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
-}
 
 
 

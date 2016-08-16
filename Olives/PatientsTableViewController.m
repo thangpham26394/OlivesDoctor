@@ -15,6 +15,7 @@
 #import "PrescriptionViewController.h"
 #import "MoreInfoTableViewController.h"
 #import "DoctorNoteTableViewController.h"
+
 #import <CoreData/CoreData.h>
 @interface PatientsTableViewController ()
 //@property (weak, nonatomic) IBOutlet UIBarButtonItem *menuButton;
@@ -431,7 +432,7 @@
     }
 
 
-
+    
 
 }
 

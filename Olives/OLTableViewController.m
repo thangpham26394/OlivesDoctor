@@ -57,7 +57,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
-    return 6;
+    return 5;
 }
 
 
@@ -76,12 +76,8 @@
         cell = [tableView dequeueReusableCellWithIdentifier:@"appointmentCell" forIndexPath:indexPath];
         cell.image.image = [UIImage imageNamed: @"appointment.png"];
         cell.descriptionLabel.text = @"Appointments";
-    }else if(indexPath.row ==3){
-        cell = [tableView dequeueReusableCellWithIdentifier:@"loanCell" forIndexPath:indexPath];
-        cell.image.image = [UIImage imageNamed: @"loanicon.png"];
-        cell.descriptionLabel.text = @"My Loans";
     }
-    else if(indexPath.row ==4){
+    else if(indexPath.row ==3){
         cell = [tableView dequeueReusableCellWithIdentifier:@"editCell" forIndexPath:indexPath];
         cell.image.image = [UIImage imageNamed: @"setting.png"];
         cell.descriptionLabel.text = @"Edit Profile";

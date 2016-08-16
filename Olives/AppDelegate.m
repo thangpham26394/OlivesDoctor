@@ -50,83 +50,92 @@
     self.window.rootViewController = rootViewController;
     [self.window makeKeyAndVisible];
 
+    //refresh nsuserdefault incase app shutdown incorrectly
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"HasLaunchedOnce"]) {
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"chatScreenLoaded"];
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"homeScreenLoaded"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
+
+
     //get doctor email and password from coredata
     NSManagedObjectContext *context = [self managedObjectContext];
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
     NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    if (doctorObject.count>0) {
+        NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+        // Connect to the service
+        id qs = @{
+                  @"Email": [doctor valueForKey:@"email"],
+                  @"Password": [doctor valueForKey:@"password"]
+                  };
+        SRHubConnection *hubConnection = [SRHubConnection connectionWithURLString:APIURL queryString:qs];
+        // Create a proxy to the chat service
+        SRHubProxy *notificationHub = [hubConnection createHubProxy:@"NotificationHub"];
 
-    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+        [notificationHub on:@"broadcastNotification" perform:self selector:@selector(notificationReceived:)];
 
-    // Connect to the service
-    id qs = @{
-              @"Email": [doctor valueForKey:@"email"],
-              @"Password": [doctor valueForKey:@"password"]
-              };
-    SRHubConnection *hubConnection = [SRHubConnection connectionWithURLString:APIURL queryString:qs];
-    // Create a proxy to the chat service
-    SRHubProxy *notificationHub = [hubConnection createHubProxy:@"NotificationHub"];
+        // Register for connection lifecycle events
+        [hubConnection setStarted:^{
+            NSLog(@"Connection Started");
+        }];
 
-    [notificationHub on:@"broadcastNotification" perform:self selector:@selector(notificationReceived:)];
-    
-    // Register for connection lifecycle events
-    [hubConnection setStarted:^{
-        NSLog(@"Connection Started");
-    }];
+        [hubConnection setReceived:^(NSString *message) {
+            NSLog(@"Connection Recieved Data: %@",message);
+        }];
 
-    [hubConnection setReceived:^(NSString *message) {
-        NSLog(@"Connection Recieved Data: %@",message);
-    }];
-
-    [hubConnection setConnectionSlow:^{
-        NSLog(@"Connection Slow");
-    }];
-    [hubConnection setReconnecting:^{
-        NSLog(@"Connection Reconnecting");
-    }];
-    [hubConnection setReconnected:^{
-        NSLog(@"Connection Reconnected");
-    }];
-    [hubConnection setClosed:^{
-        NSLog(@"Connection Closed");
-    }];
-    [hubConnection setError:^(NSError *error) {
-        NSLog(@"Connection Error %@",error);
-    }];
-    // Start the connection
-    [hubConnection start];
-
+        [hubConnection setConnectionSlow:^{
+            NSLog(@"Connection Slow");
+        }];
+        [hubConnection setReconnecting:^{
+            NSLog(@"Connection Reconnecting");
+        }];
+        [hubConnection setReconnected:^{
+            NSLog(@"Connection Reconnected");
+        }];
+        [hubConnection setClosed:^{
+            NSLog(@"Connection Closed");
+        }];
+        [hubConnection setError:^(NSError *error) {
+            NSLog(@"Connection Error %@",error);
+        }];
+        // Start the connection
+        [hubConnection start];
 
 
 
-    // Connect to the service chat
-    SRHubConnection *hubConnectionForChat = [SRHubConnection connectionWithURLString:APIURL queryString:qs];
-    // Create a proxy to the chat service
-    SRHubProxy *notificationHubForChat = [hubConnectionForChat createHubProxy:@"NotificationHub"];
-    [notificationHubForChat on:@"notifyMessage" perform:self selector:@selector(messageReceived:)];
-    // Register for connection lifecycle events
-    [hubConnectionForChat setStarted:^{
-        NSLog(@"Connection Started");
-    }];
-    [hubConnectionForChat setReceived:^(NSString *message) {
-        NSLog(@"Connection Recieved Data: %@",message);
-    }];
-    [hubConnectionForChat setConnectionSlow:^{
-        NSLog(@"Connection Slow");
-    }];
-    [hubConnectionForChat setReconnecting:^{
-        NSLog(@"Connection Reconnecting");
-    }];
-    [hubConnectionForChat setReconnected:^{
-        NSLog(@"Connection Reconnected");
-    }];
-    [hubConnectionForChat setClosed:^{
-        NSLog(@"Connection Closed");
-    }];
-    [hubConnectionForChat setError:^(NSError *error) {
-        NSLog(@"Connection Error %@",error);
-    }];
-    // Start the connection for chat API
-    [hubConnectionForChat start];
+
+        // Connect to the service chat
+        SRHubConnection *hubConnectionForChat = [SRHubConnection connectionWithURLString:APIURL queryString:qs];
+        // Create a proxy to the chat service
+        SRHubProxy *notificationHubForChat = [hubConnectionForChat createHubProxy:@"NotificationHub"];
+        [notificationHubForChat on:@"notifyMessage" perform:self selector:@selector(messageReceived:)];
+        // Register for connection lifecycle events
+        [hubConnectionForChat setStarted:^{
+            NSLog(@"Connection Started");
+        }];
+        [hubConnectionForChat setReceived:^(NSString *message) {
+            NSLog(@"Connection Recieved Data: %@",message);
+        }];
+        [hubConnectionForChat setConnectionSlow:^{
+            NSLog(@"Connection Slow");
+        }];
+        [hubConnectionForChat setReconnecting:^{
+            NSLog(@"Connection Reconnecting");
+        }];
+        [hubConnectionForChat setReconnected:^{
+            NSLog(@"Connection Reconnected");
+        }];
+        [hubConnectionForChat setClosed:^{
+            NSLog(@"Connection Closed");
+        }];
+        [hubConnectionForChat setError:^(NSError *error) {
+            NSLog(@"Connection Error %@",error);
+        }];
+        // Start the connection for chat API
+        [hubConnectionForChat start];
+
+    }
 
 
     if ([UIApplication instancesRespondToSelector:@selector(registerUserNotificationSettings:)]){

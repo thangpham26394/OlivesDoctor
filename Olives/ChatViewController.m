@@ -7,6 +7,8 @@
 //
 #define APIURL @"http://olive.azurewebsites.net"
 #define APIURL_CREATE_MESSAGE @"http://olive.azurewebsites.net/api/message"
+#define API_MESSAGE_URL @"http://olive.azurewebsites.net/api/message/filter"
+
 
 #import "ChatViewController.h"
 #import "ChatDateTimeTableViewCell.h"
@@ -44,6 +46,80 @@
 }
 
 #pragma mark - Connect to API function
+
+
+-(void)getAllMessageFromAPIWithPatientID:(NSString *) patientID{
+
+    // create url
+    NSURL *url = [NSURL URLWithString:API_MESSAGE_URL];
+    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+    //    sessionConfig.timeoutIntervalForRequest = 5.0;
+    //    sessionConfig.timeoutIntervalForResource = 5.0;
+
+    //NSURLSession *defaultSession = [NSURLSession sharedSession];
+    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:sessionConfig];
+    //create request
+    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
+
+    //get doctor email and password from coredata
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+
+    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+
+
+    //setup header and body for request
+    [urlRequest setHTTPMethod:@"POST"];
+    [urlRequest setValue:[doctor valueForKey:@"email"] forHTTPHeaderField:@"Email"];
+    [urlRequest setValue:[doctor valueForKey:@"password"]  forHTTPHeaderField:@"Password"];
+    [urlRequest setValue:@"en-US" forHTTPHeaderField:@"Accept-Language"];
+    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [urlRequest setTimeoutInterval:10];
+
+    //create JSON data to post to API
+    NSDictionary *account = @{
+                                    @"Sort":@"0",
+                                    @"Partner":patientID
+                              };
+    NSError *error = nil;
+    NSData *jsondata = [NSJSONSerialization dataWithJSONObject:account options:NSJSONWritingPrettyPrinted error:&error];
+    [urlRequest setHTTPBody:jsondata];
+
+    dispatch_semaphore_t    sem;
+    sem = dispatch_semaphore_create(0);
+
+    NSURLSessionDataTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
+                                                       completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+                                      {
+                                          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+
+                                          if((long)[httpResponse statusCode] == 200  && error ==nil)
+                                          {
+                                              NSError *parsJSONError = nil;
+                                              self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                              if (self.responseJSONData != nil) {
+                                                  self.messageArray = [self.responseJSONData objectForKey:@"Messages"];
+
+                                              }else{
+                                              }
+
+                                              //stop waiting after get response from API
+                                              dispatch_semaphore_signal(sem);
+                                          }
+                                          else{
+                                              NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+                                              NSLog(@"\n\n\nError = %@",text);
+                                              dispatch_semaphore_signal(sem);
+                                              return;
+                                          }
+                                      }];
+    [dataTask resume];
+    //start waiting until get response from API
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    
+}
+
 
 -(void)sendMessageToAPI:(NSString *)messageSent{
 
@@ -184,16 +260,23 @@
     [super viewWillAppear:animated];
     [self registerForKeyboardNotifications];
     [self setupGestureRecognizerToDisMissKeyBoard];
+
+}
+-(void)viewDidAppear:(BOOL)animated{
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"chatScreenLoaded"];
     [[NSUserDefaults standardUserDefaults] setObject:self.selectedPatientID forKey:@"chattingPatient"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+-(void)viewDidDisappear:(BOOL)animated{
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"chatScreenLoaded"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [self deregisterFromKeyboardNotifications];
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"chatScreenLoaded"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+
     // Stop the connection for chat API
     [self.hubConnectionForChat stop];
 }
@@ -201,13 +284,23 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
+    self.messageArray = [[NSMutableArray alloc]init];
     //get doctor email and password from coredata
     NSManagedObjectContext *context = [self managedObjectContext];
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
     NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
 
     NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+    [self getAllMessageFromAPIWithPatientID:self.selectedPatientID];
+
+    //reverse received Message
+    NSMutableArray *reverseArray = [[NSMutableArray alloc] init];
+    for (NSInteger index = self.messageArray.count-1; index >=0;index -- ) {
+        [reverseArray addObject:[self.messageArray objectAtIndex:index]];
+    }
+    self.messageArray = reverseArray;
+    [self.tableView reloadData];
+
     // Connect to the service
     id qs = @{
               @"Email": [doctor valueForKey:@"email"],
@@ -253,17 +346,18 @@
 //    [self.tableView setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
 
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
-    self.messageArray = [[NSMutableArray alloc]init];
-    for (NSInteger index =self.unseenMessage.count-1; index >=0 ; index --) {
-        NSDictionary *currentUnseen = [self.unseenMessage objectAtIndex:index];
-        NSDictionary *cellContent = [NSDictionary dictionaryWithObjectsAndKeys:
-                                     @"1",@"type",
-                                     [currentUnseen objectForKey:@"content"],@"content",
-                                     [currentUnseen objectForKey:@"time"],@"time"
-                                     , nil];
 
-        [self.messageArray addObject:cellContent];
-    }
+
+//    for (NSInteger index =self.unseenMessage.count-1; index >=0 ; index --) {
+//        NSDictionary *currentUnseen = [self.unseenMessage objectAtIndex:index];
+//        NSDictionary *cellContent = [NSDictionary dictionaryWithObjectsAndKeys:
+//                                     @"1",@"type",
+//                                     [currentUnseen objectForKey:@"content"],@"content",
+//                                     [currentUnseen objectForKey:@"time"],@"time"
+//                                     , nil];
+//        [self.messageArray addObject:cellContent];
+//    }
+
     [self.tableView reloadData];
     [self updateTableContentInset];
     NSInteger  lastRowNumber = [self.tableView numberOfRowsInSection:0] - 1;
@@ -300,7 +394,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.messageArray.count+1;
+    return self.messageArray.count;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -316,37 +410,36 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
 
-    if (indexPath.row ==0) {
-        ChatDateTimeTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:@"dateTimeCell" forIndexPath:indexPath];
-        return cell;
-    }else{
 
-        NSDictionary *messageInfo = [self.messageArray objectAtIndex:indexPath.row-1];
-        self.noteLabelHeight = [[messageInfo objectForKey:@"content"] boundingRectWithSize:CGSizeMake(self.view.bounds.size.width - 140, CGFLOAT_MAX)
+
+        NSDictionary *messageInfo = [self.messageArray objectAtIndex:indexPath.row];
+        self.noteLabelHeight = [[messageInfo objectForKey:@"Content"] boundingRectWithSize:CGSizeMake(self.view.bounds.size.width - 140, CGFLOAT_MAX)
                                                                                    options:NSStringDrawingUsesLineFragmentOrigin
                                                                                 attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:12]}
                                                                                    context:nil].size.height;
 
-        NSString *notiTime = [messageInfo objectForKey:@"time"];
-
+        NSString *notiTime = [messageInfo objectForKey:@"Created"];
         NSDateFormatter * dateFormatterToLocal = [[NSDateFormatter alloc] init];
         [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
         [dateFormatterToLocal setDateFormat:@"HH:mm:ss"];
 
         NSDate *notiDate = [NSDate dateWithTimeIntervalSince1970:[notiTime doubleValue]/1000];
-        NSString *type = [messageInfo objectForKey:@"type"];
-        if ([[NSString stringWithFormat:@"%@",type] isEqualToString:@"2"]){
+
+        NSString *broadCaster = [messageInfo objectForKey:@"Broadcaster"];
+
+
+        if (![[NSString stringWithFormat:@"%@",broadCaster] isEqualToString:[NSString stringWithFormat:@"%@", self.selectedPatientID ]]){
             ChatMessageSendTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:@"sendCell" forIndexPath:indexPath];
-            cell.messageLabel.text =[messageInfo objectForKey:@"content"];
+            cell.messageLabel.text =[messageInfo objectForKey:@"Content"];
             cell.timeLabel.text = [dateFormatterToLocal stringFromDate:notiDate];
             return cell;
         }else{
             ChatMessageReceiveTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:@"receiveCell" forIndexPath:indexPath];
-            cell.messageLabel.text = [messageInfo objectForKey:@"content"];
+            cell.messageLabel.text = [messageInfo objectForKey:@"Content"];
             cell.timeLabel.text = [dateFormatterToLocal stringFromDate:notiDate];
             return cell;
         }
-    }
+    
 
 
 }
@@ -373,18 +466,18 @@
     NSString *content = [messageDic objectForKey:@"content"];
     NSString *created = [messageDic objectForKey:@"created"];
 
-    NSDateFormatter * dateFormatterToLocal = [[NSDateFormatter alloc] init];
-    [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
-    [dateFormatterToLocal setDateFormat:@"MM/dd/yyyy"];
-
-    NSDate *notiDate = [NSDate dateWithTimeIntervalSince1970:[created doubleValue]/1000];
+//    NSDateFormatter * dateFormatterToLocal = [[NSDateFormatter alloc] init];
+//    [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
+//    [dateFormatterToLocal setDateFormat:@"MM/dd/yyyy"];
+//
+//    NSDate *notiDate = [NSDate dateWithTimeIntervalSince1970:[created doubleValue]/1000];
 
     //if broadcaster is current chatting patient
     if ([[NSString stringWithFormat:@"%@",self.selectedPatientID] isEqual: [NSString stringWithFormat:@"%@",broadcaster]]) {
         NSDictionary *cellContent = [NSDictionary dictionaryWithObjectsAndKeys:
-                                     @"1",@"type",
-                                     content,@"content",
-                                     [dateFormatterToLocal stringFromDate:notiDate],@"time"
+                                     broadcaster,@"Broadcaster",
+                                     content,@"Content",
+                                     created,@"Created"
                                      , nil];
         self.messageTextView.text = @"";
         [self.messageArray addObject:cellContent];
@@ -402,14 +495,20 @@
     NSString *trimmedString = [message stringByTrimmingCharactersInSet:
                                [NSCharacterSet whitespaceCharacterSet]];
     double time = [[NSDate date] timeIntervalSince1970 ]*1000;
+    //get doctor email and password from coredata
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+
+    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
     if (trimmedString!= nil  && ![trimmedString  isEqual: @""]) {
         self.connectToAPISuccess = NO;
         [self sendMessageToAPI:trimmedString];
         if (self.connectToAPISuccess) {
             NSDictionary *cellContent = [NSDictionary dictionaryWithObjectsAndKeys:
-                                         @"2",@"type",
-                                         trimmedString,@"content",
-                                         [NSString stringWithFormat:@"%f",time],@"time"
+                                         [doctor valueForKey:@"doctorID"],@"Broadcaster",
+                                         trimmedString,@"Content",
+                                         [NSString stringWithFormat:@"%f",time],@"Created"
                                          , nil];
             self.messageTextView.text = @"";
             [self.messageArray addObject:cellContent];
