@@ -24,6 +24,10 @@
 @property(assign,nonatomic) BOOL connectToAPISuccess;
 @property(strong,nonatomic) NSDictionary *selectedPatient;
 @property (strong,nonatomic) UIView *backgroundView;
+@property (strong,nonatomic) UIActivityIndicatorView *  activityIndicator;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *manageBarButton;
+
+
 -(IBAction)cancel:(id)sender;
 @end
 
@@ -207,28 +211,38 @@
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
     self.patientArray = [[NSArray alloc]init];
-
+    self.tableView.multipleTouchEnabled = NO;
+    self.tableView.userInteractionEnabled = YES;
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     CGFloat screenWidth = screenRect.size.width;
     CGFloat screenHeight = screenRect.size.height;
 
     self.backgroundView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
     self.backgroundView.backgroundColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.5];
-    UIActivityIndicatorView *  activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    activityIndicator.center = CGPointMake(self.backgroundView .frame.size.width/2, self.backgroundView .frame.size.height/2);
-    [self.backgroundView  addSubview:activityIndicator];
+
+    //setup indicator view
+    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    self.activityIndicator.center = CGPointMake(self.backgroundView .frame.size.width/2, self.backgroundView .frame.size.height/2);
+    [self.backgroundView  addSubview:self.activityIndicator];
     UIWindow *currentWindow = [UIApplication sharedApplication].keyWindow;
     [currentWindow addSubview:self.backgroundView];
+    [currentWindow bringSubviewToFront:self.backgroundView];
 
-    [activityIndicator startAnimating];
-    [self loadPatienttDataFromAPI];
-    [activityIndicator stopAnimating];
-    [self.backgroundView removeFromSuperview];
+    [self.activityIndicator startAnimating];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
 
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self loadPatienttDataFromAPI];
+            [self.tableView reloadData];
+            [self.activityIndicator stopAnimating];
+            [self.backgroundView removeFromSuperview];
+        });
+    });
 
-    [self.tableView reloadData];
 
 }
+
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -246,24 +260,27 @@
     UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"menuscreen.jpg"]];
     self.tableView.backgroundView = imageView;
 
+    [self.manageBarButton setEnabled:NO];
+    [self.manageBarButton setTintColor: [UIColor clearColor]];
+
     //set up menu button if not isAppointmentViewDetailPatient
     if ([self.isAppointmentViewDetailPatient  isEqual: @""] || self.isAppointmentViewDetailPatient == nil) {
 
+            [self.manageBarButton setEnabled:YES];
+            [self.manageBarButton setTintColor:nil];
 
-        SWRevealViewController *revealViewController = self.revealViewController;
+            SWRevealViewController *revealViewController = self.revealViewController;
 
-        if (revealViewController) {
-            leftBarButton = [[UIBarButtonItem alloc]
-                             initWithImage:[UIImage imageNamed:@"menu.png"]
-                             style:UIBarButtonItemStylePlain
-                             target:self.revealViewController
-                             action:@selector(revealToggle:)];
-            self.navigationItem.leftBarButtonItem = leftBarButton;
+            if (revealViewController) {
+                leftBarButton = [[UIBarButtonItem alloc]
+                                 initWithImage:[UIImage imageNamed:@"menu.png"]
+                                 style:UIBarButtonItemStylePlain
+                                 target:self.revealViewController
+                                 action:@selector(revealToggle:)];
+                self.navigationItem.leftBarButtonItem = leftBarButton;
+                [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
+            }
 
-//            [self.menuButton setTarget:self.revealViewController];
-//            [self.menuButton setAction:@selector(revealToggle:)];
-            [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
-        }
     }else{
         // when user choose add new appointment
         self.isAddNewAppointment = YES;
@@ -332,15 +349,19 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // Do some stuff when the row is selected
-    self.selectedPatient = self.patientArray[indexPath.row];
-    if (!self.isAddNewAppointment) {
-        // if the view current state is not for add new appointment
-        [self performSegueWithIdentifier:@"showDetailPatient" sender:self];
-    }else{
-        [self performSegueWithIdentifier:@"unwindToTimePicker" sender:self];
-    }
+
+        self.selectedPatient = self.patientArray[indexPath.row];
+        if (!self.isAddNewAppointment) {
+            // if the view current state is not for add new appointment
+            [self performSegueWithIdentifier:@"showDetailPatient" sender:self];
+        }else{
+            [self performSegueWithIdentifier:@"unwindToTimePicker" sender:self];
+        }
+
+
 
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+    [tableView setUserInteractionEnabled:NO];
 }
 
 
@@ -408,6 +429,9 @@
         TimePickerViewController *timePicker = [segue destinationViewController];
        timePicker.selectedPatient = self.selectedPatient;
     }
+
+
+
 
 }
 

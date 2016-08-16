@@ -9,5 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface ChatViewController : UIViewController
-
+@property(strong,nonatomic) NSString *selectedPatientID;
+@property(strong,nonatomic) NSArray *unseenMessage;
 @end

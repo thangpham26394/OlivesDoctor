@@ -31,6 +31,8 @@
         NSDictionary *currentDic = displayData[index];
         NSString *key = [[currentDic allKeys] objectAtIndex:0];
         NSString *value = [currentDic objectForKey:key];
+
+
         [timeArray addObject:value];
         [valueArray addObject:key];
     }
@@ -48,6 +50,7 @@
 -(void)setChart:(NSArray *)dataPoint withValue:(NSArray *) doubleValue{
     NSMutableArray <ChartDataEntry *> *dataEntries = [[NSMutableArray alloc]init];
     for (int i =0; i<dataPoint.count; i++) {
+    #warning change index theo time
         ChartDataEntry *dataEntry = [[ChartDataEntry alloc]initWithValue:[[doubleValue objectAtIndex:i] doubleValue]  xIndex:i];
         [dataEntries addObject:dataEntry];
     }

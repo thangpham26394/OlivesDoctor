@@ -6,7 +6,7 @@
 //  Copyright © 2016 Thang. All rights reserved.
 //
 #define APIURL @"http://olive.azurewebsites.net"
-#define ROOTVIEW [[[UIApplication sharedApplication] keyWindow] rootViewController]
+//#define ROOTVIEW [[[UIApplication sharedApplication] keyWindow] rootViewController]
 #import "AppDelegate.h"
 #import "SignalR.h"
 #import "HomeViewController.h"
@@ -50,10 +50,22 @@
     self.window.rootViewController = rootViewController;
     [self.window makeKeyAndVisible];
 
+    //get doctor email and password from coredata
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+
+    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+
     // Connect to the service
-    SRHubConnection *hubConnection = [SRHubConnection connectionWithURLString:APIURL];
+    id qs = @{
+              @"Email": [doctor valueForKey:@"email"],
+              @"Password": [doctor valueForKey:@"password"]
+              };
+    SRHubConnection *hubConnection = [SRHubConnection connectionWithURLString:APIURL queryString:qs];
     // Create a proxy to the chat service
     SRHubProxy *notificationHub = [hubConnection createHubProxy:@"NotificationHub"];
+
     [notificationHub on:@"broadcastNotification" perform:self selector:@selector(notificationReceived:)];
     
     // Register for connection lifecycle events
@@ -81,7 +93,41 @@
         NSLog(@"Connection Error %@",error);
     }];
     // Start the connection
-//    [hubConnection start];
+    [hubConnection start];
+
+
+
+
+    // Connect to the service chat
+    SRHubConnection *hubConnectionForChat = [SRHubConnection connectionWithURLString:APIURL queryString:qs];
+    // Create a proxy to the chat service
+    SRHubProxy *notificationHubForChat = [hubConnectionForChat createHubProxy:@"NotificationHub"];
+    [notificationHubForChat on:@"notifyMessage" perform:self selector:@selector(messageReceived:)];
+    // Register for connection lifecycle events
+    [hubConnectionForChat setStarted:^{
+        NSLog(@"Connection Started");
+    }];
+    [hubConnectionForChat setReceived:^(NSString *message) {
+        NSLog(@"Connection Recieved Data: %@",message);
+    }];
+    [hubConnectionForChat setConnectionSlow:^{
+        NSLog(@"Connection Slow");
+    }];
+    [hubConnectionForChat setReconnecting:^{
+        NSLog(@"Connection Reconnecting");
+    }];
+    [hubConnectionForChat setReconnected:^{
+        NSLog(@"Connection Reconnected");
+    }];
+    [hubConnectionForChat setClosed:^{
+        NSLog(@"Connection Closed");
+    }];
+    [hubConnectionForChat setError:^(NSError *error) {
+        NSLog(@"Connection Error %@",error);
+    }];
+    // Start the connection for chat API
+    [hubConnectionForChat start];
+
 
     if ([UIApplication instancesRespondToSelector:@selector(registerUserNotificationSettings:)]){
 
@@ -95,9 +141,46 @@
         // Set icon badge number to zero
         application.applicationIconBadgeNumber = 0;
     }
-    
+
     return YES;
 }
+
+
+- (void)messageReceived:(id)message
+{
+
+
+    //do something with the message
+    NSError * err;
+    NSData * jsonData = [NSJSONSerialization dataWithJSONObject:message options:0 error:&err];
+    NSDictionary *messageDic = [NSJSONSerialization JSONObjectWithData:jsonData
+                                                               options:kNilOptions
+                                                                 error:nil];
+    NSLog(@"%@",messageDic);
+    NSString *broadcaster = [messageDic objectForKey:@"broadcaster"];
+    //if user is current in chat screen
+    NSString *chattingPatientID;
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"chatScreenLoaded"]) {
+        chattingPatientID = [[NSUserDefaults standardUserDefaults] objectForKey:@"chattingPatient"];
+
+    }
+    if (![[NSString stringWithFormat:@"%@",chattingPatientID] isEqual: [NSString stringWithFormat:@"%@",broadcaster]]) {
+        UILocalNotification *notification = [[UILocalNotification alloc] init];
+        notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:0];
+        notification.alertBody = [messageDic objectForKey:@"content"];
+        notification.alertAction = @"Show me";
+        notification.timeZone = [NSTimeZone defaultTimeZone];
+        notification.soundName = UILocalNotificationDefaultSoundName;
+        notification.applicationIconBadgeNumber = [[UIApplication sharedApplication] applicationIconBadgeNumber] + 1;
+
+        [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+    }
+
+}
+
+
+
+
 - (void)notificationReceived:(id)message
 {
     //do something with the message
@@ -107,6 +190,7 @@
                                                                  options:kNilOptions
                                                                    error:nil];
     NSLog(@"%@",messageDic);
+    
 
     UILocalNotification *notification = [[UILocalNotification alloc] init];
     notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:0];
@@ -140,6 +224,18 @@
         self.popupNotification.backgroundColor = [UIColor blackColor];
     }
 
+    //reload home screen if needed
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"homeScreenLoaded"]) {
+        UIStoryboard *storyboard = self.window.rootViewController.storyboard;
+        //move to home view
+        UIViewController *homeController ;
+        homeController = [storyboard instantiateViewControllerWithIdentifier:@"HomeView"];
+        AppDelegate *myAppDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+        myAppDelegate.window.rootViewController = homeController;
+        [myAppDelegate.window makeKeyAndVisible];
+    }
+
+
 
     UIWindow *currentWindow = [UIApplication sharedApplication].keyWindow;
     [currentWindow addSubview:self.popupNotification];
@@ -156,16 +252,9 @@
     [okButton addTarget:self action:@selector(okButtonActionNormal:) forControlEvents:UIControlEventTouchUpInside];
     [self.popupNotification addSubview:okButton];
 
-    //reload home screen if needed
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"homeScreenLoaded"]) {
-        UIStoryboard *storyboard = self.window.rootViewController.storyboard;
-        //move to home view
-        UIViewController *homeController ;
-        homeController = [storyboard instantiateViewControllerWithIdentifier:@"HomeView"];
-        AppDelegate *myAppDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
-        myAppDelegate.window.rootViewController = homeController;
-        [myAppDelegate.window makeKeyAndVisible];
-    }
+
+
+    
     //show popup notification view
     [UIView animateWithDuration:0.25
                      animations:^{
@@ -178,6 +267,7 @@
 
 
     application.applicationIconBadgeNumber = 0;
+
 }
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

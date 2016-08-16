@@ -10,6 +10,7 @@
 #define APIURL_GET_MEDICALRECORD @"http://olive.azurewebsites.net/api/medical/record?Id="
 #define APIURL_GET_PRESCRIPTION @"http://olive.azurewebsites.net/api/medical/prescription?Id="
 #define APIURL_GET_MEDICALNOTE @"http://olive.azurewebsites.net/api/medical/note?Id="
+#define APIURL_GET_PATIENT @"http://olive.azurewebsites.net/api/patient?Id="
 
 #import "ShowNotificationTableViewController.h"
 #import "TimePickerViewController.h"
@@ -32,6 +33,7 @@
 @property (strong,nonatomic)NSDictionary *selectedMedicalRecord;
 @property (strong,nonatomic)NSDictionary *selectedPrescription;
 @property (strong,nonatomic)NSDictionary *selectedMedicalNote;
+@property (strong,nonatomic)NSMutableArray *broadcasterArray;
 @property (strong,nonatomic) NSString* selectedPatientID;
 @end
 
@@ -325,11 +327,63 @@
     //back ground for tableview view
     UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"menuscreen.jpg"]];
     self.tableView.backgroundView = imageView;
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+
+    //handle chat noti data
+    if (self.notificationType ==0) {
+        self.broadcasterArray = [[NSMutableArray alloc]init];
+        NSMutableArray *totalPatientArray = [[NSMutableArray alloc]init];
+        //get distince patient
+        for (int index = 0; index < self.notifictionDataArray.count ; index ++) {
+            NSDictionary *currentNoti = [self.notifictionDataArray objectAtIndex:index];
+            NSString *patientId = [currentNoti objectForKey:@"Broadcaster"];
+
+            if (![totalPatientArray containsObject:patientId]) {
+                [totalPatientArray addObject:patientId];
+            }
+
+        }
+
+        for (int index = 0; index <totalPatientArray.count; index++) {
+            [self getCurrentPatientAPIWithID:[totalPatientArray objectAtIndex:index]];
+            NSMutableDictionary *patient = [self.responseJSONDataForPendingList objectForKey:@"Patient"];
+            NSString *currentPatientID = [patient  objectForKey:@"Id"];
+            //get avatar
+            UIImage *img;
+            NSString *imgURL = [patient  objectForKey:@"Photo"];
+            if ((id)imgURL != [NSNull null]) {
+                NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:imgURL]];
+                img = [[UIImage alloc] initWithData:data];
+            }else{
+                img = [UIImage imageNamed:@"nullAvatar"];
+            }
+            [patient setObject:img forKey:@"avatar"];
+
+
+            //get the lastest message
+            double maxtime = 0;
+            NSDictionary *notiContentLastestMessage = [[NSDictionary alloc]init];
+            for (int index = 0; index < self.notifictionDataArray.count ; index ++) {
+                NSDictionary *currentNoti = [self.notifictionDataArray objectAtIndex:index];
+                NSString *broadcasterId = [currentNoti objectForKey:@"Broadcaster"] ;
+                if ([[currentNoti objectForKey:@"Created"] doubleValue] >maxtime   &&  [[NSString stringWithFormat:@"%@",broadcasterId] isEqualToString:[NSString stringWithFormat:@"%@",currentPatientID] ]) {
+                    maxtime = [[currentNoti objectForKey:@"Created"] doubleValue];
+                    notiContentLastestMessage = currentNoti;
+                }
+            }
+
+            [patient setObject:notiContentLastestMessage forKey:@"lastestNoti"];
+
+            [self.broadcasterArray addObject:patient];
+
+        }
+
+
+
+
+        [self.tableView reloadData];
+
+    }
+
 }
 
 - (void)didReceiveMemoryWarning {
@@ -344,28 +398,58 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.notifictionDataArray.count;
+    if (self.notificationType ==0) {
+        return self.broadcasterArray.count;
+    }else{
+        return self.notifictionDataArray.count;
+    }
+
 }
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+
     NotificationTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"notificationCell" forIndexPath:indexPath];
-    NSDictionary *currentNoti = [self.notifictionDataArray objectAtIndex:indexPath.row];
-    // Configure the cell...
-    cell.notificationMessage.text = [currentNoti objectForKey:@"Message"];
 
-    //get notification created time
-    NSString *notiTime = [currentNoti objectForKey:@"Created"];
 
-    NSDateFormatter * dateFormatterToLocal = [[NSDateFormatter alloc] init];
-    [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
-    [dateFormatterToLocal setDateFormat:@"MM/dd/yyyy"];
 
-    NSDate *notiDate = [NSDate dateWithTimeIntervalSince1970:[notiTime doubleValue]/1000];
+    if (self.notificationType ==0) {
+        NSDictionary *patientSender = [self.broadcasterArray objectAtIndex:indexPath.row];
+        NSDictionary *currentNoti = [patientSender objectForKey:@"lastestNoti"];
+        // Configure the cell...
+        cell.notificationMessage.text = [currentNoti objectForKey:@"Content"];
+        cell.avatar.image = [patientSender objectForKey:@"avatar"];
+        //get notification created time
+        NSString *notiTime = [currentNoti objectForKey:@"Created"];
 
-    cell.notificationCreatedTime.text = [dateFormatterToLocal stringFromDate:notiDate];
-    
-    return cell;
+        NSDateFormatter * dateFormatterToLocal = [[NSDateFormatter alloc] init];
+        [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
+        [dateFormatterToLocal setDateFormat:@"MM/dd/yyyy"];
+
+        NSDate *notiDate = [NSDate dateWithTimeIntervalSince1970:[notiTime doubleValue]/1000];
+
+        cell.notificationCreatedTime.text = [dateFormatterToLocal stringFromDate:notiDate];
+        
+        return cell;
+    }else{
+        NSDictionary *currentNoti = [self.notifictionDataArray objectAtIndex:indexPath.row];
+        // Configure the cell...
+        cell.notificationMessage.text = [currentNoti objectForKey:@"Message"];
+
+        //get notification created time
+        NSString *notiTime = [currentNoti objectForKey:@"Created"];
+
+        NSDateFormatter * dateFormatterToLocal = [[NSDateFormatter alloc] init];
+        [dateFormatterToLocal setTimeZone:[NSTimeZone systemTimeZone]];
+        [dateFormatterToLocal setDateFormat:@"MM/dd/yyyy"];
+
+        NSDate *notiDate = [NSDate dateWithTimeIntervalSince1970:[notiTime doubleValue]/1000];
+
+        cell.notificationCreatedTime.text = [dateFormatterToLocal stringFromDate:notiDate];
+        
+        return cell;
+    }
+
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -373,16 +457,11 @@
     //if selected notification field is appointment notification
     if (self.notificationType == 0) {
         // get the selected notification chat
-        self.selectedChatNoti = [self loadAppointmentDataFromAPIWithID:[self.selectedNotification objectForKey:@"Record"]];
-        self.selectedPatientID = [self.selectedNotification objectForKey:@"Broadcaster"];
+
+        self.selectedPatientID = [[[self.broadcasterArray objectAtIndex:indexPath.row ] objectForKey:@"lastestNoti"]objectForKey:@"Broadcaster"];
         [self performSegueWithIdentifier:@"showChatWithPatientNoti" sender:self];
     }
-//    if (self.notificationType == 1) {
-//        // get the selected notification
-//        self.selectedAppointment = [self loadAppointmentDataFromAPIWithID:[self.selectedNotification objectForKey:@"Record"]];
-//        self.selectedPatientID = [self.selectedNotification objectForKey:@"Broadcaster"];
-//        [self performSegueWithIdentifier:@"showDetailAppointmentNoti" sender:self];
-//    }
+
     if (self.notificationType == 2) {
         // get the selected notification appointment
         self.selectedAppointment = [self loadAppointmentDataFromAPIWithID:[self.selectedNotification objectForKey:@"Record"]];
@@ -438,7 +517,7 @@
     }
 
     NSString *selectedNotiID = [self.selectedNotification objectForKey:@"Id"];
-    [self putSeenNotificationToAPIWithID:selectedNotiID];
+//    [self putSeenNotificationToAPIWithID:selectedNotiID];
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
@@ -476,6 +555,67 @@
 }
 */
 #pragma mark - handle API connection
+
+-(void)getCurrentPatientAPIWithID:(NSString*)patientID{
+    // create url
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",APIURL_GET_PATIENT,patientID]];
+    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+    sessionConfig.timeoutIntervalForRequest = 5.0;
+    sessionConfig.timeoutIntervalForResource = 5.0;
+    // config session
+    //NSURLSession *defaultSession = [NSURLSession sharedSession];
+    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:sessionConfig];
+    //create request
+    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
+
+    //get doctor email and password from coredata
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+
+    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+
+
+    //setup header and body for request
+    [urlRequest setHTTPMethod:@"GET"];
+    [urlRequest setValue:[doctor valueForKey:@"email"] forHTTPHeaderField:@"Email"];
+    [urlRequest setValue:[doctor valueForKey:@"password"]  forHTTPHeaderField:@"Password"];
+    [urlRequest setValue:@"en-US" forHTTPHeaderField:@"Accept-Language"];
+    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+
+
+
+    dispatch_semaphore_t    sem;
+    sem = dispatch_semaphore_create(0);
+
+    NSURLSessionDataTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
+                                                       completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+                                      {
+                                          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+
+                                          if((long)[httpResponse statusCode] == 200  && error ==nil)
+                                          {
+                                              NSError *parsJSONError = nil;
+                                              self.responseJSONDataForPendingList = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                              if (self.responseJSONDataForPendingList != nil) {
+                                              }else{
+                                              }
+                                              //stop waiting after get response from API
+                                              dispatch_semaphore_signal(sem);
+                                          }
+                                          else{
+                                              NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+                                              NSLog(@"\n\n\nError = %@",text);
+                                              dispatch_semaphore_signal(sem);
+                                              return;
+                                          }
+                                      }];
+    [dataTask resume];
+    //start waiting until get response from API
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    
+}
+
 
 -(void)putSeenNotificationToAPIWithID:(NSString *)notificationID{
     // create url
@@ -887,8 +1027,23 @@
     if ([[segue identifier] isEqualToString:@"showChatWithPatientNoti"])
     {
         ChatViewController * chatViewController = [segue destinationViewController];
-//        chatTableViewController.selectedMedicalNote = [self.selectedMedicalNote objectForKey:@"MedicalNote"];
+        NSMutableArray *unseenMessageArray = [[NSMutableArray alloc]init];
+        for (int index =0; index < self.notifictionDataArray.count; index++) {
+            NSDictionary *currentNoti = [self.notifictionDataArray objectAtIndex:index];
+            if ([[NSString stringWithFormat:@"%@",self.selectedPatientID] isEqual:[NSString stringWithFormat:@"%@",[currentNoti objectForKey:@"Broadcaster"]]]) {
 
+                NSString *notiTime = [currentNoti objectForKey:@"Created"];
+                NSString *content = [currentNoti objectForKey:@"Content"];
+                NSDictionary *messageDic = [NSDictionary dictionaryWithObjectsAndKeys:
+                                            notiTime,@"time",
+                                            content,@"content"
+                                            , nil];
+
+                [unseenMessageArray addObject:messageDic];
+            }
+        }
+        chatViewController.unseenMessage = (NSArray*)unseenMessageArray;
+        chatViewController.selectedPatientID = self.selectedPatientID;
     }
 
 }

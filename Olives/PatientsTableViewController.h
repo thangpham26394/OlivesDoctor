@@ -10,4 +10,5 @@
 
 @interface PatientsTableViewController : UITableViewController
 @property (strong,nonatomic) NSString *isAppointmentViewDetailPatient;
+
 @end

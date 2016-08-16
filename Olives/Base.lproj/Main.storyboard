@@ -959,7 +959,7 @@
                         <segue destination="hW8-xF-aS3" kind="show" identifier="showPrescriptionImageNoti" id="5gd-Kh-nKI"/>
                         <segue destination="7XA-nz-g1p" kind="show" identifier="showExperimentNoteNoti" id="qjh-YP-raP"/>
                         <segue destination="Q6d-NN-6kX" kind="show" identifier="showMedicalNoteNoti" id="Vgv-jc-HXX"/>
-                        <segue destination="GEP-cX-pWm" kind="show" identifier="showChatWithPatientNoti" id="0Vr-3e-S8M"/>
+                        <segue destination="GEP-cX-pWm" kind="show" identifier="showChatWithPatientNoti" id="pcU-gL-Sv4"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="s1p-WX-9fg" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1947,6 +1947,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="manageBarButton" destination="WKz-sE-W3G" id="SSU-Nl-AcO"/>
                         <segue destination="67E-ag-jJT" kind="show" identifier="showDetailPatient" id="q21-24-ZtI"/>
                         <segue destination="BNQ-Zd-Zja" kind="unwind" identifier="unwindToTimePicker" unwindAction="unwindToTimePicker:" id="wjQ-pX-ixj"/>
                     </connections>
@@ -3386,7 +3387,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vna-xE-fUZ">
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" bounces="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vna-xE-fUZ">
                                 <rect key="frame" x="0.0" y="64" width="600" height="487"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yPQ-Wv-9D7" userLabel="Content view">
@@ -3409,6 +3410,9 @@
                                                         </constraints>
                                                         <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="15"/>
                                                         <state key="normal" title="Send"/>
+                                                        <connections>
+                                                            <action selector="sendAction:" destination="GEP-cX-pWm" eventType="touchUpInside" id="DNu-hg-Bjq"/>
+                                                        </connections>
                                                     </button>
                                                 </subviews>
                                                 <color key="backgroundColor" red="0.30459797240000003" green="0.49431446340000001" blue="0.45855311830000001" alpha="1" colorSpace="calibratedRGB"/>
@@ -3463,7 +3467,7 @@
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Z7v-8q-Di8">
                                                                             <rect key="frame" x="5" y="5" width="460" height="96.5"/>
-                                                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
                                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                                             <nil key="highlightedColor"/>
                                                                         </label>
@@ -3514,7 +3518,7 @@
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vvn-rG-IZh">
                                                                             <rect key="frame" x="5" y="5" width="460" height="125.5"/>
-                                                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
                                                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                                             <nil key="highlightedColor"/>
                                                                         </label>
@@ -5319,7 +5323,7 @@
                         <segue destination="trw-vI-1zC" kind="show" identifier="showAppointmentNoti" id="qxU-zS-o42"/>
                         <segue destination="trw-vI-1zC" kind="show" identifier="medicalRecordNoti" id="Hym-fz-sFN"/>
                         <segue destination="WpN-Ic-r9Y" kind="show" identifier="showNewRequestNotification" id="l4a-Ba-k5I"/>
-                        <segue destination="trw-vI-1zC" kind="show" identifier="showChatNoti" id="vhk-yA-oST"/>
+                        <segue destination="trw-vI-1zC" kind="show" identifier="showChatNoti" id="0hi-JC-OGj"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ekO-rq-uLJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -5470,21 +5474,21 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="KBZ-BF-bL1"/>
-        <segue reference="vhk-yA-oST"/>
-        <segue reference="l4a-Ba-k5I"/>
-        <segue reference="LJC-eh-bQz"/>
-        <segue reference="bmA-nj-e8i"/>
+        <segue reference="0hi-JC-OGj"/>
         <segue reference="5gd-Kh-nKI"/>
-        <segue reference="R5w-zO-rEK"/>
-        <segue reference="qjh-YP-raP"/>
         <segue reference="Vgv-jc-HXX"/>
+        <segue reference="bmA-nj-e8i"/>
+        <segue reference="R5w-zO-rEK"/>
+        <segue reference="LJC-eh-bQz"/>
+        <segue reference="pcU-gL-Sv4"/>
         <segue reference="yKq-Pc-vjG"/>
-        <segue reference="DTx-UW-86k"/>
-        <segue reference="z2S-tF-6C6"/>
+        <segue reference="qjh-YP-raP"/>
         <segue reference="o2O-wy-pPe"/>
-        <segue reference="LBV-KK-3po"/>
+        <segue reference="C0G-Uc-bJc"/>
         <segue reference="oKW-n0-eRL"/>
         <segue reference="hNm-4v-RHF"/>
+        <segue reference="DTx-UW-86k"/>
+        <segue reference="z2S-tF-6C6"/>
         <segue reference="kVf-YF-K2w"/>
         <segue reference="0gn-oy-B7q"/>
     </inferredMetricsTieBreakers>

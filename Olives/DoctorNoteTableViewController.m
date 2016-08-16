@@ -263,12 +263,16 @@
     [self.currentWindow addSubview:self.backgroundView];
     [self.activityIndicator startAnimating];
 
-    [self loadDiaryFromAPI];
-    [self.tableView reloadData];
-
     //stop animation
-    [self.activityIndicator stopAnimating];
-    [self.backgroundView removeFromSuperview];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self loadDiaryFromAPI];
+            [self.tableView reloadData];
+            [self.activityIndicator stopAnimating];
+            [self.backgroundView removeFromSuperview];
+        });
+    });
 
 
 }
@@ -281,8 +285,8 @@
     CGFloat screenHeight = screenRect.size.height;
 
     self.backgroundView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
-    self.backgroundView.backgroundColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.5];
-    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    self.backgroundView.backgroundColor = [UIColor clearColor];
+    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     self.activityIndicator.center = CGPointMake(self.backgroundView .frame.size.width/2, self.backgroundView .frame.size.height/2);
     [self.backgroundView  addSubview:self.activityIndicator];
     self.currentWindow = [UIApplication sharedApplication].keyWindow;
@@ -399,12 +403,18 @@
                                                              [self.currentWindow addSubview:self.backgroundView];
                                                              [self.activityIndicator startAnimating];
 
-                                                             //call api to delete in server
-                                                             [self deleteDiaryAPI:[deleteDiary objectForKey:@"Id"]];
+
                                                              
                                                              //stop animation
-                                                             [self.activityIndicator stopAnimating];
-                                                             [self.backgroundView removeFromSuperview];
+                                                             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+
+                                                                 dispatch_async(dispatch_get_main_queue(), ^{
+                                                                     //call api to delete in server
+                                                                     [self deleteDiaryAPI:[deleteDiary objectForKey:@"Id"]];
+                                                                     [self.activityIndicator stopAnimating];
+                                                                     [self.backgroundView removeFromSuperview];
+                                                                 });
+                                                             });
 
                                                              if (self.apiDeleted) {
                                                                  //delete in category array

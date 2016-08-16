@@ -469,41 +469,49 @@
     self.appointmentsInMonth = [[NSArray alloc]init];
     self.appointmentsForExpired = [[NSArray alloc]init];
     self.appointmentsForPending = [[NSArray alloc]init];
-
+    self.pendingListTableView.userInteractionEnabled = YES;
+    self.listAppointMentInDayTableView.userInteractionEnabled = YES;
 
 
     //start animation
     [self.currentWindow addSubview:self.backgroundView];
     [self.activityIndicator startAnimating];
 
-    //call function connect to API to get data for pending Table
-    [self loadAppointmentDataFromAPIWithStatus:1]; //pending
-    [self loadAppointmentDataFromAPIWithStatus:4];//expired
-
-    //stop animation
-    [self.activityIndicator stopAnimating];
-    [self.backgroundView removeFromSuperview];
 
 
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            //call function connect to API to get data for pending Table
+            [self loadAppointmentDataFromAPIWithStatus:1]; //pending
+            [self loadAppointmentDataFromAPIWithStatus:4];//expired
+
+            [self.pendingListTableView reloadData];
+            int month = [[NSUserDefaults standardUserDefaults] doubleForKey:@"currentMonth"];
+            double targetHeight = [[NSUserDefaults standardUserDefaults] doubleForKey:@"targetHeight"];
+            double currentSelectedDate = [[NSUserDefaults standardUserDefaults] doubleForKey:@"currentSelectedDate"];
+            NSDate *selectedDate = [NSDate dateWithTimeIntervalSince1970:currentSelectedDate];
+            BOOL isfirstLoad = [[NSUserDefaults standardUserDefaults] boolForKey:@"firstLoadAppointment"];
+            if (!isfirstLoad) {
+                [self calendarView:self.calendar switchedToMonth:month targetHeight:targetHeight animated:YES];
+                [self calendarView:self.calendar dateSelected:selectedDate];
+            }
 
 
-    int month = [[NSUserDefaults standardUserDefaults] doubleForKey:@"currentMonth"];
-    double targetHeight = [[NSUserDefaults standardUserDefaults] doubleForKey:@"targetHeight"];
-    double currentSelectedDate = [[NSUserDefaults standardUserDefaults] doubleForKey:@"currentSelectedDate"];
-    NSDate *selectedDate = [NSDate dateWithTimeIntervalSince1970:currentSelectedDate];
-    BOOL isfirstLoad = [[NSUserDefaults standardUserDefaults] boolForKey:@"firstLoadAppointment"];
-    if (!isfirstLoad) {
-        [self calendarView:self.calendar switchedToMonth:month targetHeight:targetHeight animated:YES];
-        [self calendarView:self.calendar dateSelected:selectedDate];
-    }
+            if (self.segmentControlView.selectedSegmentIndex ==1) {
+                [self.addNewAppointmentBarButton setEnabled:NO];
+                [self.pendingListTableView setHidden:NO];
+                [self.pendingListTableView reloadData];
+                
+            }
+            [self.activityIndicator stopAnimating];
+            [self.backgroundView removeFromSuperview];
+        });
+    });
 
 
-    if (self.segmentControlView.selectedSegmentIndex ==1) {
-        [self.addNewAppointmentBarButton setEnabled:NO];
-        [self.pendingListTableView setHidden:NO];
-        [self.pendingListTableView reloadData];
 
-    }
+
 
 
 
@@ -685,8 +693,13 @@
     [self loadAppointmentDataFromAPIFrom:[NSString stringWithFormat:@"%f",unixMinDate*1000] and:[NSString stringWithFormat:@"%f",unixMaxDate*1000]];
 
     //stop animation
-    [self.activityIndicator stopAnimating];
-    [self.backgroundView removeFromSuperview];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.activityIndicator stopAnimating];
+            [self.backgroundView removeFromSuperview];
+        });
+    });
 
 
 
@@ -1129,7 +1142,7 @@
         }
         [self performSegueWithIdentifier:@"showDetalAppointment" sender:self];
         [self.listAppointMentInDayTableView deselectRowAtIndexPath:indexPath animated:YES];
-
+        [self.listAppointMentInDayTableView setUserInteractionEnabled:NO];
 
 
 
@@ -1160,7 +1173,8 @@
         NSDate *fromDate = [NSDate dateWithTimeIntervalSince1970:fromDateTimeInterval];
         self.chosenDate = [dateFormatter stringFromDate:fromDate];
         [self performSegueWithIdentifier:@"showDetalAppointment" sender:self];
-        [self.listAppointMentInDayTableView deselectRowAtIndexPath:indexPath animated:YES];
+        [self.pendingListTableView deselectRowAtIndexPath:indexPath animated:YES];
+        [self.pendingListTableView setUserInteractionEnabled:NO];
     }
 
 }
