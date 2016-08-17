@@ -15,10 +15,10 @@
     [self.backgroundCardView.layer setCornerRadius:5.0f];
     [self.backgroundCardView.layer setMasksToBounds:NO];
     [self.backgroundCardView setBackgroundColor:[UIColor colorWithWhite:1 alpha:0.1]];
-    self.image.layer.cornerRadius = self.image.frame.size.width / 2;
+//    self.image.layer.cornerRadius = self.image.frame.size.width / 2;
     self.image.clipsToBounds = YES;
-    self.image.layer.borderWidth = 1.0f;
-    self.image.layer.borderColor = [UIColor whiteColor].CGColor;
+//    self.image.layer.borderWidth = 1.0f;
+//    self.image.layer.borderColor = [UIColor whiteColor].CGColor;
     self.descriptionLabel.backgroundColor =[UIColor clearColor];
 
     self.contentView.backgroundColor = [UIColor clearColor];

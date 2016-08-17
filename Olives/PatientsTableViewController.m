@@ -423,6 +423,19 @@
         moreInfoTableView.selectedPatientID = [NSString stringWithFormat:@"%@",[self.selectedPatient objectForKey:@"Id"]];
         diaryView.selectedPatientID = [NSString stringWithFormat:@"%@",[self.selectedPatient objectForKey:@"Id"]];
         tabBar.selectedIndex = 1;
+
+
+//        UITabBarItem *tabBarItem1 = [tabBar.viewControllers objectAtIndex:0].tabBarItem;
+//
+//        UIImage *selectedIcon = [UIImage imageNamed:@"statisticIcon.png"];
+//        [tabBarItem1 setSelectedImage:selectedIcon];
+//        [[[tabBar.viewControllers objectAtIndex:0] tabBarItem]setFinishedSelectedImage:[UIImage imageNamed:@"abcd.png"] withFinishedUnselectedImage:[UIImage imageNamed:@"statisticIcon.png"]];
+
+//        [tabBarItem1 setSelectedImage:[[UIImage imageNamed:@"statisticIcon.png"]
+//                                                                imageWithRenderingMode: UIImageRenderingModeAlwaysOriginal]];
+
+        [self.navigationController.tabBarItem setSelectedImage:[[UIImage imageNamed:@"statisticIconNormal.png"]
+                                                                imageWithRenderingMode: UIImageRenderingModeAlwaysOriginal]];
     }
 
     if ([[segue identifier] isEqualToString:@"unwindToTimePicker"])

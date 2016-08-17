@@ -41,16 +41,24 @@
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
     self.medicalCategoryArray = [[NSMutableArray alloc]init];
+    [self.tableView setUserInteractionEnabled:YES];
 
     //start animation
     [self.currentWindow addSubview:self.backgroundView];
     [self.activityIndicator startAnimating];
 
-    [self loadMedicalRecordDataFromAPI];
+
 
     //stop animation
-    [self.activityIndicator stopAnimating];
-    [self.backgroundView removeFromSuperview];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            //get the newest info of current doctor
+            [self loadMedicalRecordDataFromAPI];
+            [self.activityIndicator stopAnimating];
+            [self.backgroundView removeFromSuperview];
+            self.view.userInteractionEnabled = YES;
+        });
+    });
 
 
 
@@ -92,13 +100,14 @@
     CGFloat screenWidth = screenRect.size.width;
     CGFloat screenHeight = screenRect.size.height;
 
-    self.backgroundView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
-    self.backgroundView.backgroundColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.5];
-    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    self.backgroundView = [[UIView alloc]initWithFrame:CGRectMake(screenWidth/2-20,screenHeight/2-20 , 40, 40)];
+    self.backgroundView.backgroundColor = [UIColor clearColor];
+    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     self.activityIndicator.center = CGPointMake(self.backgroundView .frame.size.width/2, self.backgroundView .frame.size.height/2);
     [self.backgroundView  addSubview:self.activityIndicator];
     self.currentWindow = [UIApplication sharedApplication].keyWindow;
-    
+
+   
 }
 
 - (void)didReceiveMemoryWarning {
@@ -416,6 +425,7 @@
 
     self.selectedMedicalRecord = medicalRecordArray;
     self.selectedCategory = [self.medicalCategoryArray objectAtIndex:indexPath.row] ;
+    [self.tableView setUserInteractionEnabled:NO];
     [self performSegueWithIdentifier:@"showMedicalRecord" sender:self];
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }

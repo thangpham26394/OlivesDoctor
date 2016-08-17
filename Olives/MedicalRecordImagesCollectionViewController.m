@@ -335,9 +335,42 @@ static NSString * const reuseIdentifier = @"medicalRecordImage";
 
 -(IBAction)addImage:(id)sender{
     UIImagePickerController *myImagePicker = [[UIImagePickerController alloc] init];
-    myImagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-    myImagePicker.delegate = self;
-    [self presentViewController:myImagePicker animated:YES completion:nil];
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Select Image..."
+                                                                             message:@"What would you like to open?"
+                                                                      preferredStyle:UIAlertControllerStyleActionSheet];
+
+
+
+    UIAlertAction *cameraAction = [UIAlertAction actionWithTitle:@"Camera"
+                                                         style:UIAlertActionStyleDefault
+                                                       handler:^(UIAlertAction *action) {
+                                                           myImagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
+                                                           myImagePicker.delegate = self;
+                                                           [self presentViewController:myImagePicker animated:YES completion:nil];
+                                                       }];
+    UIAlertAction *libraryAction = [UIAlertAction actionWithTitle:@"Library"
+                                                            style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction *action) {
+                                                              myImagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+                                                              myImagePicker.delegate = self;
+                                                              [self presentViewController:myImagePicker animated:YES completion:nil];
+                                                          }];
+
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel"
+                                                           style:UIAlertActionStyleCancel
+                                                         handler:nil];
+
+    [alertController addAction:cameraAction];
+    [alertController addAction:libraryAction];
+    [alertController addAction:cancelAction];
+
+
+
+
+
+
+
+    [self presentViewController:alertController animated:YES completion:nil];
 }
 
 
