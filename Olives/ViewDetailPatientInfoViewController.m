@@ -102,6 +102,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
     self.avatar.layer.cornerRadius = self.avatar.frame.size.width / 2;
     self.avatar.clipsToBounds = YES;
     self.avatar.layer.borderWidth = 1.0f;

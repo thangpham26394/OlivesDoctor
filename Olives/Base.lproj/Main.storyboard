@@ -50,7 +50,7 @@
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="slN-hb-6hl">
                                                     <rect key="frame" x="70" y="20" width="170" height="30.5"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="20"/>
+                                                    <fontDescription key="fontDescription" name="Helvetica-Light" family="Helvetica" pointSize="20"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -93,7 +93,7 @@
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yNo-KY-PmN">
                                                     <rect key="frame" x="70" y="20" width="170" height="30.5"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="20"/>
+                                                    <fontDescription key="fontDescription" name="Helvetica-Light" family="Helvetica" pointSize="20"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -142,7 +142,7 @@
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6dx-3A-v3D">
                                                     <rect key="frame" x="70" y="20" width="170" height="30.5"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="20"/>
+                                                    <fontDescription key="fontDescription" name="Helvetica-Light" family="Helvetica" pointSize="20"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -191,7 +191,7 @@
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iQb-Y2-MbZ">
                                                     <rect key="frame" x="70" y="20" width="170" height="30.5"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="20"/>
+                                                    <fontDescription key="fontDescription" name="Helvetica-Light" family="Helvetica" pointSize="20"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -240,7 +240,7 @@
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Oxt-Kb-4ta">
                                                     <rect key="frame" x="70" y="20" width="170" height="30.5"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="20"/>
+                                                    <fontDescription key="fontDescription" name="Helvetica-Light" family="Helvetica" pointSize="20"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -289,7 +289,7 @@
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PuQ-d0-N6q">
                                                     <rect key="frame" x="70" y="20" width="170" height="30.5"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="20"/>
+                                                    <fontDescription key="fontDescription" name="Helvetica-Light" family="Helvetica" pointSize="20"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -2466,12 +2466,12 @@
             </objects>
             <point key="canvasLocation" x="8026" y="-4680"/>
         </scene>
-        <!--Medical Record Table View Controller-->
+        <!--Medical-->
         <scene sceneID="UCm-SN-irl">
             <objects>
                 <tableViewController id="kUU-h1-35I" customClass="MedicalRecordTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="dYf-z8-HxX">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="551"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -2492,7 +2492,8 @@
                             <outlet property="delegate" destination="kUU-h1-35I" id="Iwk-jL-DwX"/>
                         </connections>
                     </tableView>
-                    <tabBarItem key="tabBarItem" systemItem="topRated" id="dxO-9u-qZW"/>
+                    <extendedEdge key="edgesForExtendedLayout" top="YES"/>
+                    <tabBarItem key="tabBarItem" title="Medical" image="medicalRecord01.png" id="dxO-9u-qZW"/>
                     <connections>
                         <segue destination="APW-pn-UXQ" kind="show" identifier="pickMedicalRecord" id="V1Y-Sc-CEW"/>
                     </connections>
@@ -2934,7 +2935,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" bounces="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JaJ-SL-2IN">
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JaJ-SL-2IN">
                                 <rect key="frame" x="0.0" y="64" width="600" height="487"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qXL-B4-zea" userLabel="ContentView">
@@ -3818,7 +3819,7 @@
             </objects>
             <point key="canvasLocation" x="4351" y="-2574"/>
         </scene>
-        <!--Patient Details View Controller-->
+        <!--Statistic-->
         <scene sceneID="s9g-MP-u3W">
             <objects>
                 <viewController id="UZf-iz-Lp2" customClass="PatientDetailsViewController" sceneMemberID="viewController">
@@ -3969,7 +3970,7 @@
                             <constraint firstAttribute="trailing" secondItem="FDl-ob-Vip" secondAttribute="trailing" id="xPf-RQ-lJ2"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" systemItem="recents" id="8HT-7i-5JY"/>
+                    <tabBarItem key="tabBarItem" title="Statistic" image="chiSo02.png" id="8HT-7i-5JY"/>
                     <navigationItem key="navigationItem" id="fJC-Md-QHK"/>
                     <connections>
                         <outlet property="avatarImage" destination="LgX-ih-Bwk" id="d23-fU-hkY"/>
@@ -4019,7 +4020,7 @@
             </objects>
             <point key="canvasLocation" x="5874" y="-2316"/>
         </scene>
-        <!--Prescription View Controller-->
+        <!--Prescription-->
         <scene sceneID="2Dp-zp-wOV">
             <objects>
                 <viewController id="yc6-Wo-FVx" customClass="PrescriptionViewController" sceneMemberID="viewController">
@@ -4125,7 +4126,7 @@
                             <constraint firstItem="QcQ-Mz-eAJ" firstAttribute="top" secondItem="UgV-xP-fSc" secondAttribute="bottom" id="wsS-fj-sNw"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" systemItem="contacts" id="JHV-Nj-I1M"/>
+                    <tabBarItem key="tabBarItem" title="Prescription" image="donThuoc02.png" id="JHV-Nj-I1M"/>
                     <connections>
                         <outlet property="currentTableView" destination="UgV-xP-fSc" id="pe0-Ot-jLq"/>
                         <outlet property="historyTableView" destination="tSz-Ah-yJ4" id="T2N-LK-Sql"/>
@@ -4594,7 +4595,7 @@
             </objects>
             <point key="canvasLocation" x="7290" y="-809"/>
         </scene>
-        <!--Doctor Note Table View Controller-->
+        <!--Diary-->
         <scene sceneID="r4f-Hi-b0g">
             <objects>
                 <tableViewController id="d0e-UB-UY4" customClass="DoctorNoteTableViewController" sceneMemberID="viewController">
@@ -4634,7 +4635,7 @@
                         </connections>
                     </tableView>
                     <extendedEdge key="edgesForExtendedLayout" top="YES"/>
-                    <tabBarItem key="tabBarItem" systemItem="history" id="4eH-ip-ZzC"/>
+                    <tabBarItem key="tabBarItem" title="Diary" image="nhatki01.png" id="4eH-ip-ZzC"/>
                     <connections>
                         <segue destination="LKb-GN-5wl" kind="show" identifier="updateDiary" id="oKW-n0-eRL"/>
                         <segue destination="LKb-GN-5wl" kind="show" identifier="addNewDiary" id="2Jp-Oa-IBn"/>
@@ -5707,31 +5708,35 @@
     </scenes>
     <resources>
         <image name="avatar.png" width="300" height="300"/>
+        <image name="chiSo02.png" width="25" height="25"/>
+        <image name="donThuoc02.png" width="25" height="25"/>
         <image name="homeImageBackground.jpg" width="340" height="200"/>
         <image name="homescreen2.jpg" width="744" height="1392"/>
+        <image name="medicalRecord01.png" width="25" height="25"/>
         <image name="menu.png" width="28" height="20"/>
+        <image name="nhatki01.png" width="25" height="25"/>
         <image name="sanji.jpeg" width="204" height="204"/>
         <image name="strawhat.png" width="204" height="204"/>
         <image name="zoro.jpeg" width="204" height="204"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="o2O-wy-pPe"/>
-        <segue reference="bmA-nj-e8i"/>
-        <segue reference="0hi-JC-OGj"/>
         <segue reference="byS-eb-3hF"/>
+        <segue reference="0hi-JC-OGj"/>
         <segue reference="l4a-Ba-k5I"/>
+        <segue reference="bmA-nj-e8i"/>
+        <segue reference="Vgv-jc-HXX"/>
         <segue reference="5gd-Kh-nKI"/>
-        <segue reference="LJC-eh-bQz"/>
         <segue reference="yKq-Pc-vjG"/>
         <segue reference="qjh-YP-raP"/>
         <segue reference="R5w-zO-rEK"/>
-        <segue reference="Vgv-jc-HXX"/>
+        <segue reference="o2O-wy-pPe"/>
+        <segue reference="v84-aw-FaA"/>
         <segue reference="DTx-UW-86k"/>
         <segue reference="z2S-tF-6C6"/>
-        <segue reference="kVf-YF-K2w"/>
-        <segue reference="0gn-oy-B7q"/>
-        <segue reference="hNm-4v-RHF"/>
         <segue reference="LBV-KK-3po"/>
+        <segue reference="V1Y-Sc-CEW"/>
         <segue reference="oKW-n0-eRL"/>
+        <segue reference="kVf-YF-K2w"/>
+        <segue reference="hNm-4v-RHF"/>
     </inferredMetricsTieBreakers>
 </document>

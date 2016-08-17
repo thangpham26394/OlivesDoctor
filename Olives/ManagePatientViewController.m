@@ -427,6 +427,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 //    self.currentPatientArray = [self loadPatientFromCoreData];
+    self.segmentcontroller.tintColor = [UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0];
     if (self.isNotificationView) {
         self.segmentcontroller.selectedSegmentIndex = 1;
         [self.waitingAcceptPatientView setHidden:NO];

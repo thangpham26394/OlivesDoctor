@@ -24,6 +24,11 @@
 		156A3FE91D649C06001EED7D /* statisticIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 156A3FE71D649C06001EED7D /* statisticIcon.png */; };
 		156A3FEE1D64A6D6001EED7D /* abcd.png in Resources */ = {isa = PBXBuildFile; fileRef = 156A3FED1D64A6D6001EED7D /* abcd.png */; };
 		156A3FF01D64B5F2001EED7D /* homeImageBackground.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 156A3FEF1D64B5F2001EED7D /* homeImageBackground.jpg */; };
+		156A3FF81D64E0B3001EED7D /* demo.png in Resources */ = {isa = PBXBuildFile; fileRef = 156A3FF71D64E0B3001EED7D /* demo.png */; };
+		156A3FFD1D64E6D6001EED7D /* chiSo02.png in Resources */ = {isa = PBXBuildFile; fileRef = 156A3FF91D64E6D6001EED7D /* chiSo02.png */; };
+		156A3FFE1D64E6D6001EED7D /* donThuoc02.png in Resources */ = {isa = PBXBuildFile; fileRef = 156A3FFA1D64E6D6001EED7D /* donThuoc02.png */; };
+		156A3FFF1D64E6D6001EED7D /* medicalRecord01.png in Resources */ = {isa = PBXBuildFile; fileRef = 156A3FFB1D64E6D6001EED7D /* medicalRecord01.png */; };
+		156A40001D64E6D6001EED7D /* nhatki01.png in Resources */ = {isa = PBXBuildFile; fileRef = 156A3FFC1D64E6D6001EED7D /* nhatki01.png */; };
 		15BF12671D5516E900728456 /* AddOrUpdateMedicineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BF12661D5516E900728456 /* AddOrUpdateMedicineViewController.m */; };
 		15BF126A1D56462800728456 /* AddNewMedicalNoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BF12691D56462800728456 /* AddNewMedicalNoteViewController.m */; };
 		15BF126E1D56744100728456 /* MedicalRecordExperimentNoteTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BF126D1D56744100728456 /* MedicalRecordExperimentNoteTableViewController.m */; };
@@ -226,6 +231,11 @@
 		156A3FE71D649C06001EED7D /* statisticIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = statisticIcon.png; sourceTree = "<group>"; };
 		156A3FED1D64A6D6001EED7D /* abcd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = abcd.png; sourceTree = "<group>"; };
 		156A3FEF1D64B5F2001EED7D /* homeImageBackground.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = homeImageBackground.jpg; sourceTree = "<group>"; };
+		156A3FF71D64E0B3001EED7D /* demo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = demo.png; sourceTree = "<group>"; };
+		156A3FF91D64E6D6001EED7D /* chiSo02.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = chiSo02.png; sourceTree = "<group>"; };
+		156A3FFA1D64E6D6001EED7D /* donThuoc02.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = donThuoc02.png; sourceTree = "<group>"; };
+		156A3FFB1D64E6D6001EED7D /* medicalRecord01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = medicalRecord01.png; sourceTree = "<group>"; };
+		156A3FFC1D64E6D6001EED7D /* nhatki01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nhatki01.png; sourceTree = "<group>"; };
 		15BF12651D5516E900728456 /* AddOrUpdateMedicineViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddOrUpdateMedicineViewController.h; sourceTree = "<group>"; };
 		15BF12661D5516E900728456 /* AddOrUpdateMedicineViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddOrUpdateMedicineViewController.m; sourceTree = "<group>"; };
 		15BF12681D56462800728456 /* AddNewMedicalNoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddNewMedicalNoteViewController.h; sourceTree = "<group>"; };
@@ -596,6 +606,11 @@
 		15DCF5AC1CF4A52200013F19 /* image */ = {
 			isa = PBXGroup;
 			children = (
+				156A3FF91D64E6D6001EED7D /* chiSo02.png */,
+				156A3FFA1D64E6D6001EED7D /* donThuoc02.png */,
+				156A3FFB1D64E6D6001EED7D /* medicalRecord01.png */,
+				156A3FFC1D64E6D6001EED7D /* nhatki01.png */,
+				156A3FF71D64E0B3001EED7D /* demo.png */,
 				156A3FEF1D64B5F2001EED7D /* homeImageBackground.jpg */,
 				156A3FED1D64A6D6001EED7D /* abcd.png */,
 				156A3FE61D649C06001EED7D /* statisticIconNormal.png */,
@@ -1156,12 +1171,14 @@
 				15E75A351CF73C2C00A985E7 /* blurbackground.jpg in Resources */,
 				15F010621D49644A001663CE /* messageicon.png in Resources */,
 				156A3FF01D64B5F2001EED7D /* homeImageBackground.jpg in Resources */,
+				156A3FFF1D64E6D6001EED7D /* medicalRecord01.png in Resources */,
 				15F010571D47FB8C001663CE /* cellBackground1.png in Resources */,
 				15F0105F1D49644A001663CE /* serviceicon.png in Resources */,
 				15E76B771D2F973D0028EFEB /* timeicon.png in Resources */,
 				15E75A311CF7345C00A985E7 /* backgroundIOS.jpeg in Resources */,
 				15E586121D4E50CC00C6F468 /* menuBackGround.jpg in Resources */,
 				15F0A6351D1E72EB00A32848 /* homescreen.jpg in Resources */,
+				156A3FFE1D64E6D6001EED7D /* donThuoc02.png in Resources */,
 				15E75A431CF7633600A985E7 /* homeimage.JPG in Resources */,
 				15FA33BF1D59D86400423421 /* Home.png in Resources */,
 				15DCF5861CF3593800013F19 /* Assets.xcassets in Resources */,
@@ -1171,18 +1188,21 @@
 				15DCF5B61CF4A65000013F19 /* nami.jpeg in Resources */,
 				15DCF5B41CF4A65000013F19 /* sanji.jpeg in Resources */,
 				15F0A63E1D1E77E100A32848 /* screen1.jpg in Resources */,
+				156A3FF81D64E0B3001EED7D /* demo.png in Resources */,
 				15FA33C01D59D86400423421 /* Logout.png in Resources */,
 				156A3FE81D649C06001EED7D /* statisticIconNormal.png in Resources */,
 				15F0A63F1D1E77E100A32848 /* patientlist.jpg in Resources */,
 				156A3FC51D606DD0001EED7D /* nullAvatar.png in Resources */,
 				15FA33BE1D59D86400423421 /* appointment.png in Resources */,
 				15FA33C21D59D86400423421 /* setting.png in Resources */,
+				156A40001D64E6D6001EED7D /* nhatki01.png in Resources */,
 				156735411D1C408700392ADA /* Main.storyboard in Resources */,
 				15F0A63B1D1E75F600A32848 /* homescreen2.jpg in Resources */,
 				15FA33C11D59D86400423421 /* MyPatient.png in Resources */,
 				15E75A491CF767F900A985E7 /* barimage.jpeg in Resources */,
 				15F0A6371D1E751F00A32848 /* homescreen1.jpg in Resources */,
 				15F0106E1D4BEBA7001663CE /* menuBG.jpg in Resources */,
+				156A3FFD1D64E6D6001EED7D /* chiSo02.png in Resources */,
 				15E586111D4E50CC00C6F468 /* homeBackGround.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

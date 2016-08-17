@@ -21,6 +21,9 @@
 @property(strong,nonatomic) NSString *partner;
 @property (strong,nonatomic) NSDictionary *responseJSONData;
 @property (strong,nonatomic) UIImage *selectedImage;
+@property (strong,nonatomic) UIView *backgroundView;
+@property (strong,nonatomic) UIActivityIndicatorView *  activityIndicator ;
+@property (strong,nonatomic) UIWindow *currentWindow;
 @end
 
 @implementation MedicalRecordImagesCollectionViewController
@@ -298,10 +301,7 @@ static NSString * const reuseIdentifier = @"medicalRecordImage";
     
 }
 
--(void)viewDidAppear:(BOOL)animated{
-    [super viewDidAppear:animated];
-    self.medicalRecordImages = [[NSMutableArray alloc]init];
-
+-(void)downloadImage{
     [self loadPartnerFromCoredata];
     [self downloadMedicalRecordImageFromAPI];
     NSArray *imageArray = [self.responseJSONData objectForKey:@"MedicalImages"];
@@ -321,6 +321,29 @@ static NSString * const reuseIdentifier = @"medicalRecordImage";
         [self.medicalRecordImages addObject:convertImage];
         [self.collectionView reloadData];
     }
+}
+
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    self.medicalRecordImages = [[NSMutableArray alloc]init];
+
+    //start animation
+    [self.currentWindow addSubview:self.backgroundView];
+    [self.activityIndicator startAnimating];
+
+
+
+    //stop animation
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            //get the newest info of current doctor
+            [self downloadImage];
+            [self.activityIndicator stopAnimating];
+            [self.backgroundView removeFromSuperview];
+            self.view.userInteractionEnabled = YES;
+        });
+    });
+
 
 }
 
@@ -335,6 +358,7 @@ static NSString * const reuseIdentifier = @"medicalRecordImage";
 
 -(IBAction)addImage:(id)sender{
     UIImagePickerController *myImagePicker = [[UIImagePickerController alloc] init];
+    myImagePicker.delegate = self;
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Select Image..."
                                                                              message:@"What would you like to open?"
                                                                       preferredStyle:UIAlertControllerStyleActionSheet];
@@ -345,14 +369,14 @@ static NSString * const reuseIdentifier = @"medicalRecordImage";
                                                          style:UIAlertActionStyleDefault
                                                        handler:^(UIAlertAction *action) {
                                                            myImagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
-                                                           myImagePicker.delegate = self;
+
                                                            [self presentViewController:myImagePicker animated:YES completion:nil];
                                                        }];
     UIAlertAction *libraryAction = [UIAlertAction actionWithTitle:@"Library"
                                                             style:UIAlertActionStyleDefault
                                                           handler:^(UIAlertAction *action) {
                                                               myImagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-                                                              myImagePicker.delegate = self;
+
                                                               [self presentViewController:myImagePicker animated:YES completion:nil];
                                                           }];
 
@@ -376,8 +400,28 @@ static NSString * const reuseIdentifier = @"medicalRecordImage";
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo
 {
-    [picker dismissViewControllerAnimated:YES completion:^{}];
+    [picker dismissViewControllerAnimated:YES completion:^{
+//        //start animation
+//        [self.currentWindow addSubview:self.backgroundView];
+//        [self.activityIndicator startAnimating];
+//
+//
+//
+//        //stop animation
+//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                //get the newest info of current doctor
+//                [self uploadMedicalRecordImageToAPI:image];
+//                [self downloadImage];
+//                [self.activityIndicator stopAnimating];
+//                [self.backgroundView removeFromSuperview];
+//                self.view.userInteractionEnabled = YES;
+//            });
+//        });
+
+    }];
     [self uploadMedicalRecordImageToAPI:image];
+
 }
 
 
@@ -395,7 +439,17 @@ static NSString * const reuseIdentifier = @"medicalRecordImage";
     [self.collectionView setShowsVerticalScrollIndicator:NO];
     // Do any additional setup after loading the view.
 
+    //set up for indicator view
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat screenWidth = screenRect.size.width;
+    CGFloat screenHeight = screenRect.size.height;
 
+    self.backgroundView = [[UIView alloc]initWithFrame:CGRectMake(screenWidth/2-20,screenHeight/2-20 , 40, 40)];
+    self.backgroundView.backgroundColor = [UIColor clearColor];
+    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    self.activityIndicator.center = CGPointMake(self.backgroundView .frame.size.width/2, self.backgroundView .frame.size.height/2);
+    [self.backgroundView  addSubview:self.activityIndicator];
+    self.currentWindow = [UIApplication sharedApplication].keyWindow;
 
 
 }

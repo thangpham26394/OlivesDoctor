@@ -54,6 +54,7 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             //get the newest info of current doctor
             [self loadMedicalRecordDataFromAPI];
+            [self.tableView reloadData];
             [self.activityIndicator stopAnimating];
             [self.backgroundView removeFromSuperview];
             self.view.userInteractionEnabled = YES;

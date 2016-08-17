@@ -198,7 +198,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    NSLog(@"TTTTT          %@",self.appointmentID);
+    [self.editOrAceptAppointment setBackgroundColor:[UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0]];
     [self.makerNoteTextView setEditable:NO];
     self.scrollView.bounces = NO;
     self.navigationController.navigationBar.translucent = NO;

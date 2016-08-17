@@ -168,7 +168,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     //setup indicator view
-
+    self.segmentController.tintColor = [UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0];
 }
 
 - (void)didReceiveMemoryWarning {
