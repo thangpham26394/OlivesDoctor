@@ -1546,41 +1546,41 @@
                   moduleName = "Olives"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/thang/Desktop/OlivesDoctorApp/Olives/ManagePatientViewController.m"
-                  timestampString = "493154125.0056"
+                  timestampString = "493157886.88674"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "645"
-                  endingLineNumber = "645"
+                  startingLineNumber = "646"
+                  endingLineNumber = "646"
                   offsetFromSymbolStart = "591">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "__copy_helper_block_.297"
+                  symbolName = "__copy_helper_block_.299"
                   moduleName = "Olives"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/thang/Desktop/OlivesDoctorApp/Olives/ManagePatientViewController.m"
-                  timestampString = "493154125.005701"
+                  timestampString = "493157886.886847"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "645"
-                  endingLineNumber = "645"
+                  startingLineNumber = "646"
+                  endingLineNumber = "646"
                   offsetFromSymbolStart = "108">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "__destroy_helper_block_.298"
+                  symbolName = "__destroy_helper_block_.300"
                   moduleName = "Olives"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/thang/Desktop/OlivesDoctorApp/Olives/ManagePatientViewController.m"
-                  timestampString = "493154125.005787"
+                  timestampString = "493157886.886936"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "645"
-                  endingLineNumber = "645"
+                  startingLineNumber = "646"
+                  endingLineNumber = "646"
                   offsetFromSymbolStart = "59">
                </Location>
             </Locations>
@@ -2105,11 +2105,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Olives/ChatViewController.m"
-            timestampString = "493047838.443822"
+            timestampString = "493157722.867352"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "476"
-            endingLineNumber = "476"
+            startingLineNumber = "473"
+            endingLineNumber = "473"
             landmarkName = "-messageReceived:"
             landmarkType = "5">
          </BreakpointContent>
@@ -2137,11 +2137,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Olives/ChatViewController.m"
-            timestampString = "493047838.443822"
+            timestampString = "493157722.867352"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "506"
-            endingLineNumber = "506"
+            startingLineNumber = "503"
+            endingLineNumber = "503"
             landmarkName = "-sendAction:"
             landmarkType = "5">
          </BreakpointContent>
@@ -2200,22 +2200,6 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Olives/PatientDetailsViewController.m"
-            timestampString = "493030349.735824"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "396"
-            endingLineNumber = "396"
-            landmarkName = "-prepareForSegue:sender:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "Olives/HomeViewController.m"
             timestampString = "493139826.539143"
             startingColumnNumber = "9223372036854775807"
@@ -2233,11 +2217,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Olives/ChatViewController.m"
-            timestampString = "493047838.443822"
+            timestampString = "493157722.867352"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "431"
-            endingLineNumber = "431"
+            startingLineNumber = "428"
+            endingLineNumber = "428"
             landmarkName = "-tableView:cellForRowAtIndexPath:"
             landmarkType = "5">
          </BreakpointContent>
@@ -2415,6 +2399,22 @@
             startingLineNumber = "221"
             endingLineNumber = "221"
             landmarkName = "-addNewPrescriptionAPI"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Olives/ChatViewController.m"
+            timestampString = "493157947.569796"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "363"
+            endingLineNumber = "363"
+            landmarkName = "-viewDidLoad"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

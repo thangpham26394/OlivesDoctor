@@ -29,7 +29,7 @@
     UIView *bgColorView = [[UIView alloc] init];
     [bgColorView.layer setCornerRadius:10.0f];
     [bgColorView.layer setMasksToBounds:NO];
-    [bgColorView setBackgroundColor:[UIColor colorWithRed:173/255.0 green:255/255.0 blue: 47/255.0 alpha:0.3f]];
+    [bgColorView setBackgroundColor:[UIColor colorWithRed:0/255.0 green:150/255.0 blue: 136/255.0 alpha:0.5f]];
 
 
     [self setSelectedBackgroundView:bgColorView];

@@ -361,8 +361,11 @@
     [self.tableView reloadData];
     [self updateTableContentInset];
     NSInteger  lastRowNumber = [self.tableView numberOfRowsInSection:0] - 1;
-    NSIndexPath* ip = [NSIndexPath indexPathForRow:lastRowNumber inSection:0];
-    [self.tableView scrollToRowAtIndexPath:ip atScrollPosition:UITableViewScrollPositionNone animated:NO];
+    if (lastRowNumber >=0) {
+        NSIndexPath* ip = [NSIndexPath indexPathForRow:lastRowNumber inSection:0];
+        [self.tableView scrollToRowAtIndexPath:ip atScrollPosition:UITableViewScrollPositionNone animated:NO];
+    }
+
     
 }
 
@@ -398,13 +401,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-
-    if (indexPath.row ==0) {
-        return 20;
-    }else{
-        return self.noteLabelHeight + 50;
-    }
-
+    return self.noteLabelHeight + 50;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {

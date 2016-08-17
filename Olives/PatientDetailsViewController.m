@@ -313,7 +313,7 @@
     self.avatarImage.clipsToBounds = YES;
     self.importantInfoTableView.layer.cornerRadius = 5;
     self.importantInfoTableView.clipsToBounds = YES;
-    self.sendMessageButton.backgroundColor = [UIColor colorWithRed:0/255.0 green:153/255.0 blue:153/255.0 alpha:1.0];
+    self.sendMessageButton.backgroundColor = [UIColor colorWithRed:0/255.0 green:150/255.0 blue:136/255.0 alpha:1.0];
 
     //set up for indicator view
     CGRect screenRect = [[UIScreen mainScreen] bounds];

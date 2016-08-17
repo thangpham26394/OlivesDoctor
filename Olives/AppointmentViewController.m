@@ -529,7 +529,7 @@
     //check if view is first loading
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"firstLoadAppointment"];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    self.segmentControlView.tintColor = [UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0];
+    self.segmentControlView.tintColor = [UIColor colorWithRed:0/255.0 green:150/255.0 blue:136/255.0 alpha:1.0];
     if (self.isShowNotification) {
         self.segmentControlView.selectedSegmentIndex =1;
     }else{
