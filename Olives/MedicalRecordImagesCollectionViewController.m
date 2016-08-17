@@ -303,6 +303,7 @@ static NSString * const reuseIdentifier = @"medicalRecordImage";
 
 -(void)downloadImage{
     [self loadPartnerFromCoredata];
+    self.medicalRecordImages = [[NSMutableArray alloc]init];
     [self downloadMedicalRecordImageFromAPI];
     NSArray *imageArray = [self.responseJSONData objectForKey:@"MedicalImages"];
 
@@ -319,7 +320,11 @@ static NSString * const reuseIdentifier = @"medicalRecordImage";
         UIImage *convertImage = [[UIImage alloc] initWithData:data];
 
         [self.medicalRecordImages addObject:convertImage];
-        [self.collectionView reloadData];
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.collectionView reloadData];
+        });
+
     }
 }
 
@@ -388,12 +393,6 @@ static NSString * const reuseIdentifier = @"medicalRecordImage";
     [alertController addAction:libraryAction];
     [alertController addAction:cancelAction];
 
-
-
-
-
-
-
     [self presentViewController:alertController animated:YES completion:nil];
 }
 
@@ -401,26 +400,27 @@ static NSString * const reuseIdentifier = @"medicalRecordImage";
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo
 {
     [picker dismissViewControllerAnimated:YES completion:^{
-//        //start animation
-//        [self.currentWindow addSubview:self.backgroundView];
-//        [self.activityIndicator startAnimating];
-//
-//
-//
-//        //stop animation
-//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                //get the newest info of current doctor
-//                [self uploadMedicalRecordImageToAPI:image];
-//                [self downloadImage];
-//                [self.activityIndicator stopAnimating];
-//                [self.backgroundView removeFromSuperview];
-//                self.view.userInteractionEnabled = YES;
-//            });
-//        });
+        //start animation
+        [self.currentWindow addSubview:self.backgroundView];
+        [self.activityIndicator startAnimating];
+
+
+
+        //stop animation
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            dispatch_async(dispatch_get_main_queue(), ^{
+                //get the newest info of current doctor
+                [self uploadMedicalRecordImageToAPI:image];
+                [self downloadImage];
+                [self.activityIndicator stopAnimating];
+                [self.backgroundView removeFromSuperview];
+                [self.collectionView reloadData];
+                self.view.userInteractionEnabled = YES;
+            });
+        });
 
     }];
-    [self uploadMedicalRecordImageToAPI:image];
+//    [self uploadMedicalRecordImageToAPI:image];
 
 }
 

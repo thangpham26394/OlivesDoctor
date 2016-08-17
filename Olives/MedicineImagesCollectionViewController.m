@@ -21,6 +21,9 @@
 @property (strong,nonatomic) NSDictionary *responseJSONData;
 @property(strong,nonatomic) NSMutableArray *prescriptionImages;
 @property (strong,nonatomic) UIImage *selectedImage;
+@property (strong,nonatomic) UIView *backgroundView;
+@property (strong,nonatomic) UIActivityIndicatorView *  activityIndicator ;
+@property (strong,nonatomic) UIWindow *currentWindow;
 @end
 
 @implementation MedicineImagesCollectionViewController
@@ -300,20 +303,9 @@ static NSString * const reuseIdentifier = @"medicineImageCell";
 }
 
 
-
-
-
-
-
-
--(void)viewDidAppear:(BOOL)animated{
-    [super viewDidAppear:animated];
-    self.prescriptionImages = [[NSMutableArray alloc]init];
-
+-(void)downloadImage{
     [self loadPartnerFromCoredata];
-    if (self.selectedPartnerID !=nil) {
-        self.partner = @"77";//self.selectedPartnerID;
-    }
+    self.prescriptionImages = [[NSMutableArray alloc]init];
     [self downloadPrescriptionImageFromAPI];
     NSArray *imageArray = [self.responseJSONData objectForKey:@"PrescriptionImages"];
 
@@ -330,9 +322,36 @@ static NSString * const reuseIdentifier = @"medicineImageCell";
         UIImage *convertImage = [[UIImage alloc] initWithData:data];
 
         [self.prescriptionImages addObject:convertImage];
-        [self.collectionView reloadData];
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.collectionView reloadData];
+        });
+        
     }
-    
+}
+
+
+
+
+
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    self.prescriptionImages = [[NSMutableArray alloc]init];
+
+    //start animation
+    [self.currentWindow addSubview:self.backgroundView];
+    [self.activityIndicator startAnimating];
+
+    //stop animation
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            //get the newest info of current doctor
+            [self downloadImage];
+            [self.activityIndicator stopAnimating];
+            [self.backgroundView removeFromSuperview];
+            self.view.userInteractionEnabled = YES;
+        });
+    });
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -346,16 +365,64 @@ static NSString * const reuseIdentifier = @"medicineImageCell";
 
 -(IBAction)addImage:(id)sender{
     UIImagePickerController *myImagePicker = [[UIImagePickerController alloc] init];
-    myImagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     myImagePicker.delegate = self;
-    [self presentViewController:myImagePicker animated:YES completion:nil];
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Select Image..."
+                                                                             message:@"What would you like to open?"
+                                                                      preferredStyle:UIAlertControllerStyleActionSheet];
+
+
+
+    UIAlertAction *cameraAction = [UIAlertAction actionWithTitle:@"Camera"
+                                                           style:UIAlertActionStyleDefault
+                                                         handler:^(UIAlertAction *action) {
+                                                             myImagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
+
+                                                             [self presentViewController:myImagePicker animated:YES completion:nil];
+                                                         }];
+    UIAlertAction *libraryAction = [UIAlertAction actionWithTitle:@"Library"
+                                                            style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction *action) {
+                                                              myImagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+
+                                                              [self presentViewController:myImagePicker animated:YES completion:nil];
+                                                          }];
+
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel"
+                                                           style:UIAlertActionStyleCancel
+                                                         handler:nil];
+
+    [alertController addAction:cameraAction];
+    [alertController addAction:libraryAction];
+    [alertController addAction:cancelAction];
+    
+    [self presentViewController:alertController animated:YES completion:nil];
 }
 
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo
 {
-    [picker dismissViewControllerAnimated:YES completion:^{}];
-    [self uploadPrescriptionImageToAPI:image];
+    [picker dismissViewControllerAnimated:YES completion:^{
+        //start animation
+        [self.currentWindow addSubview:self.backgroundView];
+        [self.activityIndicator startAnimating];
+
+
+
+        //stop animation
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            dispatch_async(dispatch_get_main_queue(), ^{
+                //get the newest info of current doctor
+                [self uploadPrescriptionImageToAPI:image];
+                [self downloadImage];
+                [self.activityIndicator stopAnimating];
+                [self.backgroundView removeFromSuperview];
+                [self.collectionView reloadData];
+                self.view.userInteractionEnabled = YES;
+            });
+        });
+        
+    }];
+
 }
 
 
@@ -369,6 +436,17 @@ static NSString * const reuseIdentifier = @"medicineImageCell";
     [self.collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:reuseIdentifier];
     
     // Do any additional setup after loading the view.
+    //set up for indicator view
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat screenWidth = screenRect.size.width;
+    CGFloat screenHeight = screenRect.size.height;
+
+    self.backgroundView = [[UIView alloc]initWithFrame:CGRectMake(screenWidth/2-20,screenHeight/2-20 , 40, 40)];
+    self.backgroundView.backgroundColor = [UIColor clearColor];
+    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    self.activityIndicator.center = CGPointMake(self.backgroundView .frame.size.width/2, self.backgroundView .frame.size.height/2);
+    [self.backgroundView  addSubview:self.activityIndicator];
+    self.currentWindow = [UIApplication sharedApplication].keyWindow;
 }
 
 - (void)didReceiveMemoryWarning {
