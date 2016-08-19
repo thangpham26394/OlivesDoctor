@@ -12,8 +12,8 @@
 #define APIURL_GET_MEDICALNOTE @"http://olive.azurewebsites.net/api/medical/note?Id="
 #define APIURL_GET_PATIENT @"http://olive.azurewebsites.net/api/patient?Id="
 #define API_MESSAGE_SEEN_URL @"http://olive.azurewebsites.net/api/message/seen"
-
-
+#define API_MESSAGE_URL @"http://olive.azurewebsites.net/api/message/filter"
+#define API_FILTER_PATIENT_URL @"http://olive.azurewebsites.net/api/patient/filter"
 
 
 
@@ -32,6 +32,7 @@
 
 @interface ShowNotificationTableViewController ()
 @property (strong,nonatomic) NSDictionary *responseJSONDataForPendingList ;
+@property (strong,nonatomic) NSDictionary *responseJSONDataForCurrentPatient;
 @property (strong,nonatomic)NSDictionary *selectedNotification;
 @property (strong,nonatomic)NSDictionary *selectedAppointment;
 @property (strong,nonatomic)NSDictionary *selectedChatNoti;
@@ -41,6 +42,8 @@
 @property (strong,nonatomic)NSMutableArray *broadcasterArray;
 @property (strong,nonatomic) NSString* selectedPatientID;
 @property (strong,nonatomic) NSDictionary *responseJSONData;
+@property (strong,nonatomic) UIView *backgroundView;
+@property (strong,nonatomic) UIActivityIndicatorView *  activityIndicator;
 @end
 
 @implementation ShowNotificationTableViewController
@@ -325,70 +328,101 @@
 
 #pragma mark - view controller
 
+-(void)viewDidAppear:(BOOL)animated{
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat screenWidth = screenRect.size.width;
+    CGFloat screenHeight = screenRect.size.height;
+
+    self.backgroundView = [[UIView alloc]initWithFrame:CGRectMake(screenWidth/2-20,screenHeight/2-20 , 40, 40)];
+    self.backgroundView.backgroundColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.5];
+    //setup indicator view
+    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    self.activityIndicator.center = CGPointMake(self.backgroundView .frame.size.width/2, self.backgroundView .frame.size.height/2);
+    [self.backgroundView  addSubview:self.activityIndicator];
+    UIWindow *currentWindow = [UIApplication sharedApplication].keyWindow;
+    [currentWindow addSubview:self.backgroundView];
+    [currentWindow bringSubviewToFront:self.backgroundView];
+
+    //start animation
+    [self.activityIndicator startAnimating];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self loadMessageDataFromAPI];
+
+            //handle chat noti data
+            if (self.notificationType ==0) {
+                self.broadcasterArray = [[NSMutableArray alloc]init];
+                NSMutableArray *totalPatientArray = [[NSMutableArray alloc]init];
+                //get distince patient
+                for (int index = 0; index < self.notifictionDataArray.count ; index ++) {
+                    NSDictionary *currentNoti = [self.notifictionDataArray objectAtIndex:index];
+                    NSString *patientId = [currentNoti objectForKey:@"Broadcaster"];
+
+                    if (![totalPatientArray containsObject:patientId]) {
+                        [totalPatientArray addObject:patientId];
+                    }
+
+                }
+
+                for (int index = 0; index <totalPatientArray.count; index++) {
+                    [self getCurrentPatientAPIWithID:[totalPatientArray objectAtIndex:index]];
+                    NSMutableDictionary *patient = [self.responseJSONDataForCurrentPatient objectForKey:@"Patient"];
+                    if (patient != nil) {
+                        NSString *currentPatientID = [patient  objectForKey:@"Id"];
+                        //get avatar
+                        UIImage *img;
+                        NSString *imgURL = [patient  objectForKey:@"Photo"];
+                        if ((id)imgURL != [NSNull null]) {
+                            NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:imgURL]];
+                            img = [[UIImage alloc] initWithData:data];
+                        }else{
+                            img = [UIImage imageNamed:@"nullAvatar"];
+                        }
+                        [patient setObject:img forKey:@"avatar"];
+
+
+                        //get the lastest message
+                        double maxtime = 0;
+                        NSDictionary *notiContentLastestMessage = [[NSDictionary alloc]init];
+                        for (int index = 0; index < self.notifictionDataArray.count ; index ++) {
+                            NSDictionary *currentNoti = [self.notifictionDataArray objectAtIndex:index];
+                            NSString *broadcasterId = [currentNoti objectForKey:@"Broadcaster"] ;
+                            if ([[currentNoti objectForKey:@"Created"] doubleValue] >maxtime   &&  [[NSString stringWithFormat:@"%@",broadcasterId] isEqualToString:[NSString stringWithFormat:@"%@",currentPatientID] ]) {
+                                maxtime = [[currentNoti objectForKey:@"Created"] doubleValue];
+                                notiContentLastestMessage = currentNoti;
+                            }
+                        }
+
+                        [patient setObject:notiContentLastestMessage forKey:@"lastestNoti"];
+
+                        if (![self.broadcasterArray containsObject:patient]) {
+                            [self.broadcasterArray addObject:patient];
+                        }
+                    }
+
+
+                    self.responseJSONDataForCurrentPatient = [[NSDictionary alloc] init];
+                }
+                //reverse broadcaster array  to make cell content unseen message show up first
+                self.broadcasterArray=[[[self.broadcasterArray reverseObjectEnumerator] allObjects] mutableCopy];
+                [self.tableView reloadData];
+                
+            }
+            [self.activityIndicator stopAnimating];
+            [self.backgroundView removeFromSuperview];
+        });
+    });
+
+
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     [self.tableView setShowsVerticalScrollIndicator:NO];
-    //back ground for tableview view
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"menuscreen.jpg"]];
-    self.tableView.backgroundView = imageView;
-
-    //handle chat noti data
-    if (self.notificationType ==0) {
-        self.broadcasterArray = [[NSMutableArray alloc]init];
-        NSMutableArray *totalPatientArray = [[NSMutableArray alloc]init];
-        //get distince patient
-        for (int index = 0; index < self.notifictionDataArray.count ; index ++) {
-            NSDictionary *currentNoti = [self.notifictionDataArray objectAtIndex:index];
-            NSString *patientId = [currentNoti objectForKey:@"Broadcaster"];
-
-            if (![totalPatientArray containsObject:patientId]) {
-                [totalPatientArray addObject:patientId];
-            }
-
-        }
-
-        for (int index = 0; index <totalPatientArray.count; index++) {
-            [self getCurrentPatientAPIWithID:[totalPatientArray objectAtIndex:index]];
-            NSMutableDictionary *patient = [self.responseJSONDataForPendingList objectForKey:@"Patient"];
-            NSString *currentPatientID = [patient  objectForKey:@"Id"];
-            //get avatar
-            UIImage *img;
-            NSString *imgURL = [patient  objectForKey:@"Photo"];
-            if ((id)imgURL != [NSNull null]) {
-                NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:imgURL]];
-                img = [[UIImage alloc] initWithData:data];
-            }else{
-                img = [UIImage imageNamed:@"nullAvatar"];
-            }
-            [patient setObject:img forKey:@"avatar"];
 
 
-            //get the lastest message
-            double maxtime = 0;
-            NSDictionary *notiContentLastestMessage = [[NSDictionary alloc]init];
-            for (int index = 0; index < self.notifictionDataArray.count ; index ++) {
-                NSDictionary *currentNoti = [self.notifictionDataArray objectAtIndex:index];
-                NSString *broadcasterId = [currentNoti objectForKey:@"Broadcaster"] ;
-                if ([[currentNoti objectForKey:@"Created"] doubleValue] >maxtime   &&  [[NSString stringWithFormat:@"%@",broadcasterId] isEqualToString:[NSString stringWithFormat:@"%@",currentPatientID] ]) {
-                    maxtime = [[currentNoti objectForKey:@"Created"] doubleValue];
-                    notiContentLastestMessage = currentNoti;
-                }
-            }
-
-            [patient setObject:notiContentLastestMessage forKey:@"lastestNoti"];
-
-            [self.broadcasterArray addObject:patient];
-
-        }
-
-
-
-
-        [self.tableView reloadData];
-
-    }
 
 }
 
@@ -422,8 +456,26 @@
     if (self.notificationType ==0) {
         NSDictionary *patientSender = [self.broadcasterArray objectAtIndex:indexPath.row];
         NSDictionary *currentNoti = [patientSender objectForKey:@"lastestNoti"];
+
+        //check if current noti content new message noti
+        BOOL isContentNewMessage = NO;
+        if (self.newestMessageDataArray.count>0) {
+            for (int index = 0; index < self.newestMessageDataArray.count; index ++) {
+                NSDictionary *currentNewMessage = [self.newestMessageDataArray objectAtIndex:index];
+                if ([[NSString stringWithFormat:@"%@",[currentNoti objectForKey:@"Broadcaster"]] isEqualToString:[NSString stringWithFormat:@"%@",[currentNewMessage objectForKey:@"Broadcaster"]]]) {
+                    isContentNewMessage = YES;
+                }
+            }
+        }
+
+        if (isContentNewMessage) {
+            cell.backgroundCardView.backgroundColor = [UIColor colorWithRed:38/255.0 green:166/255.0 blue:154/255.0 alpha:0.5];
+        }else{
+            cell.backgroundCardView.backgroundColor = [UIColor colorWithRed:224/255.0 green:224/255.0 blue:224/255.0 alpha:0.5];
+        }
+
         // Configure the cell...
-        cell.notificationMessage.text = [currentNoti objectForKey:@"Content"];
+        cell.notificationMessage.text = [NSString stringWithFormat:@"%@%@: '%@'",[patientSender objectForKey:@"FirstName"],[patientSender objectForKey:@"LastName"],[currentNoti objectForKey:@"Content"]];
         cell.avatar.image = [patientSender objectForKey:@"avatar"];
         //get notification created time
         NSString *notiTime = [currentNoti objectForKey:@"Created"];
@@ -435,7 +487,7 @@
         NSDate *notiDate = [NSDate dateWithTimeIntervalSince1970:[notiTime doubleValue]/1000];
 
         cell.notificationCreatedTime.text = [dateFormatterToLocal stringFromDate:notiDate];
-        
+
         return cell;
     }else{
         NSDictionary *currentNoti = [self.notifictionDataArray objectAtIndex:indexPath.row];
@@ -452,7 +504,21 @@
         NSDate *notiDate = [NSDate dateWithTimeIntervalSince1970:[notiTime doubleValue]/1000];
 
         cell.notificationCreatedTime.text = [dateFormatterToLocal stringFromDate:notiDate];
-        
+
+        //get avatar for notification cell
+        [self getCurrentPatientAPIWithID:[currentNoti objectForKey:@"Broadcaster"]];
+        NSMutableDictionary *patient = [self.responseJSONDataForCurrentPatient objectForKey:@"Patient"];
+
+        //get avatar
+        UIImage *img;
+        NSString *imgURL = [patient  objectForKey:@"Photo"];
+        if ((id)imgURL != [NSNull null]) {
+            NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:imgURL]];
+            img = [[UIImage alloc] initWithData:data];
+        }else{
+            img = [UIImage imageNamed:@"nullAvatar"];
+        }
+        cell.avatar.image = img;
         return cell;
     }
 
@@ -460,13 +526,22 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    self.selectedNotification = [self.notifictionDataArray objectAtIndex:indexPath.row];
+    self.selectedNotification = [self.broadcasterArray objectAtIndex:indexPath.row];
     //if selected notification field is chat notification
     if (self.notificationType == 0) {
         // get the selected notification chat
         self.selectedPatientID = [[[self.broadcasterArray objectAtIndex:indexPath.row ] objectForKey:@"lastestNoti"]objectForKey:@"Broadcaster"];
         [self putSeenMessageDataToAPIWithPatientID:self.selectedPatientID];
-        [self.broadcasterArray removeObjectAtIndex:indexPath.row];
+        for (int index =0; index < self.newestMessageDataArray.count; index ++) {
+            NSDictionary *currentUnseenMessage = [self.newestMessageDataArray objectAtIndex:index];
+            if ([[NSString stringWithFormat:@"%@",[[self.selectedNotification objectForKey:@"lastestNoti"] objectForKey:@"Broadcaster"]] isEqualToString:[NSString stringWithFormat:@"%@",[currentUnseenMessage objectForKey:@"Broadcaster"]]]) {
+                [self.newestMessageDataArray removeObject:currentUnseenMessage];
+
+            }
+
+
+        }
+
         [self.tableView reloadData];
         [self performSegueWithIdentifier:@"showChatWithPatientNoti" sender:self];
     }
@@ -565,6 +640,75 @@
 */
 #pragma mark - handle API connection
 
+-(void)loadMessageDataFromAPI{
+
+    // create url
+    NSURL *url = [NSURL URLWithString:API_MESSAGE_URL];
+    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+    //    sessionConfig.timeoutIntervalForRequest = 5.0;
+    //    sessionConfig.timeoutIntervalForResource = 5.0;
+
+    //NSURLSession *defaultSession = [NSURLSession sharedSession];
+    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:sessionConfig];
+    //create request
+    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
+
+    //get doctor email and password from coredata
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+
+    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+
+
+    //setup header and body for request
+    [urlRequest setHTTPMethod:@"POST"];
+    [urlRequest setValue:[doctor valueForKey:@"email"] forHTTPHeaderField:@"Email"];
+    [urlRequest setValue:[doctor valueForKey:@"password"]  forHTTPHeaderField:@"Password"];
+    [urlRequest setValue:@"en-US" forHTTPHeaderField:@"Accept-Language"];
+    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [urlRequest setTimeoutInterval:5];
+    NSDictionary *account = @{
+                              @"Sort":@"1",
+                              @"Mode":@"1"
+                              };
+    NSError *error = nil;
+    NSData *jsondata = [NSJSONSerialization dataWithJSONObject:account options:NSJSONWritingPrettyPrinted error:&error];
+    [urlRequest setHTTPBody:jsondata];
+    dispatch_semaphore_t    sem;
+    sem = dispatch_semaphore_create(0);
+
+    NSURLSessionDataTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
+                                                       completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+                                      {
+                                          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+
+                                          if((long)[httpResponse statusCode] == 200  && error ==nil)
+                                          {
+                                              NSError *parsJSONError = nil;
+                                              self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                              if (self.responseJSONData != nil) {
+                                                  self.notifictionDataArray = [self.responseJSONData objectForKey:@"Messages"];
+
+                                              }else{
+                                              }
+
+
+                                              //stop waiting after get response from API
+                                              dispatch_semaphore_signal(sem);
+                                          }
+                                          else{
+                                              NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+                                              NSLog(@"\n\n\nError = %@",text);
+                                              dispatch_semaphore_signal(sem);
+                                              return;
+                                          }
+                                      }];
+    [dataTask resume];
+    //start waiting until get response from API
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    
+}
 
 
 
@@ -679,8 +823,8 @@
                                           if((long)[httpResponse statusCode] == 200  && error ==nil)
                                           {
                                               NSError *parsJSONError = nil;
-                                              self.responseJSONDataForPendingList = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
-                                              if (self.responseJSONDataForPendingList != nil) {
+                                              self.responseJSONDataForCurrentPatient = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                              if (self.responseJSONDataForCurrentPatient != nil) {
                                               }else{
                                               }
                                               //stop waiting after get response from API

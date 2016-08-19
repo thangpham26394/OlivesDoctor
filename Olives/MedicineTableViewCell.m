@@ -15,7 +15,6 @@
     // Initialization code
     [self.backgroundCardView.layer setCornerRadius:5.0f];
     [self.backgroundCardView.layer setMasksToBounds:NO];
-    [self.backgroundCardView setBackgroundColor:[UIColor colorWithRed:255/255.0 green:255/255.0 blue:255/255.0 alpha:0.1]];
 
     self.contentView.backgroundColor = [UIColor clearColor];
     [self setBackgroundColor:[UIColor clearColor]];
@@ -30,8 +29,6 @@
 
     [self setSelectedBackgroundView:bgColorView];
 
-
-    self.note.backgroundColor = [UIColor colorWithWhite:1 alpha:0.3];
     [self.note.layer setCornerRadius:5.0f];
     [self.note.layer setMasksToBounds:YES];
     [self.unit sizeToFit];

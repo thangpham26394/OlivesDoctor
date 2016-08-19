@@ -476,7 +476,7 @@
     {
         ShowNotificationTableViewController *showChatView = [segue destinationViewController];
         showChatView.notificationType = 0;
-        showChatView.notifictionDataArray = (NSArray*)self.messageNotiArray;
+        showChatView.newestMessageDataArray = self.messageNotiArray;
     }
     //show notification about patient request array
     if ([[segue identifier] isEqualToString:@"showNewRequestNotification"])

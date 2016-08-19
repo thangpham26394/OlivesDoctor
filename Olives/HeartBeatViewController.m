@@ -283,6 +283,7 @@
         [colorArray addObject:[UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0]];
     }
     lineChartDataSet.circleColors = [colorArray copy];
+    lineChartDataSet.circleRadius = 4.0f;
     [self.lineChartView animateWithXAxisDuration:1.0 yAxisDuration:2.0 easingOption:ChartEasingOptionEaseInOutQuart];
     lineChartDataSet.valueTextColor = [UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0];
     self.lineChartView.data = lineCharData;

@@ -104,10 +104,11 @@
     }
     self.contentViewHeight.constant = [[UIScreen mainScreen] bounds].size.height - [UIApplication sharedApplication].statusBarFrame.size.height - self.navigationController.navigationBar.frame.size.height;
 
-    [self.saveButton.layer setCornerRadius:self.saveButton.frame.size.height/2+1];
+    [self.saveButton.layer setCornerRadius:5.0f];
     self.saveButton.backgroundColor = [UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0];
 
     self.genderBackground.layer.cornerRadius = 5.0f;
+    self.genderSegment.tintColor = [UIColor colorWithRed:0/255.0 green:150/255.0 blue:136/255.0 alpha:1.0];
 
     //get the current doctor data
     NSManagedObjectContext *context = [self managedObjectContext];

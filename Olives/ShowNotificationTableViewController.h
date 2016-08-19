@@ -10,5 +10,6 @@
 
 @interface ShowNotificationTableViewController : UITableViewController
 @property(strong,nonatomic) NSArray * notifictionDataArray;
+@property(strong,nonatomic) NSMutableArray * newestMessageDataArray;
 @property(assign,nonatomic) NSInteger notificationType;
 @end

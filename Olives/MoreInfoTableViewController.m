@@ -18,6 +18,11 @@
 
 @implementation MoreInfoTableViewController
 
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    self.navigationController.topViewController.title=@"More Info";
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     

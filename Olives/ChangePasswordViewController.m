@@ -117,7 +117,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.saveButton.backgroundColor = [UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0];
-    [self.saveButton.layer setCornerRadius:self.saveButton.frame.size.height/2+1];
+    [self.saveButton.layer setCornerRadius:5.0f];
     [self setupGestureRecognizer];
 }
 

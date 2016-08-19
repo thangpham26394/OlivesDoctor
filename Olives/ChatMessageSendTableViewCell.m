@@ -14,7 +14,7 @@
     [super awakeFromNib];
     // Initialization code
 //    self.message.userInteractionEnabled = NO;
-    self.bgCardView.layer.cornerRadius = 10.0f;
+    self.bgCardView.layer.cornerRadius = 5.0f;
     [self.bgCardView.layer setMasksToBounds:NO];
 //    self.message.layer.cornerRadius = 5.0f;
 //    self.message.backgroundColor = [UIColor clearColor];

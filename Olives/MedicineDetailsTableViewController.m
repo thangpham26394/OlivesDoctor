@@ -90,13 +90,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
-    //back ground for tableview view
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"menuscreen.jpg"]];
-    self.tableView.backgroundView = imageView;
-
-
-
-
 }
 
 - (void)didReceiveMemoryWarning {

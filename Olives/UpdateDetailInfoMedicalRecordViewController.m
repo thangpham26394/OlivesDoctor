@@ -182,10 +182,76 @@
     }
 }
 
+- (void)registerForKeyboardNotifications {
 
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardDidShow:)
+                                                 name:UIKeyboardDidShowNotification
+                                               object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillBeHidden:)
+                                                 name:UIKeyboardWillHideNotification
+                                               object:nil];
+}
+
+- (void)deregisterFromKeyboardNotifications {
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:UIKeyboardDidHideNotification
+                                                  object:nil];
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:UIKeyboardWillHideNotification
+                                                  object:nil];
+}
+
+- (void)keyboardDidShow:(NSNotification *)notification
+{
+    NSDictionary* info = [notification userInfo];
+    CGRect kbRect = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue];
+
+    kbRect = [self.view convertRect:kbRect fromView:nil];
+
+    UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, kbRect.size.height, 0.0);
+    self.scrollView.contentInset = contentInsets;
+    self.scrollView.scrollIndicatorInsets = contentInsets;
+
+    CGRect aRect = self.view.frame;
+    aRect.size.height -= kbRect.size.height;
+    if ([self.textView isFirstResponder] ) {
+        [self.scrollView scrollRectToVisible:self.textView.frame animated:YES];
+    }
+}
+
+- (void)keyboardWillBeHidden:(NSNotification *)notification
+{
+    UIEdgeInsets contentInsets = UIEdgeInsetsZero;
+    self.scrollView.contentInset = contentInsets;
+    self.scrollView.scrollIndicatorInsets = contentInsets;
+}
+
+-(void) setupGestureRecognizerToDisMissKeyBoard {
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGestureToDisMissKeyBoard:)];
+    [self.contentView addGestureRecognizer:tapGesture];
+}
+
+- (void)handleTapGestureToDisMissKeyBoard:(UIPanGestureRecognizer *)recognizer{
+    [self.textField resignFirstResponder];
+    [self.textView resignFirstResponder];
+}
+
+
+- (void)viewWillDisappear:(BOOL)animated {
+
+    [self deregisterFromKeyboardNotifications];
+    [super viewWillDisappear:animated];
+
+}
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
-
+    [self registerForKeyboardNotifications];
+    [self setupGestureRecognizerToDisMissKeyBoard];
     if (self.isUpdateView) {
         self.navigationController.topViewController.title=@"Update info";
     }else{
@@ -207,6 +273,7 @@
         self.textView.text = [self.totalInfo objectForKey:self.selectedInfoKey];
         [self.deleteOrCancalButton setTitle:@"Delete" forState:UIControlStateNormal];
     }
+    self.textView.layer.cornerRadius = 5.0f;
 }
 
 - (void)didReceiveMemoryWarning {

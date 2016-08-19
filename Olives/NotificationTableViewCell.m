@@ -20,10 +20,10 @@
 
     [self.backgroundCardView.layer setCornerRadius:5.0f];
     [self.backgroundCardView.layer setMasksToBounds:NO];
-    [self.backgroundCardView setBackgroundColor:[UIColor colorWithWhite:1 alpha:0.3]];
 
-    self.contentView.backgroundColor = [UIColor clearColor];
-    [self setBackgroundColor:[UIColor clearColor]];
+
+//    self.contentView.backgroundColor = [UIColor clearColor];
+//    [self setBackgroundColor:[UIColor clearColor]];
     // set up for selected cell
     self.selectionStyle = UITableViewCellSelectionStyleDefault;
     UIView *bgColorView = [[UIView alloc] init];
