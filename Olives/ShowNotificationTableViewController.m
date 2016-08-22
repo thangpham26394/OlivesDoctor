@@ -600,8 +600,6 @@
 
     }
 
-    NSString *selectedNotiID = [self.selectedNotification objectForKey:@"Id"];
-//    [self putSeenNotificationToAPIWithID:selectedNotiID];
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 

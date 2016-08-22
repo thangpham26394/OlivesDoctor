@@ -359,10 +359,10 @@
     self.serviceNotiView.layer.cornerRadius = 5.0f;
 
     //self.messageNotiView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.5];
-    self.messageImage.image = [UIImage imageNamed:@"messageicon.png"];
-    self.patientRequestImage.image = [UIImage imageNamed:@"requesticon.png"];
-    self.appointmentImage.image = [UIImage imageNamed:@"newAppointmentIcon.png"];
-    self.serviceImage.image = [UIImage imageNamed:@"serviceicon.png"];
+    self.messageImage.image = [UIImage imageNamed:@"messageNoti.png"];
+    self.patientRequestImage.image = [UIImage imageNamed:@"patientRequestNoti.png"];
+    self.appointmentImage.image = [UIImage imageNamed:@"appointmentNoti.png"];
+    self.serviceImage.image = [UIImage imageNamed:@"medicalNoti.png"];
 
 
     SWRevealViewController *revealViewController = self.revealViewController;
