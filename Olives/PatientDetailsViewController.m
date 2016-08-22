@@ -253,6 +253,9 @@
         NSString *timeCreate = [formatter stringFromDate:createdDate];
 
         NSString *infoString = [prescriptionDic objectForKey:@"Info"];
+        if ((id)infoString == [NSNull null]) {
+            infoString = @"";
+        }
         NSError *jsonError;
         NSData *objectData = [infoString dataUsingEncoding:NSUTF8StringEncoding];
         NSMutableDictionary *currentDic = [NSJSONSerialization JSONObjectWithData:objectData

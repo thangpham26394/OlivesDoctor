@@ -75,10 +75,10 @@
 
                                           nil];
 
-//        if ([[medicalRecord valueForKey:@"medicalRecordID" ] isEqual:[NSString stringWithFormat:@"%@",[self.medicalRecordDic objectForKey:@"Id"]]]) {
-//            self.medicalRecordDic = medicalRecordDic;
-//        }
-        [medicalRecordArray addObject:medicalRecordDic];
+        if ([[NSString stringWithFormat:@"%@",[medicalCategoryDic objectForKey:@"Id"]] isEqualToString:[NSString stringWithFormat:@"%@",[self.selectedCategory objectForKey:@"Id"]]] ) {
+            [medicalRecordArray addObject:medicalRecordDic];
+        }
+
 
     }
 

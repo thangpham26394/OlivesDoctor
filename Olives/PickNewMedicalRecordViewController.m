@@ -208,7 +208,7 @@
     self.tableView.layer.cornerRadius = 10.0f;
 
     self.choseButton.backgroundColor = [UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0];
-    [self.choseButton.layer setCornerRadius:self.choseButton.frame.size.height/2+1];
+    [self.choseButton.layer setCornerRadius:5.0f];
     self.isAlreadySelected = NO;
 }
 

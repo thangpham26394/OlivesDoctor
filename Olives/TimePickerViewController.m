@@ -198,12 +198,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    [self.editOrAceptAppointment setBackgroundColor:[UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0]];
+//    [self.editOrAceptAppointment setBackgroundColor:[UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0]];
     [self.makerNoteTextView setEditable:NO];
     self.scrollView.bounces = NO;
     self.navigationController.navigationBar.translucent = NO;
     self.sendButton.backgroundColor = [UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0];
-    [self.sendButton.layer setCornerRadius:self.sendButton.frame.size.height/2+1];
 
     self.contentViewHeight.constant = [[UIScreen mainScreen] bounds].size.height - [UIApplication sharedApplication].statusBarFrame.size.height - self.navigationController.navigationBar.frame.size.height;
 
