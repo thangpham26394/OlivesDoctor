@@ -328,6 +328,21 @@
 
 #pragma mark - view controller
 
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:YES];
+    if (self.notificationType ==0) {
+        self.navigationController.topViewController.title=@"Chat notifications";
+    }
+    if (self.notificationType ==2) {
+        self.navigationController.topViewController.title=@"Appointment notifications";
+    }
+    if (self.notificationType ==3) {
+        self.navigationController.topViewController.title=@"Medical notifications";
+    }
+
+}
+
+
 -(void)viewDidAppear:(BOOL)animated{
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     CGFloat screenWidth = screenRect.size.width;
