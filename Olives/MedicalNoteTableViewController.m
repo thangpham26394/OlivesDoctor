@@ -121,7 +121,10 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-    [self reloadDataFromCoreData];
+    if (!self.isNotificationView) {
+        [self reloadDataFromCoreData];
+    }
+
     NSString *time = [self.medicalRecordDic objectForKey:@"Time"];
     NSString *name = [self.medicalRecordDic objectForKey:@"Name"];
 
@@ -185,11 +188,26 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 5) {
-        [self performSegueWithIdentifier:@"editMedicalRecord" sender:self];
+        if (!self.canEdit) {
+            [self showAlertError:@"You don't have permission in this medical record"];
+        }else{
+            [self performSegueWithIdentifier:@"editMedicalRecord" sender:self];
+        }
+
     }
 }
 
-
+//show alert message for error
+-(void)showAlertError:(NSString *)errorString{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:errorString
+                                                                   message:nil
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {}];
+    [alert addAction:OKAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
 
 //- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 //    UITableViewCell *cell;
@@ -253,28 +271,32 @@
         {
             ShowDetailInfoMedicalRecordTableViewController *medicalRecordDetail = [segue destinationViewController];
             medicalRecordDetail.selectedMedicalRecord = self.medicalRecordDic;
+            medicalRecordDetail.canEdit = self.canEdit;
         }
         if ([[segue identifier] isEqualToString:@"medicalRecordPrescription"])
         {
             MedicalRecordPresctiptionTableViewController *medicalRecordPrescriptionDetail = [segue destinationViewController];
             medicalRecordPrescriptionDetail.medicalRecordID = [self.medicalRecordDic objectForKey:@"Id"];
+            medicalRecordPrescriptionDetail.canEdit = self.canEdit;
         }
         if ([[segue identifier] isEqualToString:@"medicalRecordNoteDetail"])
         {
             MedicalRecordNoteDetailTableViewController *medicalRecordNoteDetail = [segue destinationViewController];
             medicalRecordNoteDetail.selectedMedicalRecord = self.medicalRecordDic;
+            medicalRecordNoteDetail.canEdit = self.canEdit;
         }
         if ([[segue identifier] isEqualToString:@"showMedicalRecordImages"])
         {
             MedicalRecordImagesCollectionViewController *medicalRecordImage= [segue destinationViewController];
             medicalRecordImage.medicalRecordID = [self.medicalRecordDic objectForKey:@"Id"];
+            medicalRecordImage.canEdit = self.canEdit;
 
         }
     if ([[segue identifier] isEqualToString:@"showExperimentNote"])
     {
         ExperimentNoteGeneralTableViewController *medicalRecordExperimentNote= [segue destinationViewController];
         medicalRecordExperimentNote.medicalRecordID = [self.medicalRecordDic objectForKey:@"Id"];
-
+        medicalRecordExperimentNote.canEdit = self.canEdit;
     }
     if ([[segue identifier] isEqualToString:@"editMedicalRecord"])
     {

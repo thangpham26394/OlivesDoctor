@@ -363,10 +363,11 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
 
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self loadMessageDataFromAPI];
 
             //handle chat noti data
             if (self.notificationType ==0) {
+                [self loadMessageDataFromAPI];
+                self.notifictionDataArray=[[[self.notifictionDataArray reverseObjectEnumerator] allObjects] mutableCopy];
                 self.broadcasterArray = [[NSMutableArray alloc]init];
                 NSMutableArray *totalPatientArray = [[NSMutableArray alloc]init];
                 //get distince patient
@@ -420,7 +421,7 @@
                     self.responseJSONDataForCurrentPatient = [[NSDictionary alloc] init];
                 }
                 //reverse broadcaster array  to make cell content unseen message show up first
-                self.broadcasterArray=[[[self.broadcasterArray reverseObjectEnumerator] allObjects] mutableCopy];
+//                self.broadcasterArray=[[[self.broadcasterArray reverseObjectEnumerator] allObjects] mutableCopy];
                 [self.tableView reloadData];
                 
             }
@@ -541,9 +542,10 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    self.selectedNotification = [self.broadcasterArray objectAtIndex:indexPath.row];
+
     //if selected notification field is chat notification
     if (self.notificationType == 0) {
+        self.selectedNotification = [self.broadcasterArray objectAtIndex:indexPath.row];
         // get the selected notification chat
         self.selectedPatientID = [[[self.broadcasterArray objectAtIndex:indexPath.row ] objectForKey:@"lastestNoti"]objectForKey:@"Broadcaster"];
         [self putSeenMessageDataToAPIWithPatientID:self.selectedPatientID];
@@ -553,23 +555,22 @@
                 [self.newestMessageDataArray removeObject:currentUnseenMessage];
 
             }
-
-
         }
 
-        [self.tableView reloadData];
+        //[self.tableView reloadData];
         [self performSegueWithIdentifier:@"showChatWithPatientNoti" sender:self];
     }
 
     if (self.notificationType == 2) {
         // get the selected notification appointment
+        self.selectedNotification = [self.notifictionDataArray objectAtIndex:indexPath.row];
         self.selectedAppointment = [self loadAppointmentDataFromAPIWithID:[self.selectedNotification objectForKey:@"Record"]];
         self.selectedPatientID = [self.selectedNotification objectForKey:@"Broadcaster"];
         [self performSegueWithIdentifier:@"showDetailAppointmentNoti" sender:self];
     }
     if (self.notificationType == 3) {
         // get the selected notification medical record
-
+        self.selectedNotification = [self.notifictionDataArray objectAtIndex:indexPath.row];
         self.selectedPatientID = [self.selectedNotification objectForKey:@"Broadcaster"];
 
 
@@ -683,7 +684,8 @@
     [urlRequest setTimeoutInterval:5];
     NSDictionary *account = @{
                               @"Sort":@"1",
-                              @"Mode":@"1"
+                              @"Mode":@"1",
+                              @"Direction":@"1"
                               };
     NSError *error = nil;
     NSData *jsondata = [NSJSONSerialization dataWithJSONObject:account options:NSJSONWritingPrettyPrinted error:&error];
@@ -1164,6 +1166,7 @@
     {
         MedicalNoteTableViewController *medicalRecordDetail = [segue destinationViewController];
         medicalRecordDetail.medicalRecordDic = [self.selectedMedicalRecord objectForKey:@"MedicalRecord"];
+        medicalRecordDetail.isNotificationView = YES;
     }
 
     //show notification about medical image

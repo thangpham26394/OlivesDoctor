@@ -2551,8 +2551,8 @@
                                             <rect key="frame" x="0.0" y="0.0" width="567" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Detail Informations" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="X9z-c9-ef6">
-                                                    <rect key="frame" x="15" y="12" width="136.5" height="19.5"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="General Informations" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="X9z-c9-ef6">
+                                                    <rect key="frame" x="15" y="12" width="151.5" height="19.5"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -2793,7 +2793,7 @@
                                                     <constraint firstAttribute="height" constant="40" id="YQg-uw-l1f"/>
                                                 </constraints>
                                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                                <state key="normal" title="Button">
+                                                <state key="normal" title="Save">
                                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
                                                 <connections>
@@ -3500,7 +3500,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="567" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Blood Suger" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="tF2-xb-Rvh">
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Blood Sugar" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="tF2-xb-Rvh">
                                                     <rect key="frame" x="15" y="13" width="88.5" height="18.5"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="16"/>
@@ -3664,7 +3664,7 @@
                                                                             <nil key="highlightedColor"/>
                                                                         </label>
                                                                     </subviews>
-                                                                    <color key="backgroundColor" red="0.8292566536" green="0.8292566536" blue="0.8292566536" alpha="1" colorSpace="calibratedRGB"/>
+                                                                    <color key="backgroundColor" red="0.92516770290000006" green="0.92516770290000006" blue="0.92516770290000006" alpha="1" colorSpace="calibratedRGB"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="bottom" secondItem="Z7v-8q-Di8" secondAttribute="bottom" constant="5" id="G4p-DZ-V05"/>
                                                                         <constraint firstItem="Z7v-8q-Di8" firstAttribute="leading" secondItem="8Xg-Tm-YxO" secondAttribute="leading" constant="5" id="VIC-qu-775"/>
@@ -4329,7 +4329,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
-                                            <color key="backgroundColor" red="0.83783949607329844" green="0.83783949607329844" blue="0.83783949607329844" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="backgroundColor" red="0.92516770290000006" green="0.92516770290000006" blue="0.92516770290000006" alpha="1" colorSpace="calibratedRGB"/>
                                             <constraints>
                                                 <constraint firstItem="ozm-EL-JfO" firstAttribute="height" secondItem="6ie-hk-3B7" secondAttribute="height" id="Fjl-5X-KHw"/>
                                                 <constraint firstItem="ozm-EL-JfO" firstAttribute="top" secondItem="6ie-hk-3B7" secondAttribute="top" id="Ghy-VY-75V"/>
@@ -4801,7 +4801,7 @@
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                 </textView>
                                             </subviews>
-                                            <color key="backgroundColor" red="0.8292566536" green="0.8292566536" blue="0.8292566536" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="backgroundColor" red="0.92516770290000006" green="0.92516770290000006" blue="0.92516770290000006" alpha="1" colorSpace="calibratedRGB"/>
                                             <constraints>
                                                 <constraint firstItem="wl4-bL-cMK" firstAttribute="top" secondItem="eQS-Jr-A9y" secondAttribute="top" constant="10" id="4DX-gc-tKP"/>
                                                 <constraint firstItem="CTb-E9-vNr" firstAttribute="width" secondItem="wl4-bL-cMK" secondAttribute="width" id="KvJ-r1-3Fq"/>
@@ -4813,7 +4813,7 @@
                                             </constraints>
                                         </view>
                                     </subviews>
-                                    <color key="backgroundColor" red="0.92516770290000006" green="0.92516770290000006" blue="0.92516770290000006" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <constraints>
                                         <constraint firstItem="eQS-Jr-A9y" firstAttribute="top" secondItem="pgb-7p-fzZ" secondAttribute="top" constant="5" id="AHm-QP-291"/>
                                         <constraint firstItem="eQS-Jr-A9y" firstAttribute="leading" secondItem="pgb-7p-fzZ" secondAttribute="leading" constant="5" id="Wyn-vQ-Bom"/>
@@ -5699,23 +5699,23 @@
         <image name="zoro.jpeg" width="204" height="204"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="l4a-Ba-k5I"/>
-        <segue reference="byS-eb-3hF"/>
-        <segue reference="0hi-JC-OGj"/>
-        <segue reference="LJC-eh-bQz"/>
-        <segue reference="yKq-Pc-vjG"/>
-        <segue reference="R5w-zO-rEK"/>
-        <segue reference="pcU-gL-Sv4"/>
-        <segue reference="5gd-Kh-nKI"/>
-        <segue reference="qjh-YP-raP"/>
+        <segue reference="o2O-wy-pPe"/>
         <segue reference="bmA-nj-e8i"/>
+        <segue reference="0hi-JC-OGj"/>
+        <segue reference="byS-eb-3hF"/>
+        <segue reference="l4a-Ba-k5I"/>
+        <segue reference="LJC-eh-bQz"/>
+        <segue reference="5gd-Kh-nKI"/>
+        <segue reference="pcU-gL-Sv4"/>
+        <segue reference="qjh-YP-raP"/>
+        <segue reference="yKq-Pc-vjG"/>
         <segue reference="Vgv-jc-HXX"/>
         <segue reference="DTx-UW-86k"/>
         <segue reference="z2S-tF-6C6"/>
-        <segue reference="0gn-oy-B7q"/>
-        <segue reference="kVf-YF-K2w"/>
         <segue reference="4NF-RN-mxh"/>
-        <segue reference="o2O-wy-pPe"/>
+        <segue reference="wkR-0j-gpv"/>
+        <segue reference="kVf-YF-K2w"/>
+        <segue reference="0gn-oy-B7q"/>
         <segue reference="oKW-n0-eRL"/>
     </inferredMetricsTieBreakers>
 </document>

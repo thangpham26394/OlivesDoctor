@@ -10,5 +10,5 @@
 
 @interface MedicalRecordNoteDetailTableViewController : UITableViewController
 @property (strong,nonatomic) NSDictionary *selectedMedicalRecord;
-
+@property (assign,nonatomic)BOOL canEdit;
 @end

@@ -10,4 +10,6 @@
 
 @interface MedicalNoteTableViewController : UITableViewController
 @property (strong,nonatomic) NSDictionary *medicalRecordDic;
+@property (assign,nonatomic)BOOL isNotificationView;
+@property (assign,nonatomic)BOOL canEdit;
 @end

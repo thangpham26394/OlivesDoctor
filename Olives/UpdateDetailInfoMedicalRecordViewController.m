@@ -324,14 +324,33 @@
 
 
 - (IBAction)saveAction:(id)sender {
-    if (self.isUpdateView) {
-        //edit an exist info string
-        [self performSegueWithIdentifier:@"updateInfoUnwind" sender:self];
+    if (self.canEdit) {
+        if (self.isUpdateView) {
+            //edit an exist info string
+            [self performSegueWithIdentifier:@"updateInfoUnwind" sender:self];
+        }else{
+            //add new info string
+            [self performSegueWithIdentifier:@"addNewInfoUnwind" sender:self];
+        }
     }else{
-        //add new info string
-        [self performSegueWithIdentifier:@"addNewInfoUnwind" sender:self];
+        [self showAlertError:@"You don't have permission in this medical record"];
     }
+
 }
+
+//show alert message for error
+-(void)showAlertError:(NSString *)errorString{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:errorString
+                                                                   message:nil
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {}];
+    [alert addAction:OKAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+
 
 - (IBAction)deleteAction:(id)sender {
     if (self.isUpdateView) {

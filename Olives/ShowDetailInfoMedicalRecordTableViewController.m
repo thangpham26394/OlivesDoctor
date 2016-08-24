@@ -54,7 +54,7 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
-    self.navigationController.topViewController.title=@"Medical Info";
+    self.navigationController.topViewController.title=@"General Info";
     //setup barbutton
     UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc]
                                        initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addInfo:)];
@@ -63,9 +63,24 @@
 }
 
 -(IBAction)addInfo:(id)sender{
+    if (!self.canEdit) {
+        [self showAlertError:@"You don't have permission in this medical record"];
+        return;
+    }
     [self performSegueWithIdentifier:@"addMedicalRecordInfo" sender:self];
 }
 
+//show alert message for error
+-(void)showAlertError:(NSString *)errorString{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:errorString
+                                                                   message:nil
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {}];
+    [alert addAction:OKAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
@@ -116,7 +131,12 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // get the selected string string info
     self.selectedInfoKey = [[self.info allKeys] objectAtIndex:indexPath.row];
-    [self performSegueWithIdentifier:@"updateMedicalRecordInfo" sender:self];
+    if (!self.canEdit) {
+        [self showAlertError:@"You don't have permission in this medical record"];
+    }else{
+        [self performSegueWithIdentifier:@"updateMedicalRecordInfo" sender:self];
+    }
+
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
@@ -168,6 +188,7 @@
         UpdateDetailInfoMedicalRecordViewController *updateMedicalRecordDetail = [segue destinationViewController];
         updateMedicalRecordDetail.totalInfo = [self.info mutableCopy];
         updateMedicalRecordDetail.selectedMedicalRecord = self.selectedMedicalRecord;
+        updateMedicalRecordDetail.canEdit = self.canEdit;
     }
     if ([[segue identifier] isEqualToString:@"updateMedicalRecordInfo"])
     {
@@ -175,6 +196,7 @@
         updateMedicalRecordDetail.totalInfo = self.info ;
         updateMedicalRecordDetail.selectedMedicalRecord = self.selectedMedicalRecord;//for get id and category id of medical record that selected
         updateMedicalRecordDetail.selectedInfoKey = self.selectedInfoKey;
+        updateMedicalRecordDetail.canEdit = self.canEdit;
     }
 }
 

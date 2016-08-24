@@ -10,5 +10,5 @@
 
 @interface ExperimentNoteGeneralTableViewController : UITableViewController
 @property (strong,nonatomic) NSString *medicalRecordID;
-
+@property (assign,nonatomic)BOOL canEdit;
 @end

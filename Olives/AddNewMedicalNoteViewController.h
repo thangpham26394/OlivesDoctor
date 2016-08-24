@@ -11,4 +11,5 @@
 @interface AddNewMedicalNoteViewController : UIViewController
 @property (strong,nonatomic) NSString *selectedMedicalRecordId;
 @property(strong,nonatomic) NSDictionary *selectedMedicalNote;
+@property (assign,nonatomic)BOOL canEdit;
 @end

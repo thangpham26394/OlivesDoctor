@@ -330,6 +330,7 @@ static NSString * const reuseIdentifier = @"medicalRecordImage";
 
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
+    [self.view setUserInteractionEnabled:YES];
     self.medicalRecordImages = [[NSMutableArray alloc]init];
 
     //start animation
@@ -361,7 +362,23 @@ static NSString * const reuseIdentifier = @"medicalRecordImage";
     self.navigationController.topViewController.navigationItem.rightBarButtonItem = rightBarButton;
 }
 
+//show alert message for error
+-(void)showAlertError:(NSString *)errorString{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:errorString
+                                                                   message:nil
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {}];
+    [alert addAction:OKAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
 -(IBAction)addImage:(id)sender{
+    if (!self.canEdit) {
+        [self showAlertError:@"You don't have permission in this medical record"];
+        return;
+    }
     UIImagePickerController *myImagePicker = [[UIImagePickerController alloc] init];
     myImagePicker.delegate = self;
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Select Image..."
@@ -446,7 +463,7 @@ static NSString * const reuseIdentifier = @"medicalRecordImage";
 
     self.backgroundView = [[UIView alloc]initWithFrame:CGRectMake(screenWidth/2-20,screenHeight/2-20 , 40, 40)];
     self.backgroundView.backgroundColor = [UIColor clearColor];
-    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     self.activityIndicator.center = CGPointMake(self.backgroundView .frame.size.width/2, self.backgroundView .frame.size.height/2);
     [self.backgroundView  addSubview:self.activityIndicator];
     self.currentWindow = [UIApplication sharedApplication].keyWindow;
@@ -516,6 +533,7 @@ static NSString * const reuseIdentifier = @"medicalRecordImage";
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath  {
     self.selectedImage = [self.medicalRecordImages objectAtIndex:indexPath.row];
+    [self.view setUserInteractionEnabled:NO];
     [self performSegueWithIdentifier:@"showMedicalRecordPhoto" sender:self];
 }
 

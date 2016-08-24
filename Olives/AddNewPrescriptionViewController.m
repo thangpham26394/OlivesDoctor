@@ -463,14 +463,32 @@
 }
 */
 
+//show alert message for error
+-(void)showAlertError:(NSString *)errorString{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:errorString
+                                                                   message:nil
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {}];
+    [alert addAction:OKAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+
 - (IBAction)savePrescriptionAction:(id)sender {
-    if (self.selectedMedicalRecordId ==nil) {
-        //this view is used for edit prescription
-        [self editwPrescriptionAPI];
+    if (self.canEdit) {
+        if (self.selectedMedicalRecordId ==nil) {
+            //this view is used for edit prescription
+            [self editwPrescriptionAPI];
+        }else{
+            //this view is used for add new prescription
+            [self addNewPrescriptionAPI];
+        }
     }else{
-        //this view is used for add new prescription
-        [self addNewPrescriptionAPI];
+        [self showAlertError:@"You don't have permission in this medical record"];
     }
+
 
     [self.navigationController popViewControllerAnimated:YES];
 }

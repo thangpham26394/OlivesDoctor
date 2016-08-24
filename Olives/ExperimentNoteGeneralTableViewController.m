@@ -348,6 +348,10 @@
 
 }
 -(IBAction)addInfo:(id)sender{
+    if (!self.canEdit) {
+        [self showAlertError:@"You don't have permission in this medical record"];
+        return;
+    }
     // show popup view here
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     CGFloat screenWidth = screenRect.size.width;
@@ -483,6 +487,17 @@
                      completion:^(BOOL finished){ [self.popupView removeFromSuperview]; }];
 }
 
+//show alert message for error
+-(void)showAlertError:(NSString *)errorString{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:errorString
+                                                                   message:nil
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {}];
+    [alert addAction:OKAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -585,8 +600,9 @@
     {
         MedicalRecordExperimentNoteTableViewController *medicalRecordExperimentNote= [segue destinationViewController];
         medicalRecordExperimentNote.experimentNoteID = [self.selectedExperimentNote objectForKey:@"Id"];
-
+        medicalRecordExperimentNote.canEdit = self.canEdit;
     }
+
 }
 
 

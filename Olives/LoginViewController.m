@@ -101,15 +101,16 @@
 
     [super viewWillAppear:animated];
     [self registerForKeyboardNotifications];
-
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"loginViewLoaded"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
 
     [self deregisterFromKeyboardNotifications];
-
     [super viewWillDisappear:animated];
-    
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"loginViewLoaded"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (void)registerForKeyboardNotifications {
@@ -205,20 +206,28 @@
 
                                           if((long)[httpResponse statusCode] == 200  && error ==nil)
                                           {
-
                                               NSError *parsJSONError = nil;
                                               self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
                                               if (self.responseJSONData !=nil) {
-                                                  self.canLogin = YES;
+                                                  if ([ [NSString stringWithFormat:@"%@", [[self.responseJSONData objectForKey:@"User"] objectForKey:@"Role"]] isEqual:@"3"]) {
+                                                      self.canLogin = YES;
+                                                  }else
+                                                  {
+                                                      dispatch_async(dispatch_get_main_queue(), ^{
+                                                          [self showAlertError:@"Invalid email or password"];
+                                                      });
+                                                      self.canLogin = NO;
+                                                  }
+
                                               }else{
+                                                  dispatch_async(dispatch_get_main_queue(), ^{
+                                                      [self showAlertError:@"Cannot connect to server"];
+                                                  });
                                                   self.canLogin = NO;
                                               }
 
-
-
                                               //stop waiting after get response from API
                                               dispatch_semaphore_signal(sem);
-
                                           }
                                           else{
                                               self.canLogin = NO;
@@ -238,27 +247,25 @@
                                                   dispatch_semaphore_signal(sem);
                                                   return;
                                               }
+                                              else{
+                                                  NSDictionary *errorDic = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                                  NSArray *errorArray = [errorDic objectForKey:@"Errors"];
+                                                  //                                              NSLog(@"\n\n\nError = %@",[errorArray objectAtIndex:0]);
 
-                                              NSDictionary *errorDic = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
-                                              NSArray *errorArray = [errorDic objectForKey:@"Errors"];
-                                              //                                              NSLog(@"\n\n\nError = %@",[errorArray objectAtIndex:0]);
+                                                  dispatch_async(dispatch_get_main_queue(), ^{
+                                                      UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                                                                     message:[errorArray objectAtIndex:0]
+                                                                                                              preferredStyle:UIAlertControllerStyleAlert];
 
-                                              dispatch_async(dispatch_get_main_queue(), ^{
-                                                  UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error"
-                                                                                                                 message:[errorArray objectAtIndex:0]
-                                                                                                          preferredStyle:UIAlertControllerStyleAlert];
-
-                                                  UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
-                                                                                                     style:UIAlertActionStyleDefault
-                                                                                                   handler:^(UIAlertAction * action) {}];
-                                                  [alert addAction:OKAction];
-                                                  [self presentViewController:alert animated:YES completion:nil];
-                                              });
-
-
-                                              dispatch_semaphore_signal(sem);
-                                              return;
-
+                                                      UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                                                                         style:UIAlertActionStyleDefault
+                                                                                                       handler:^(UIAlertAction * action) {}];
+                                                      [alert addAction:OKAction];
+                                                      [self presentViewController:alert animated:YES completion:nil];
+                                                  });
+                                                  dispatch_semaphore_signal(sem);
+                                                  return;
+                                              }
                                           }
 
                                       }];
@@ -280,6 +287,18 @@
 
     }
 
+}
+
+//show alert message for error
+-(void)showAlertError:(NSString *)errorString{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:errorString
+                                                                   message:nil
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {}];
+    [alert addAction:OKAction];
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 -(IBAction)loginButton:(id)sender{
@@ -305,7 +324,7 @@
 
     NSString * doctorID = [doctorInfo objectForKey:@"Id"];
     NSString * doctorEmail = [doctorInfo objectForKey:@"Email"];
-    NSString * doctorPassword = [doctorInfo objectForKey:@"Password"];
+    NSString * doctorPassword = self.passwordTextField.text;
     NSString * doctorFirstName = [doctorInfo objectForKey:@"FirstName"];
     NSString * doctorLastName = [doctorInfo objectForKey:@"LastName"];
     NSString * doctorBirthDay = [doctorInfo objectForKey:@"Birthday"];

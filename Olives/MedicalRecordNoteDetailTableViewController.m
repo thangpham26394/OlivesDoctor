@@ -212,6 +212,10 @@
 }
 
 -(IBAction)addInfo:(id)sender{
+    if (!self.canEdit) {
+        [self showAlertError:@"You don't have permission in this medical record"];
+        return;
+    }
     [self performSegueWithIdentifier:@"addMedicalNote" sender:self];
 }
 - (void)viewDidLoad {
@@ -227,6 +231,18 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+//show alert message for error
+-(void)showAlertError:(NSString *)errorString{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:errorString
+                                                                   message:nil
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {}];
+    [alert addAction:OKAction];
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 #pragma mark - Table view data source
@@ -272,8 +288,11 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     self.selectedMedicalNote = self.medicalNoteArray[indexPath.row];
-    [self performSegueWithIdentifier:@"editMedicalNote" sender:self];
-
+    if (!self.canEdit) {
+        [self showAlertError:@"You don't have permission in this medical record"];
+    }else{
+        [self performSegueWithIdentifier:@"editMedicalNote" sender:self];
+    }
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     
 }
@@ -323,13 +342,14 @@
     {
         AddNewMedicalNoteViewController * addNewMedicalNoteViewcontroller = [segue destinationViewController];
         addNewMedicalNoteViewcontroller.selectedMedicalRecordId = [self.selectedMedicalRecord objectForKey:@"Id"];
+        addNewMedicalNoteViewcontroller.canEdit = self.canEdit;
 
     }
     if ([[segue identifier] isEqualToString:@"editMedicalNote"])
     {
         AddNewMedicalNoteViewController * addNewMedicalNoteViewcontroller = [segue destinationViewController];
         addNewMedicalNoteViewcontroller.selectedMedicalNote = self.selectedMedicalNote;
-
+        addNewMedicalNoteViewcontroller.canEdit = self.canEdit;
     }
 }
 

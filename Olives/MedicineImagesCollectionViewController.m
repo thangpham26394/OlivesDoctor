@@ -336,6 +336,7 @@ static NSString * const reuseIdentifier = @"medicineImageCell";
 
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
+    [self.view setUserInteractionEnabled:YES];
     self.prescriptionImages = [[NSMutableArray alloc]init];
 
     //start animation
@@ -443,7 +444,7 @@ static NSString * const reuseIdentifier = @"medicineImageCell";
 
     self.backgroundView = [[UIView alloc]initWithFrame:CGRectMake(screenWidth/2-20,screenHeight/2-20 , 40, 40)];
     self.backgroundView.backgroundColor = [UIColor clearColor];
-    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     self.activityIndicator.center = CGPointMake(self.backgroundView .frame.size.width/2, self.backgroundView .frame.size.height/2);
     [self.backgroundView  addSubview:self.activityIndicator];
     self.currentWindow = [UIApplication sharedApplication].keyWindow;
@@ -513,6 +514,7 @@ static NSString * const reuseIdentifier = @"medicineImageCell";
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath  {
     self.selectedImage = [self.prescriptionImages objectAtIndex:indexPath.row];
+    [self.view setUserInteractionEnabled:NO];
     [self performSegueWithIdentifier:@"showMedicinePhoto" sender:self];
 }
 

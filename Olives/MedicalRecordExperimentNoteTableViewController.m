@@ -208,6 +208,11 @@
 }
 
 -(IBAction)addInfo:(id)sender{
+    if (!self.canEdit) {
+        [self showAlertError:@"You don't have permission in this medical record"];
+        return;
+    }
+
     [self showPopUpViewForEdit:NO];
 }
 
@@ -360,6 +365,18 @@
     [UIView animateWithDuration:0.5
                      animations:^{self.popupView .alpha = 0.0;}
                      completion:^(BOOL finished){ [self.popupView removeFromSuperview]; }];
+}
+
+//show alert message for error
+-(void)showAlertError:(NSString *)errorString{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:errorString
+                                                                   message:nil
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {}];
+    [alert addAction:OKAction];
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 - (void)viewDidLoad {

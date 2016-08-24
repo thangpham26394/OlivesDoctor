@@ -10,5 +10,5 @@
 
 @interface MedicalRecordExperimentNoteTableViewController : UIViewController<UITextFieldDelegate>
 @property (strong,nonatomic) NSString *experimentNoteID;
-
+@property (assign,nonatomic)BOOL canEdit;
 @end

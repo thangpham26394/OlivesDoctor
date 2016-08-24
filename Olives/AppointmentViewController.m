@@ -443,7 +443,6 @@
                                                   [self loadAppointmentFromCoreDataWhenAPIFailFrom:minDate To:maxDate];
                                               }
 
-
                                               //stop waiting after get response from API
                                               dispatch_semaphore_signal(sem);
                                           }
@@ -1070,7 +1069,7 @@
              cell.backgroundColor = [UIColor whiteColor];
          }else{
              //cell for not active appointment
-             cell.backgroundColor = [UIColor lightGrayColor];
+             cell.backgroundColor = [UIColor colorWithRed:230/255.0 green:230/255.0 blue:230/255.0 alpha:1.0];
              if ([[NSString stringWithFormat:@"%@",[[startAndEndTime objectAtIndex:indexPath.row]  objectForKey:@"status"]] isEqual:@"0"]) {
                  cell.timeLabel.text = @"Canceled";
                  cell.timeLabel.textColor = [UIColor redColor];
@@ -1115,7 +1114,7 @@
          if ([[NSString stringWithFormat:@"%@",[appointmentDic objectForKey:@"Status"]] isEqual:@"4"]) {
              cell.timeLabel.text = @"Expired";
              cell.timeLabel.textColor = [UIColor redColor];
-             cell.backgroundColor = [UIColor lightGrayColor];
+             cell.backgroundColor = [UIColor colorWithRed:230/255.0 green:230/255.0 blue:230/255.0 alpha:1.0];
          }else{
              cell.timeLabel.textColor = [UIColor lightGrayColor];
              cell.backgroundColor = [UIColor whiteColor];

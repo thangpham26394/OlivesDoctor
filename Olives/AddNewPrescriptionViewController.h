@@ -11,4 +11,5 @@
 @interface AddNewPrescriptionViewController : UIViewController
 @property(strong,nonatomic) NSString*selectedMedicalRecordId;
 @property(strong,nonatomic) NSDictionary *selectedPrescription;
+@property (assign,nonatomic)BOOL canEdit;
 @end

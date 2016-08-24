@@ -18,6 +18,8 @@
 @property(strong,nonatomic) UITextField *stringTextField;
 @property(strong,nonatomic) UIDatePicker *experimentDatePicker;
 @property(strong,nonatomic) UIView *popupView;
+@property(strong,nonatomic) NSMutableArray *cannotEditArray;
+@property (assign,nonatomic)BOOL canEdit;
 - (IBAction)createNewMedicalRecord:(id)sender;
 @end
 
@@ -75,7 +77,7 @@
 
                                           nil];
 
-        if ([[NSString stringWithFormat:@"%@",[medicalCategoryDic objectForKey:@"Id"]] isEqualToString:[NSString stringWithFormat:@"%@",[self.selectedCategory objectForKey:@"Id"]]] ) {
+        if ([[NSString stringWithFormat:@"%@",[medicalCategoryDic objectForKey:@"Id"]] isEqualToString:[NSString stringWithFormat:@"%@",[self.selectedCategory objectForKey:@"Id"]]] && [[NSString stringWithFormat:@"%@",[medicalRecordDic objectForKey:@"Owner"]] isEqualToString:[NSString stringWithFormat:@"%@",self.selectedPatientID]]) {
             [medicalRecordArray addObject:medicalRecordDic];
         }
 
@@ -249,6 +251,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     NSLog(@"TTTTTTTTT  %@",self.selectedCategory);
+    self.cannotEditArray = [[NSMutableArray alloc]init];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -281,6 +284,24 @@
     NSDictionary *dic = [self.medicalRecordArray objectAtIndex:indexPath.row];
     NSString *name = [dic objectForKey:@"Name"];
     NSString *time = [dic objectForKey:@"Time"];
+    NSString *creator = [dic objectForKey:@"Creator"];
+
+    //check if current medical record is create by doctor or not
+    //get doctor email and password from coredata
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+
+    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+
+    NSString *currentDoctorID = [doctor valueForKey:@"doctorID"] ;
+
+    if (![creator isEqualToString:currentDoctorID]) {
+        cell.backgroundColor = [UIColor colorWithRed:230/255.0 green:230/255.0 blue:230/255.0 alpha:1.0];
+        [self.cannotEditArray addObject:[NSString stringWithFormat:@"%ld", (long)indexPath.row ]];
+    }else{
+        cell.backgroundColor = [UIColor whiteColor];
+    }
 
     if ((id)name != [NSNull null] && ![name isEqual:[NSString stringWithFormat:@"<null>"]])  {
         cell.textLabel.text = name;
@@ -309,8 +330,14 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // Do some stuff when the row is selected
     self.selectedMedicalRecord = [self.medicalRecordArray objectAtIndex:indexPath.row];
+    //check if current medical record can edit or not
+    self.canEdit = YES;
+    for (int index =0; index < self.cannotEditArray.count; index ++) {
+        if ( [self.cannotEditArray containsObject: [NSString stringWithFormat:@"%ld",(long)indexPath.row]] ) {
+            self.canEdit = NO;
+        }
+    }
     [self performSegueWithIdentifier:@"medicalNoteAndDetailInfo" sender:self];
-
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
@@ -498,6 +525,8 @@
     {
         MedicalNoteTableViewController *medicalRecordDetail = [segue destinationViewController];
         medicalRecordDetail.medicalRecordDic = self.selectedMedicalRecord;
+        medicalRecordDetail.canEdit = self.canEdit;
+        
     }
 
 }

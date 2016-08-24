@@ -13,4 +13,5 @@
 @property(strong,nonatomic) NSMutableDictionary *totalInfo;
 @property(strong,nonatomic) NSDictionary *selectedMedicalRecord;
 @property(strong,nonatomic) NSString *selectedInfoKey;
+@property (assign,nonatomic)BOOL canEdit;
 @end

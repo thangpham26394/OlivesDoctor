@@ -225,17 +225,16 @@
                                               self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
                                               if (self.responseJSONData != nil) {
                                                   [self saveMedicalRecordToCoreData];
-                                                  [self showSucces];
+                                                  dispatch_async(dispatch_get_main_queue(), ^{
+                                                      [self showSucces];
+                                                  });
+
 
                                               }else{
-                                                  UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Internet Error"
-                                                                                                                 message:nil
-                                                                                                          preferredStyle:UIAlertControllerStyleAlert];
-                                                  UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
-                                                                                                     style:UIAlertActionStyleDefault
-                                                                                                   handler:^(UIAlertAction * action) {}];
-                                                  [alert addAction:OKAction];
-                                                  [self presentViewController:alert animated:YES completion:nil];
+                                                  dispatch_async(dispatch_get_main_queue(), ^{
+                                                      [self showAlertError:@"Cannot connect to server"];
+                                                  });
+
 
                                               }
 
@@ -245,33 +244,29 @@
                                           else{
                                               NSError *parsJSONError = nil;
                                               if (data ==nil) {
-                                                  UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Internet Error"
-                                                                                                                 message:nil
-                                                                                                          preferredStyle:UIAlertControllerStyleAlert];
-                                                  UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
-                                                                                                     style:UIAlertActionStyleDefault
-                                                                                                   handler:^(UIAlertAction * action) {}];
-                                                  [alert addAction:OKAction];
-                                                  [self presentViewController:alert animated:YES completion:nil];
-                                                  dispatch_semaphore_signal(sem);
+                                                  dispatch_async(dispatch_get_main_queue(), ^{
+                                                      [self showAlertError:@"Cannot connect to server"];
+                                                  });
 
+                                                  dispatch_semaphore_signal(sem);
+                                                  return;
+                                              }else{
+                                                  NSDictionary *errorDic = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                                  NSArray *errorArray = [errorDic objectForKey:@"Errors"];
+                                                  dispatch_async(dispatch_get_main_queue(), ^{
+                                                      if (errorArray != nil) {
+                                                          [self showAlertError:[errorArray objectAtIndex:0]];
+                                                      }else{
+                                                          [self showAlertError:@"Edit failed!"];
+                                                      }
+
+                                                  });
+
+                                                  dispatch_semaphore_signal(sem);
                                                   return;
                                               }
-                                              NSDictionary *errorDic = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
-                                              NSArray *errorArray = [errorDic objectForKey:@"Errors"];
-                                              //                                              NSLog(@"\n\n\nError = %@",[errorArray objectAtIndex:0]);
+                                              
 
-                                              UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error"
-                                                                                                             message:[errorArray objectAtIndex:0]
-                                                                                                      preferredStyle:UIAlertControllerStyleAlert];
-
-                                              UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
-                                                                                                 style:UIAlertActionStyleDefault
-                                                                                               handler:^(UIAlertAction * action) {}];
-                                              [alert addAction:OKAction];
-                                              [self presentViewController:alert animated:YES completion:nil];
-                                              dispatch_semaphore_signal(sem);
-                                              return;
                                           }
                                       }];
     [dataTask resume];
@@ -279,7 +274,19 @@
     dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
 }
 
-
+//show alert message for error
+-(void)showAlertError:(NSString *)errorString{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:errorString
+                                                                   message:nil
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {
+                                                         [self.navigationController popViewControllerAnimated:YES];
+                                                     }];
+    [alert addAction:OKAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
 
 
 #pragma mark - View delegate

@@ -275,7 +275,12 @@
             patientId = [[selectedAppointment objectForKey:@"Dater"] objectForKey:@"Id"];
         }
         self.makerNoteTextView.text = [selectedAppointment objectForKey:@"Note"];
-        self.noteLabel.text =   [selectedAppointment objectForKey:@"LastModifiedNote"];
+        if ([selectedAppointment objectForKey:@"LastModifiedNote"] == [NSNull null] || [[selectedAppointment objectForKey:@"LastModifiedNote"] isEqualToString:@"<null>"]) {
+            self.noteLabel.text =   @"";
+        }else{
+            self.noteLabel.text =   [selectedAppointment objectForKey:@"LastModifiedNote"];
+        }
+
         //set up dateformater to local time
         NSDateFormatter * dateFormatToLocal = [[NSDateFormatter alloc] init];
         [dateFormatToLocal setTimeZone:[NSTimeZone systemTimeZone]];
@@ -352,7 +357,12 @@
             patientId = [[selectedAppointment objectForKey:@"Dater"] objectForKey:@"Id"];
         }
         self.makerNoteTextView.text = [selectedAppointment objectForKey:@"Note"];
-        self.noteLabel.text =   [selectedAppointment objectForKey:@"LastModifiedNote"];
+        if ([selectedAppointment objectForKey:@"LastModifiedNote"] == [NSNull null] || [[selectedAppointment objectForKey:@"LastModifiedNote"] isEqualToString:@"<null>"]) {
+            self.noteLabel.text =   @"";
+        }else{
+            self.noteLabel.text =   [selectedAppointment objectForKey:@"LastModifiedNote"];
+        }
+
         //set up dateformater to local time
         NSDateFormatter * dateFormatToLocal = [[NSDateFormatter alloc] init];
         [dateFormatToLocal setTimeZone:[NSTimeZone systemTimeZone]];

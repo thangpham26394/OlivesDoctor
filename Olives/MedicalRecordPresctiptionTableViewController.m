@@ -208,6 +208,10 @@
 }
 
 -(IBAction)addInfo:(id)sender{
+    if (!self.canEdit) {
+        [self showAlertError:@"You don't have permission in this medical record"];
+        return;
+    }
     [self performSegueWithIdentifier:@"addMedicalRecordPrescription" sender:self];
 }
 - (void)viewDidLoad {
@@ -269,10 +273,28 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     self.selectedPrescription = self.prescriptionArray[indexPath.row];
-    [self performSegueWithIdentifier:@"medicalRecordPrescriptionShowDetail" sender:self];
+    if (!self.canEdit) {
+        [self showAlertError:@"You don't have permission in this medical record"];
+    }else{
+        [self performSegueWithIdentifier:@"medicalRecordPrescriptionShowDetail" sender:self];
+    }
+
 
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 
+}
+
+
+//show alert message for error
+-(void)showAlertError:(NSString *)errorString{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:errorString
+                                                                   message:nil
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {}];
+    [alert addAction:OKAction];
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 /*
@@ -326,7 +348,7 @@
     {
         AddNewPrescriptionViewController * addNewPrescriptionViewcontroller = [segue destinationViewController];
         addNewPrescriptionViewcontroller.selectedMedicalRecordId = self.medicalRecordID;
-
+        addNewPrescriptionViewcontroller.canEdit = self.canEdit;
     }
 
 
