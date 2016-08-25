@@ -22,6 +22,16 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.lineChartView setHidden:NO];
+    //config time for data
+    NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
+    [formatter setTimeZone:[NSTimeZone systemTimeZone]];
+    [formatter setLocale:[NSLocale systemLocale]];
+    [formatter setDateFormat:@"MM/dd/yyyy"];
+
+
+
+
+
     self.chartName = [[self.displayDataDic allKeys] objectAtIndex:0];
     NSArray *displayData = [self.displayDataDic objectForKey:self.chartName];
     NSMutableArray *timeArray = [[NSMutableArray alloc]init];
@@ -31,9 +41,10 @@
         NSDictionary *currentDic = displayData[index];
         NSString *key = [[currentDic allKeys] objectAtIndex:0];
         NSString *value = [currentDic objectForKey:key];
+        NSTimeInterval dateTimeInterval = [value doubleValue]/1000;
+        NSDate *createdDate = [NSDate dateWithTimeIntervalSince1970:dateTimeInterval];
 
-
-        [timeArray addObject:value];
+        [timeArray addObject:[formatter stringFromDate:createdDate]];
         [valueArray addObject:key];
     }
 

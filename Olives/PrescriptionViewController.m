@@ -21,7 +21,8 @@
 @property (strong,nonatomic) UIView *backgroundView;
 @property (strong,nonatomic) UIActivityIndicatorView *  activityIndicator ;
 @property (strong,nonatomic) UIWindow *currentWindow;
-
+@property(strong,nonatomic) NSMutableArray *cannotEditArray;
+@property (assign,nonatomic)BOOL canEdit;
 - (IBAction)changeSegment:(id)sender;
 
 @end
@@ -240,6 +241,7 @@
     self.currentTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     self.historyTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     self.segmentController.tintColor = [UIColor colorWithRed:0/255.0 green:150/255.0 blue:136/255.0 alpha:1.0];
+    self.cannotEditArray = [[NSMutableArray alloc]init];
 
     //set up for indicator view
     CGRect screenRect = [[UIScreen mainScreen] bounds];
@@ -252,6 +254,7 @@
     self.activityIndicator.center = CGPointMake(self.backgroundView .frame.size.width/2, self.backgroundView .frame.size.height/2);
     [self.backgroundView  addSubview:self.activityIndicator];
     self.currentWindow = [UIApplication sharedApplication].keyWindow;
+
 
 }
 
@@ -315,10 +318,24 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell;
+    //get doctor email and password from coredata
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
     if (self.segmentController.selectedSegmentIndex ==0) {
         cell = [self.currentTableView dequeueReusableCellWithIdentifier:@"currentCell" forIndexPath:indexPath];
 
         NSString *prescriptioneName = [self.currentPrescription[indexPath.row] objectForKey:@"Name"];
+        NSString *creator = [self.currentPrescription[indexPath.row]  objectForKey:@"Creator"];
+        //check if current prescription is create by doctor or not
+        NSString *currentDoctorID = [doctor valueForKey:@"doctorID"] ;
+        if (![[NSString stringWithFormat:@"%@",creator] isEqual:[NSString stringWithFormat:@"%@",currentDoctorID]]) {
+            cell.backgroundColor = [UIColor colorWithRed:230/255.0 green:230/255.0 blue:230/255.0 alpha:1.0];
+            [self.cannotEditArray addObject:[NSString stringWithFormat:@"%ld", (long)indexPath.row ]];
+        }else{
+            cell.backgroundColor = [UIColor whiteColor];
+        }
 
         if ((id)prescriptioneName != [NSNull null]) {
             cell.textLabel.text = prescriptioneName;
@@ -331,7 +348,16 @@
         cell = [self.historyTableView dequeueReusableCellWithIdentifier:@"historyCell" forIndexPath:indexPath];
 
         NSString *prescriptioneName = [self.historyPrescription[indexPath.row] objectForKey:@"Name"];
-
+        NSString *creator = [self.currentPrescription[indexPath.row]  objectForKey:@"Creator"];
+        //check if current prescription is create by doctor or not
+        NSString *currentDoctorID = [doctor valueForKey:@"doctorID"] ;
+        if (![[NSString stringWithFormat:@"%@",creator] isEqual:[NSString stringWithFormat:@"%@",currentDoctorID]]) {
+            cell.backgroundColor = [UIColor colorWithRed:230/255.0 green:230/255.0 blue:230/255.0 alpha:1.0];
+            [self.cannotEditArray addObject:[NSString stringWithFormat:@"%ld", (long)indexPath.row ]];
+        }else{
+            cell.backgroundColor = [UIColor whiteColor];
+        }
+        
         if ((id)prescriptioneName != [NSNull null]  && ![prescriptioneName isEqual:@"<null>"]) {
             cell.textLabel.text = prescriptioneName;
         }else{
@@ -349,6 +375,13 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    //check if current medical record can edit or not
+    self.canEdit = YES;
+    for (int index =0; index < self.cannotEditArray.count; index ++) {
+        if ( [self.cannotEditArray containsObject: [NSString stringWithFormat:@"%ld",(long)indexPath.row]] ) {
+            self.canEdit = NO;
+        }
+    }
     if (self.segmentController.selectedSegmentIndex ==0) {
         self.selectedPrescription = self.currentPrescription[indexPath.row];
         [self performSegueWithIdentifier:@"prescriptionShowDetail" sender:self];
@@ -360,6 +393,7 @@
     }
 }
 - (IBAction)changeSegment:(id)sender {
+    self.cannotEditArray = [[NSMutableArray alloc]init];
     switch (self.segmentController.selectedSegmentIndex)
     {
         case 0:
@@ -388,6 +422,7 @@
     {
         MedicineTableViewController * medicineTableViewcontroller = [segue destinationViewController];
         medicineTableViewcontroller.selectedPrescriptionID = [self.selectedPrescription objectForKey:@"Id"];
+        medicineTableViewcontroller.canEdit = self.canEdit;
     }
 
     

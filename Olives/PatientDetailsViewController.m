@@ -242,15 +242,7 @@
     NSMutableDictionary *dataDic = [[NSMutableDictionary alloc] init];
     for (int index=0; index < self.experimentArray.count; index ++) {
         NSDictionary *prescriptionDic = self.experimentArray[index];
-
-        NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
-        [formatter setTimeZone:[NSTimeZone systemTimeZone]];
-        [formatter setLocale:[NSLocale systemLocale]];
-        [formatter setDateFormat:@"MM/dd/yyyy"];
-
-        NSTimeInterval dateTimeInterval = [[prescriptionDic objectForKey:@"Time"] doubleValue]/1000;
-        NSDate *createdDate = [NSDate dateWithTimeIntervalSince1970:dateTimeInterval];
-        NSString *timeCreate = [formatter stringFromDate:createdDate];
+        NSString *timeCreate = [prescriptionDic objectForKey:@"Time"] ;
 
         NSString *infoString = [prescriptionDic objectForKey:@"Info"];
         if ((id)infoString == [NSNull null]) {
@@ -377,7 +369,21 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // Do some stuff when the row is selected
     NSString *key = [[self.dictionaryForDisplay allKeys] objectAtIndex:indexPath.row];
-    self.selectedDataDic =[NSDictionary dictionaryWithObjectsAndKeys:[self.dictionaryForDisplay objectForKey:key],key, nil] ;
+    NSMutableArray *valueArray = [self.dictionaryForDisplay objectForKey:key];
+
+    //sort value array by time
+    for (int i =0; i < valueArray.count -1; i ++) {
+        for (int j =i+1; j <valueArray.count; j++) {
+            if ([[valueArray[i] objectForKey:[[valueArray[i] allKeys] objectAtIndex:0 ]] doubleValue] >  [[valueArray[j] objectForKey:[[valueArray[j] allKeys] objectAtIndex:0 ]] doubleValue]) {
+                NSDictionary *tempDic = valueArray[i];
+                valueArray[i] = valueArray[j];
+                valueArray[j] = tempDic;
+
+            }
+        }
+    }
+
+    self.selectedDataDic =[NSDictionary dictionaryWithObjectsAndKeys:valueArray,key, nil] ;
     [self performSegueWithIdentifier:@"showChartView" sender:self];
     [self.importantInfoTableView deselectRowAtIndexPath:indexPath animated:YES];
 }
