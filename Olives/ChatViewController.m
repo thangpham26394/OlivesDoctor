@@ -172,6 +172,9 @@
                                               if (self.responseJSONData != nil) {
                                                   self.connectToAPISuccess = YES;
                                               }else{
+                                                  dispatch_async(dispatch_get_main_queue(), ^{
+                                                      [self showAlertError:@"Can't connect to server"];
+                                                  });
                                               }
 
 
@@ -179,8 +182,18 @@
                                               dispatch_semaphore_signal(sem);
                                           }
                                           else{
-                                              NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
-                                              NSLog(@"\n\n\nError = %@",text);
+                                              if (data ==nil) {
+                                                  dispatch_async(dispatch_get_main_queue(), ^{
+                                                      [self showAlertError:@"Can't connect to server"];
+                                                  });
+                                              }else{
+                                                  NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+                                                  NSLog(@"\n\n\nError = %@",text);
+                                                  dispatch_async(dispatch_get_main_queue(), ^{
+                                                      [self showAlertError:text];
+                                                  });
+                                              }
+
                                               dispatch_semaphore_signal(sem);
                                               return;
                                           }
@@ -253,6 +266,18 @@
     [self.messageTextView resignFirstResponder];
 }
 
+//show alert message for error
+-(void)showAlertError:(NSString *)errorString{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:errorString
+                                                                   message:nil
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {}];
+    [alert addAction:OKAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
 
 #pragma mark - View delegate
 - (void)viewWillAppear:(BOOL)animated {
@@ -260,6 +285,7 @@
     [super viewWillAppear:animated];
     [self registerForKeyboardNotifications];
     [self setupGestureRecognizerToDisMissKeyBoard];
+    self.navigationController.topViewController.title = self.patientName;
 
 }
 -(void)viewDidAppear:(BOOL)animated{

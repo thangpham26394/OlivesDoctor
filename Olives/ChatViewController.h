@@ -11,4 +11,5 @@
 @interface ChatViewController : UIViewController
 @property(strong,nonatomic) NSString *selectedPatientID;
 @property(strong,nonatomic) NSArray *unseenMessage;
+@property (strong,nonatomic) NSString *patientName;
 @end

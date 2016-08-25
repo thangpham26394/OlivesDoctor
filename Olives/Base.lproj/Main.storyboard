@@ -1534,7 +1534,7 @@
                                 <rect key="frame" x="0.0" y="64" width="600" height="536"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hGs-2T-f7h" userLabel="ContentView">
-                                        <rect key="frame" x="0.0" y="0.0" width="600" height="570"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="500"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0Nr-5n-oCe" userLabel="ChosingPatient">
                                                 <rect key="frame" x="10" y="15" width="580" height="130"/>
@@ -1633,7 +1633,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cT6-Er-m8y">
-                                                <rect key="frame" x="0.0" y="530" width="600" height="40"/>
+                                                <rect key="frame" x="0.0" y="460" width="600" height="40"/>
                                                 <color key="backgroundColor" red="0.43824625830000002" green="0.7082583442" blue="0.65507155159999997" alpha="1" colorSpace="calibratedRGB"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="40" id="P98-QT-HZH"/>
@@ -1664,7 +1664,7 @@
                                                 </date>
                                             </datePicker>
                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="7dJ-uK-cXe">
-                                                <rect key="frame" x="10" y="402" width="580" height="98"/>
+                                                <rect key="frame" x="10" y="402" width="580" height="28"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -1683,7 +1683,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="maq-9X-gki">
-                                                <rect key="frame" x="0.0" y="530" width="300" height="40"/>
+                                                <rect key="frame" x="300" y="460" width="300" height="40"/>
                                                 <color key="backgroundColor" red="0.29799450709999997" green="0.53249754579999997" blue="0.51509440080000002" alpha="1" colorSpace="calibratedRGB"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="40" id="ytw-dd-vmu"/>
@@ -1694,17 +1694,6 @@
                                                 </state>
                                                 <connections>
                                                     <action selector="cancelPendingAppointment:" destination="Ewy-Hm-5VS" eventType="touchUpInside" id="rHx-ar-cjN"/>
-                                                </connections>
-                                            </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xgO-4y-Fzy">
-                                                <rect key="frame" x="300" y="530" width="300" height="40"/>
-                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
-                                                <state key="normal" title="Edit Appointment">
-                                                    <color key="titleColor" red="0.29799450709999997" green="0.53249754579999997" blue="0.51509440080000002" alpha="1" colorSpace="calibratedRGB"/>
-                                                </state>
-                                                <connections>
-                                                    <action selector="editOrAcceptAppointmentButton:" destination="Ewy-Hm-5VS" eventType="touchUpInside" id="NEh-3s-LxT"/>
                                                 </connections>
                                             </button>
                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="note from maker and can not edit " textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="58z-fG-O1k">
@@ -1719,29 +1708,39 @@
                                                     <outlet property="delegate" destination="Ewy-Hm-5VS" id="uJm-AU-HBT"/>
                                                 </connections>
                                             </textView>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xgO-4y-Fzy">
+                                                <rect key="frame" x="0.0" y="460" width="300" height="40"/>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                                <state key="normal" title="Edit Appointment">
+                                                    <color key="titleColor" red="0.29799450709999997" green="0.53249754579999997" blue="0.51509440080000002" alpha="1" colorSpace="calibratedRGB"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="editOrAcceptAppointmentButton:" destination="Ewy-Hm-5VS" eventType="touchUpInside" id="NEh-3s-LxT"/>
+                                                </connections>
+                                            </button>
                                         </subviews>
                                         <color key="backgroundColor" red="0.7871809555" green="0.7871809555" blue="0.7871809555" alpha="1" colorSpace="calibratedRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="bottom" secondItem="xgO-4y-Fzy" secondAttribute="bottom" id="0W4-sO-tuq"/>
-                                            <constraint firstAttribute="height" constant="570" id="4OD-Y2-h6Q"/>
+                                            <constraint firstAttribute="height" constant="500" id="4OD-Y2-h6Q"/>
                                             <constraint firstItem="0Nr-5n-oCe" firstAttribute="top" secondItem="hGs-2T-f7h" secondAttribute="top" constant="15" id="9A0-fY-uuf"/>
                                             <constraint firstItem="7dJ-uK-cXe" firstAttribute="centerX" secondItem="hGs-2T-f7h" secondAttribute="centerX" id="9nv-xG-sZL"/>
+                                            <constraint firstAttribute="trailing" secondItem="maq-9X-gki" secondAttribute="trailing" id="A0o-oR-mgZ"/>
                                             <constraint firstItem="7dJ-uK-cXe" firstAttribute="leading" secondItem="IKO-AF-OnD" secondAttribute="leading" id="EOX-c5-hgM"/>
                                             <constraint firstItem="7dJ-uK-cXe" firstAttribute="trailing" secondItem="58z-fG-O1k" secondAttribute="trailing" id="Eap-EO-2G5"/>
                                             <constraint firstAttribute="trailing" secondItem="cT6-Er-m8y" secondAttribute="trailing" id="Elb-MK-rUu"/>
                                             <constraint firstItem="22u-MV-Rdk" firstAttribute="leading" secondItem="1oc-39-DmH" secondAttribute="leading" id="Eny-f3-sFw"/>
                                             <constraint firstItem="58z-fG-O1k" firstAttribute="top" secondItem="0Nr-5n-oCe" secondAttribute="bottom" constant="5" id="Fx9-20-2zf"/>
+                                            <constraint firstItem="xgO-4y-Fzy" firstAttribute="leading" secondItem="hGs-2T-f7h" secondAttribute="leading" id="Gnh-o7-Jir"/>
                                             <constraint firstItem="7dJ-uK-cXe" firstAttribute="top" secondItem="7Qm-4p-idB" secondAttribute="bottom" constant="2" id="IBr-Mj-N5l"/>
-                                            <constraint firstAttribute="trailing" secondItem="xgO-4y-Fzy" secondAttribute="trailing" id="KvE-Rh-5TD"/>
                                             <constraint firstItem="cT6-Er-m8y" firstAttribute="leading" secondItem="hGs-2T-f7h" secondAttribute="leading" id="LTG-pY-x5X"/>
                                             <constraint firstItem="xgO-4y-Fzy" firstAttribute="height" secondItem="maq-9X-gki" secondAttribute="height" id="O5L-yB-RaF"/>
                                             <constraint firstItem="IKO-AF-OnD" firstAttribute="leading" secondItem="ihm-Lz-pOw" secondAttribute="leading" id="OFQ-ne-CTa"/>
-                                            <constraint firstItem="xgO-4y-Fzy" firstAttribute="leading" secondItem="maq-9X-gki" secondAttribute="trailing" id="PsC-6e-cEt"/>
                                             <constraint firstItem="7dJ-uK-cXe" firstAttribute="leading" secondItem="hGs-2T-f7h" secondAttribute="leading" constant="10" id="R79-Hx-NUN"/>
                                             <constraint firstItem="ihm-Lz-pOw" firstAttribute="top" secondItem="58z-fG-O1k" secondAttribute="bottom" constant="5" id="RCi-Ai-Ova"/>
                                             <constraint firstItem="7dJ-uK-cXe" firstAttribute="leading" secondItem="7Qm-4p-idB" secondAttribute="leading" id="S4W-47-4oN"/>
                                             <constraint firstItem="1oc-39-DmH" firstAttribute="top" secondItem="ihm-Lz-pOw" secondAttribute="top" id="dME-x8-Zvy"/>
-                                            <constraint firstItem="maq-9X-gki" firstAttribute="leading" secondItem="hGs-2T-f7h" secondAttribute="leading" id="e3J-wr-oM6"/>
                                             <constraint firstItem="7Qm-4p-idB" firstAttribute="top" secondItem="IKO-AF-OnD" secondAttribute="bottom" constant="15" id="gzh-ou-8Q8"/>
                                             <constraint firstItem="xgO-4y-Fzy" firstAttribute="width" secondItem="maq-9X-gki" secondAttribute="width" id="hXQ-8P-bwt"/>
                                             <constraint firstItem="7dJ-uK-cXe" firstAttribute="trailing" secondItem="0Nr-5n-oCe" secondAttribute="trailing" id="jRo-fe-cQt"/>
@@ -1752,6 +1751,7 @@
                                             <constraint firstItem="22u-MV-Rdk" firstAttribute="width" secondItem="IKO-AF-OnD" secondAttribute="width" id="olK-gn-U3N"/>
                                             <constraint firstAttribute="bottom" secondItem="maq-9X-gki" secondAttribute="bottom" id="qcl-kT-gws"/>
                                             <constraint firstItem="22u-MV-Rdk" firstAttribute="leading" secondItem="IKO-AF-OnD" secondAttribute="trailing" constant="10" id="ql7-DR-feb"/>
+                                            <constraint firstItem="maq-9X-gki" firstAttribute="leading" secondItem="xgO-4y-Fzy" secondAttribute="trailing" id="r4h-sa-z6z"/>
                                             <constraint firstAttribute="bottom" secondItem="cT6-Er-m8y" secondAttribute="bottom" id="sFX-cQ-ezC"/>
                                             <constraint firstItem="22u-MV-Rdk" firstAttribute="top" secondItem="IKO-AF-OnD" secondAttribute="top" id="sxJ-3C-apF"/>
                                             <constraint firstItem="22u-MV-Rdk" firstAttribute="height" secondItem="IKO-AF-OnD" secondAttribute="height" id="wTS-qQ-qin"/>
@@ -2029,7 +2029,7 @@
         <!--Pick New Medical Record View Controller-->
         <scene sceneID="zB4-64-AR9">
             <objects>
-                <viewController id="APW-pn-UXQ" customClass="PickNewMedicalRecordViewController" sceneMemberID="viewController">
+                <viewController automaticallyAdjustsScrollViewInsets="NO" id="APW-pn-UXQ" customClass="PickNewMedicalRecordViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="bMy-4o-r4H"/>
                         <viewControllerLayoutGuide type="bottom" id="r3d-mk-Prp"/>
@@ -2038,22 +2038,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HHR-hG-2qj">
-                                <rect key="frame" x="10" y="560" width="580" height="40"/>
-                                <color key="backgroundColor" red="0.30459797240000003" green="0.49431446340000001" blue="0.45855311830000001" alpha="1" colorSpace="calibratedRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="Ixi-7v-q95"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
-                                <state key="normal" title="Choose">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="choseCategoryButton:" destination="APW-pn-UXQ" eventType="touchUpInside" id="X1V-48-Rwc"/>
-                                </connections>
-                            </button>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="2Oh-rz-Yv0">
-                                <rect key="frame" x="20" y="168" width="560" height="372"/>
+                                <rect key="frame" x="20" y="168" width="560" height="422"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="categoryCell" textLabel="9YU-k5-6rR" style="IBUITableViewCellStyleDefault" id="Nlm-Sw-hqK">
@@ -2088,20 +2074,16 @@
                         </subviews>
                         <color key="backgroundColor" red="0.92516770290000006" green="0.92516770290000006" blue="0.92516770290000006" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstItem="HHR-hG-2qj" firstAttribute="leading" secondItem="2p7-JL-6IK" secondAttribute="leading" constant="10" id="2zD-EF-2Hc"/>
-                            <constraint firstItem="r3d-mk-Prp" firstAttribute="top" secondItem="HHR-hG-2qj" secondAttribute="bottom" id="Nbn-zu-qfs"/>
                             <constraint firstItem="b0G-n2-TUX" firstAttribute="top" secondItem="bMy-4o-r4H" secondAttribute="bottom" constant="40" id="Ops-z3-JuG"/>
                             <constraint firstAttribute="trailing" secondItem="2Oh-rz-Yv0" secondAttribute="trailing" constant="20" id="Ppl-wi-HST"/>
                             <constraint firstItem="b0G-n2-TUX" firstAttribute="leading" secondItem="2p7-JL-6IK" secondAttribute="leading" id="eIc-TH-Tz4"/>
-                            <constraint firstItem="HHR-hG-2qj" firstAttribute="top" secondItem="2Oh-rz-Yv0" secondAttribute="bottom" constant="20" id="hdm-Zc-XY6"/>
+                            <constraint firstItem="r3d-mk-Prp" firstAttribute="top" secondItem="2Oh-rz-Yv0" secondAttribute="bottom" constant="10" id="gDz-6T-zPD"/>
                             <constraint firstItem="2Oh-rz-Yv0" firstAttribute="leading" secondItem="2p7-JL-6IK" secondAttribute="leading" constant="20" id="ibr-9H-Era"/>
-                            <constraint firstAttribute="trailing" secondItem="HHR-hG-2qj" secondAttribute="trailing" constant="10" id="nAV-We-oel"/>
                             <constraint firstAttribute="trailing" secondItem="b0G-n2-TUX" secondAttribute="trailing" id="r6K-dd-OrY"/>
                             <constraint firstItem="2Oh-rz-Yv0" firstAttribute="top" secondItem="b0G-n2-TUX" secondAttribute="bottom" constant="40" id="tu3-DD-o8P"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="choseButton" destination="HHR-hG-2qj" id="YZC-rx-60Q"/>
                         <outlet property="tableView" destination="2Oh-rz-Yv0" id="oJj-47-5lV"/>
                         <segue destination="UxO-Lr-tXm" kind="unwind" identifier="unwindToMedicalRecord" unwindAction="unwindChoseOtherMedicalRecordViewController:" id="kle-5a-GCC"/>
                         <segue destination="UxO-Lr-tXm" kind="unwind" identifier="addNewCategory" unwindAction="unwindChoseNewMedicalRecordViewController:" id="1wV-8i-im9"/>
@@ -5700,10 +5682,10 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="o2O-wy-pPe"/>
-        <segue reference="bmA-nj-e8i"/>
-        <segue reference="0hi-JC-OGj"/>
+        <segue reference="bsp-8F-ycE"/>
         <segue reference="byS-eb-3hF"/>
         <segue reference="l4a-Ba-k5I"/>
+        <segue reference="0hi-JC-OGj"/>
         <segue reference="LJC-eh-bQz"/>
         <segue reference="5gd-Kh-nKI"/>
         <segue reference="pcU-gL-Sv4"/>

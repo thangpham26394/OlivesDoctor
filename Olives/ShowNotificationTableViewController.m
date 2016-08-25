@@ -44,6 +44,7 @@
 @property (strong,nonatomic) NSDictionary *responseJSONData;
 @property (strong,nonatomic) UIView *backgroundView;
 @property (strong,nonatomic) UIActivityIndicatorView *  activityIndicator;
+@property (strong,nonatomic) NSString *patientName;
 @end
 
 @implementation ShowNotificationTableViewController
@@ -548,6 +549,7 @@
         self.selectedNotification = [self.broadcasterArray objectAtIndex:indexPath.row];
         // get the selected notification chat
         self.selectedPatientID = [[[self.broadcasterArray objectAtIndex:indexPath.row ] objectForKey:@"lastestNoti"]objectForKey:@"Broadcaster"];
+        self.patientName = [NSString stringWithFormat:@"%@%@",[self.selectedNotification objectForKey:@"FirstName"],[self.selectedNotification objectForKey:@"LastName"]];
         [self putSeenMessageDataToAPIWithPatientID:self.selectedPatientID];
         for (int index =0; index < self.newestMessageDataArray.count; index ++) {
             NSDictionary *currentUnseenMessage = [self.newestMessageDataArray objectAtIndex:index];
@@ -1231,6 +1233,7 @@
         }
         chatViewController.unseenMessage = (NSArray*)unseenMessageArray;
         chatViewController.selectedPatientID = self.selectedPatientID;
+        chatViewController.patientName = self.patientName;
     }
 
 }

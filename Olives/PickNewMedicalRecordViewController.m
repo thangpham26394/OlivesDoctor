@@ -14,9 +14,7 @@
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong,nonatomic) NSArray *categoryArray;
 @property (strong,nonatomic) NSDictionary *responseJSONData;
-@property (weak, nonatomic) IBOutlet UIButton *choseButton;
 @property (assign,nonatomic) BOOL isAlreadySelected;
-- (IBAction)choseCategoryButton:(id)sender;
 @end
 
 @implementation PickNewMedicalRecordViewController
@@ -206,9 +204,6 @@
     // Do any additional setup after loading the view.
     self.didAddCategory = NO;
     self.tableView.layer.cornerRadius = 10.0f;
-
-    self.choseButton.backgroundColor = [UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0];
-    [self.choseButton.layer setCornerRadius:5.0f];
     self.isAlreadySelected = NO;
 }
 
@@ -250,6 +245,7 @@
     // get the selected category
     self.selectedCategory = self.categoryArray[indexPath.row];
     self.isAlreadySelected = YES;
+    [self selectedMedicalCategory];
 }
 
 
@@ -270,7 +266,7 @@
 //}
 
 
-- (IBAction)choseCategoryButton:(id)sender {
+- (void)selectedMedicalCategory {
     if (self.isAlreadySelected) {
         if (self.isEditMedicalRecord) {
             [self performSegueWithIdentifier:@"unwindToMedicalRecord" sender:self];
@@ -288,7 +284,5 @@
         [alert addAction:OKAction];
         [self presentViewController:alert animated:YES completion:nil];
     }
-
-
 }
 @end

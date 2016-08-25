@@ -14,15 +14,12 @@
 @interface TimePickerViewController ()
 @property (weak, nonatomic) IBOutlet UIDatePicker *dateTimePickerFrom;
 @property (weak, nonatomic) IBOutlet UIDatePicker *dateTimePickerTo;
-
 @property (weak, nonatomic) IBOutlet UITextView *noteLabel;
-
 -(IBAction)sendRequestButton:(id)sender;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIView *contentView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentViewHeight;
 @property (weak, nonatomic) IBOutlet UIButton *sendButton;
-
 @property (weak, nonatomic) IBOutlet UIView *chosingPatient;
 @property (weak, nonatomic) IBOutlet UIImageView *selectedPatientAvatar;
 @property (weak, nonatomic) IBOutlet UILabel *selectedPatientName;
@@ -35,7 +32,7 @@
 - (IBAction)editOrAcceptAppointmentButton:(id)sender;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *heightForDisplayMakerNote;
 @property (weak, nonatomic) IBOutlet UITextView *makerNoteTextView;
-
+@property (strong,nonatomic) NSDictionary *responseJSONData ;
 
 @end
 
@@ -452,13 +449,28 @@
 
                                           if((long)[httpResponse statusCode] == 200  && error ==nil)
                                           {
+                                              NSError *parsJSONError = nil;
+                                              self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                              if (self.responseJSONData ==nil) {
+                                                  UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Can't connect to Server"
+                                                                                                                 message:nil
+                                                                                                          preferredStyle:UIAlertControllerStyleAlert];
+                                                  UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                                                                     style:UIAlertActionStyleDefault
+                                                                                                   handler:^(UIAlertAction * action) {
+                                                                                                       [self.navigationController popViewControllerAnimated:YES];
+                                                                                                   }];
+                                                  [alert addAction:OKAction];
+                                                  [self presentViewController:alert animated:YES completion:nil];
+                                                  dispatch_semaphore_signal(sem);
+                                              }
                                               //stop waiting after get response from API
                                               dispatch_semaphore_signal(sem);
                                           }
                                           else{
                                               NSError *parsJSONError = nil;
                                               if (data ==nil) {
-                                                  UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Internet Error"
+                                                  UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Can't connect to Server"
                                                                                                                  message:nil
                                                                                                           preferredStyle:UIAlertControllerStyleAlert];
                                                   UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
@@ -472,8 +484,6 @@
                                               }
                                               NSDictionary *errorDic = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
                                               NSArray *errorArray = [errorDic objectForKey:@"Errors"];
-                                              //                                              NSLog(@"\n\n\nError = %@",[errorArray objectAtIndex:0]);
-
                                               UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error"
                                                                                                              message:[errorArray objectAtIndex:0]
                                                                                                       preferredStyle:UIAlertControllerStyleAlert];
@@ -540,12 +550,67 @@
     NSData *jsondata = [NSJSONSerialization dataWithJSONObject:body options:NSJSONWritingPrettyPrinted error:&error];
     [urlRequest setHTTPBody:jsondata];
 
+    dispatch_semaphore_t    sem;
+    sem = dispatch_semaphore_create(0);
     NSURLSessionDataTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
                                                        completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
                                       {
+                                          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+
+                                          if((long)[httpResponse statusCode] == 200  && error ==nil)
+                                          {
+                                              NSError *parsJSONError = nil;
+                                              self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                              if (self.responseJSONData ==nil) {
+                                                  UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Can't connect to Server"
+                                                                                                                 message:nil
+                                                                                                          preferredStyle:UIAlertControllerStyleAlert];
+                                                  UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                                                                     style:UIAlertActionStyleDefault
+                                                                                                   handler:^(UIAlertAction * action) {
+                                                                                                    [self.navigationController popViewControllerAnimated:YES];
+                                                                                                   }];
+                                                  [alert addAction:OKAction];
+                                                  [self presentViewController:alert animated:YES completion:nil];
+                                                  dispatch_semaphore_signal(sem);
+                                              }
+                                              //stop waiting after get response from API
+                                              dispatch_semaphore_signal(sem);
+                                          }
+                                          else{
+                                              NSError *parsJSONError = nil;
+                                              if (data ==nil) {
+                                                  UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Can't connect to Server"
+                                                                                                                 message:nil
+                                                                                                          preferredStyle:UIAlertControllerStyleAlert];
+                                                  UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                                                                     style:UIAlertActionStyleDefault
+                                                                                                   handler:^(UIAlertAction * action) {}];
+                                                  [alert addAction:OKAction];
+                                                  [self presentViewController:alert animated:YES completion:nil];
+                                                  dispatch_semaphore_signal(sem);
+
+                                                  return;
+                                              }
+                                              NSDictionary *errorDic = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                              NSArray *errorArray = [errorDic objectForKey:@"Errors"];
+                                              UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                                                             message:[errorArray objectAtIndex:0]
+                                                                                                      preferredStyle:UIAlertControllerStyleAlert];
+
+                                              UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                                                                 style:UIAlertActionStyleDefault
+                                                                                               handler:^(UIAlertAction * action) {}];
+                                              [alert addAction:OKAction];
+                                              [self presentViewController:alert animated:YES completion:nil];
+                                              dispatch_semaphore_signal(sem);
+                                              return;
+                                          }
 
                                       }];
     [dataTask resume];
+    //start waiting until get response from API
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
 
 }
 
@@ -597,27 +662,67 @@
     NSData *jsondata = [NSJSONSerialization dataWithJSONObject:body options:NSJSONWritingPrettyPrinted error:&error];
     [urlRequest setHTTPBody:jsondata];
 
-//    dispatch_semaphore_t    sem;
-//    sem = dispatch_semaphore_create(0);
-
+    dispatch_semaphore_t    sem;
+    sem = dispatch_semaphore_create(0);
     NSURLSessionDataTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
                                                        completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
                                       {
-                                          //dispatch_semaphore_signal(sem);
+                                          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+
+                                          if((long)[httpResponse statusCode] == 200  && error ==nil)
+                                          {
+                                              NSError *parsJSONError = nil;
+                                              self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                              if (self.responseJSONData ==nil) {
+                                                  UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Can't connect to Server"
+                                                                                                                 message:nil
+                                                                                                          preferredStyle:UIAlertControllerStyleAlert];
+                                                  UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                                                                     style:UIAlertActionStyleDefault
+                                                                                                   handler:^(UIAlertAction * action) {
+                                                                                                       [self.navigationController popViewControllerAnimated:YES];
+                                                                                                   }];
+                                                  [alert addAction:OKAction];
+                                                  [self presentViewController:alert animated:YES completion:nil];
+                                                  dispatch_semaphore_signal(sem);
+                                              }
+                                              //stop waiting after get response from API
+                                              dispatch_semaphore_signal(sem);
+                                          }
+                                          else{
+                                              NSError *parsJSONError = nil;
+                                              if (data ==nil) {
+                                                  UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Can't connect to Server"
+                                                                                                                 message:nil
+                                                                                                          preferredStyle:UIAlertControllerStyleAlert];
+                                                  UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                                                                     style:UIAlertActionStyleDefault
+                                                                                                   handler:^(UIAlertAction * action) {}];
+                                                  [alert addAction:OKAction];
+                                                  [self presentViewController:alert animated:YES completion:nil];
+                                                  dispatch_semaphore_signal(sem);
+
+                                                  return;
+                                              }
+                                              NSDictionary *errorDic = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                              NSArray *errorArray = [errorDic objectForKey:@"Errors"];
+                                              UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                                                             message:[errorArray objectAtIndex:0]
+                                                                                                      preferredStyle:UIAlertControllerStyleAlert];
+
+                                              UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                                                                 style:UIAlertActionStyleDefault
+                                                                                               handler:^(UIAlertAction * action) {}];
+                                              [alert addAction:OKAction];
+                                              [self presentViewController:alert animated:YES completion:nil];
+                                              dispatch_semaphore_signal(sem);
+                                              return;
+                                          }
 
                                       }];
     [dataTask resume];
     //start waiting until get response from API
-    //dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
-
-
-
-
-
-
-
-
-
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
 }
 
 -(IBAction)sendRequestButton:(id)sender{
@@ -653,7 +758,7 @@
 
 
 -(void)showAlertViewWhenSendRequest{
-    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Request Sent"
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Are you sure"
                                                                message:@"Your Request will be sent to your patient soon"
                                                                preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
@@ -664,16 +769,8 @@
                                                               [self.navigationController popViewControllerAnimated:YES];
                                                               
                                                           }];
-    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
-                                                     handler:^(UIAlertAction * action) {
-                                                         NSLog(@"cancel Action!");
-                                                         NSLog(@"%@",self.dateTimePickerFrom.date);
-                                                         NSLog(@"%@",self.dateTimePickerTo.date);
-                                                     }];
-
 
     [alert addAction:OKAction];
-    [alert addAction:cancelAction];
     [self presentViewController:alert animated:YES completion:nil];
 }
 

@@ -397,6 +397,7 @@
     {
         ChatViewController *chatView = [segue destinationViewController];
         chatView.selectedPatientID = self.selectedPatientID;
+        chatView.patientName = self.patientName.text;
     }
 }
 
