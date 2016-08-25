@@ -304,7 +304,12 @@ static NSString * const reuseIdentifier = @"medicineImageCell";
 
 
 -(void)downloadImage{
-    [self loadPartnerFromCoredata];
+    if (self.selectedPartnerID ==nil) {
+        [self loadPartnerFromCoredata];
+    }else{
+        self.partner = self.selectedPartnerID;
+    }
+
     self.prescriptionImages = [[NSMutableArray alloc]init];
     [self downloadPrescriptionImageFromAPI];
     NSArray *imageArray = [self.responseJSONData objectForKey:@"PrescriptionImages"];
@@ -445,7 +450,9 @@ static NSString * const reuseIdentifier = @"medicineImageCell";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    if (self.selectedPartnerID !=nil) {
+        self.canEdit = YES;
+    }
     // Uncomment the following line to preserve selection between presentations
     // self.clearsSelectionOnViewWillAppear = NO;
     

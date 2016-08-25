@@ -10,6 +10,7 @@
 #define APIURL_GET_MEDICALRECORD @"http://olive.azurewebsites.net/api/medical/record?Id="
 #define APIURL_GET_PRESCRIPTION @"http://olive.azurewebsites.net/api/medical/prescription?Id="
 #define APIURL_GET_MEDICALNOTE @"http://olive.azurewebsites.net/api/medical/note?Id="
+#define APIURL_GET_EXPERIMENTNOTE @"http://olive.azurewebsites.net/api/medical/experiment?Id="
 #define APIURL_GET_PATIENT @"http://olive.azurewebsites.net/api/patient?Id="
 #define API_MESSAGE_SEEN_URL @"http://olive.azurewebsites.net/api/message/seen"
 #define API_MESSAGE_URL @"http://olive.azurewebsites.net/api/message/filter"
@@ -38,6 +39,7 @@
 @property (strong,nonatomic)NSDictionary *selectedChatNoti;
 @property (strong,nonatomic)NSDictionary *selectedMedicalRecord;
 @property (strong,nonatomic)NSDictionary *selectedPrescription;
+@property (strong,nonatomic)NSDictionary *selectedExperimentNote;
 @property (strong,nonatomic)NSDictionary *selectedMedicalNote;
 @property (strong,nonatomic)NSMutableArray *broadcasterArray;
 @property (strong,nonatomic) NSString* selectedPatientID;
@@ -161,6 +163,59 @@
     
 }
 
+
+-(void)saveExperimentNoteToCoreData{
+    NSDictionary *experimentNoteDic = [self.responseJSONDataForPendingList objectForKey:@"Note"];
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"ExperimentNotes"];
+    NSMutableArray *exNoteObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *experiment;
+    //delete previous prescription
+    if (exNoteObject.count >0) {
+
+        for (int index=0; index < exNoteObject.count; index++) {
+            experiment = [exNoteObject objectAtIndex:index];
+            if ([[experiment valueForKey:@"id"] isEqual:[NSString stringWithFormat:@"%@",[experimentNoteDic objectForKey:@"Id"]]]) {
+                [context deleteObject:experiment]; //only delete eperiment note that have same id with eperiment note get from api
+            }
+
+        }
+    }
+
+    // insert new patients that gotten from API
+    NSString *experimentID = [experimentNoteDic objectForKey:@"Id"];
+    NSString *created = [experimentNoteDic objectForKey:@"Created"];
+    NSString *info = [experimentNoteDic objectForKey:@"Info"];
+    NSString *lastModified = [experimentNoteDic objectForKey:@"LastModified"];
+    NSString *medicalRecord = [experimentNoteDic objectForKey:@"MedicalRecord"];
+    NSString *name = [experimentNoteDic objectForKey:@"Name"];
+    NSString *ownerID = [experimentNoteDic objectForKey:@"Owner"];
+    NSString *time = [experimentNoteDic objectForKey:@"Time"];
+
+
+    //create new patient object
+    NSManagedObject *newExperimentNote  = [NSEntityDescription insertNewObjectForEntityForName:@"ExperimentNotes" inManagedObjectContext:context];
+    //set value for each attribute of new patient before save to core data
+    [newExperimentNote setValue: [NSString stringWithFormat:@"%@", experimentID] forKey:@"id"];
+    [newExperimentNote setValue: [NSString stringWithFormat:@"%@", ownerID] forKey:@"ownerID"];
+    [newExperimentNote setValue: [NSString stringWithFormat:@"%@", medicalRecord] forKey:@"medicalRecordID"];
+    [newExperimentNote setValue: [NSString stringWithFormat:@"%@", name] forKey:@"name"];
+    [newExperimentNote setValue: [NSString stringWithFormat:@"%@", info] forKey:@"info"];
+    [newExperimentNote setValue: [NSString stringWithFormat:@"%@", time] forKey:@"time"];
+    [newExperimentNote setValue: [NSString stringWithFormat:@"%@", created] forKey:@"createdDate"];
+    [newExperimentNote setValue: [NSString stringWithFormat:@"%@", lastModified] forKey:@"lastModified"];
+
+
+    NSError *error = nil;
+    // Save the object to persistent store
+    if (![context save:&error]) {
+        NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
+    }else{
+        NSLog(@"Save experiment note success!");
+    }
+}
+
+
 -(void)savePrescriptionToCoreData{
     NSDictionary *prescriptionDic = [self.responseJSONDataForPendingList objectForKey:@"Prescription"];
     NSManagedObjectContext *context = [self managedObjectContext];
@@ -214,9 +269,6 @@
     }else{
         NSLog(@"Save Prescription success!");
     }
-
-
-
 }
 
 
@@ -542,8 +594,6 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-
-
     //if selected notification field is chat notification
     if (self.notificationType == 0) {
         self.selectedNotification = [self.broadcasterArray objectAtIndex:indexPath.row];
@@ -551,6 +601,7 @@
         self.selectedPatientID = [[[self.broadcasterArray objectAtIndex:indexPath.row ] objectForKey:@"lastestNoti"]objectForKey:@"Broadcaster"];
         self.patientName = [NSString stringWithFormat:@"%@%@",[self.selectedNotification objectForKey:@"FirstName"],[self.selectedNotification objectForKey:@"LastName"]];
         [self putSeenMessageDataToAPIWithPatientID:self.selectedPatientID];
+
         for (int index =0; index < self.newestMessageDataArray.count; index ++) {
             NSDictionary *currentUnseenMessage = [self.newestMessageDataArray objectAtIndex:index];
             if ([[NSString stringWithFormat:@"%@",[[self.selectedNotification objectForKey:@"lastestNoti"] objectForKey:@"Broadcaster"]] isEqualToString:[NSString stringWithFormat:@"%@",[currentUnseenMessage objectForKey:@"Broadcaster"]]]) {
@@ -598,12 +649,12 @@
         }
         //about Prescription image
         if ([[NSString stringWithFormat:@"%@", topic ] isEqual:[NSString stringWithFormat:@"4"]]) {
-            self.selectedPrescription = [self loadPrescriptionDataFromAPIWithID:[self.selectedNotification objectForKey:@"Record"]];
             [self performSegueWithIdentifier:@"showPrescriptionImageNoti" sender:self];
         }
 
         //about Experiment note
         if ([[NSString stringWithFormat:@"%@", topic ] isEqual:[NSString stringWithFormat:@"5"]]) {
+            self.selectedExperimentNote = [self loadExperimentNoteDataFromAPIWithID:[self.selectedNotification objectForKey:@"Record"]];
             [self performSegueWithIdentifier:@"showExperimentNoteNoti" sender:self];
         }
 
@@ -986,6 +1037,69 @@
     return self.responseJSONDataForPendingList;
 }
 
+
+-(NSDictionary*)loadExperimentNoteDataFromAPIWithID:(NSString *)prescriptionID{
+    // create url
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", APIURL_GET_EXPERIMENTNOTE,prescriptionID ]];
+
+    // config session
+    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+    sessionConfig.timeoutIntervalForRequest = 5.0;
+    sessionConfig.timeoutIntervalForResource = 5.0;
+    // config session
+    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:sessionConfig];
+    //create request
+    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
+
+    //get the current doctor data
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+    NSString *email = [doctor valueForKey:@"email"];
+    NSString *password = [doctor valueForKey:@"password"];
+
+    //setup header and body for request
+    [urlRequest setHTTPMethod:@"GET"];
+    [urlRequest setValue:email forHTTPHeaderField:@"Email"];
+    [urlRequest setValue:password forHTTPHeaderField:@"Password"];
+    [urlRequest setValue:@"en-US" forHTTPHeaderField:@"Accept-Language"];
+    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+
+    dispatch_semaphore_t    sem;
+    sem = dispatch_semaphore_create(0);
+    NSURLSessionDataTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
+                                                       completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+                                      {
+                                          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+
+                                          if((long)[httpResponse statusCode] == 200  && error ==nil)
+                                          {
+                                              NSError *parsJSONError = nil;
+                                              self.responseJSONDataForPendingList = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+
+                                              if (self.responseJSONDataForPendingList != nil) {
+                                                  [self saveExperimentNoteToCoreData];
+                                              }else{
+
+                                              }
+                                              //stop waiting after get response from API
+                                              dispatch_semaphore_signal(sem);
+                                          }
+                                          else{
+                                              NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+                                              NSLog(@"\n\n\nError = %@",text);
+                                              dispatch_semaphore_signal(sem);
+                                              return;
+                                          }
+                                      }];
+    [dataTask resume];
+    //start waiting until get response from API
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    return self.responseJSONDataForPendingList;
+}
+
+
 -(NSDictionary*)loadMedicalNoteDataFromAPIWithID:(NSString *)medicalNoteID{
     // create url
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", APIURL_GET_MEDICALNOTE,medicalNoteID ]];
@@ -1175,7 +1289,8 @@
     if ([[segue identifier] isEqualToString:@"showMedicalImageNoti"])
     {
         MedicalRecordImagesCollectionViewController *medicalRecordImage= [segue destinationViewController];
-        medicalRecordImage.medicalRecordID = [[self.selectedMedicalRecord objectForKey:@"MedicalRecord"] objectForKey:@"Id"];
+        medicalRecordImage.medicalRecordID = [self.selectedNotification objectForKey:@"Container"];;
+        medicalRecordImage.selectedPartnerID = self.selectedPatientID;
     }
 
 
@@ -1185,13 +1300,14 @@
         MedicineTableViewController * medicineTableViewcontroller = [segue destinationViewController];
         medicineTableViewcontroller.selectedPrescriptionID = [[self.selectedPrescription objectForKey:@"Prescription" ] objectForKey:@"Id"];
         medicineTableViewcontroller.selectedPatientID = self.selectedPatientID;
+        medicineTableViewcontroller.isNotificationView = YES;
     }
 
     //show notification about prescription image
     if ([[segue identifier] isEqualToString:@"showPrescriptionImageNoti"])
     {
         MedicineImagesCollectionViewController * medicineImageViewcontroller = [segue destinationViewController];
-        medicineImageViewcontroller.selectedPrescriptionID = [[self.selectedPrescription objectForKey:@"Prescription" ] objectForKey:@"Id"];
+        medicineImageViewcontroller.selectedPrescriptionID = [self.selectedNotification objectForKey:@"Record"];
         medicineImageViewcontroller.selectedPartnerID = self.selectedPatientID;
 
     }
@@ -1201,15 +1317,16 @@
     {
         MedicalRecordExperimentNoteTableViewController * experimentNoteViewcontroller = [segue destinationViewController];
         experimentNoteViewcontroller.experimentNoteID = [self.selectedNotification objectForKey:@"Record"];
+        experimentNoteViewcontroller.isNotificationView = YES;
 
     }
 
-    //show notification about prescription
+    //show notification about medical note
     if ([[segue identifier] isEqualToString:@"showMedicalNoteNoti"])
     {
         AddNewMedicalNoteViewController * addNewMedicalNoteViewcontroller = [segue destinationViewController];
         addNewMedicalNoteViewcontroller.selectedMedicalNote = [self.selectedMedicalNote objectForKey:@"MedicalNote"];
-
+        addNewMedicalNoteViewcontroller.isNotificationView = YES;
     }
 
     //show notification about chat message

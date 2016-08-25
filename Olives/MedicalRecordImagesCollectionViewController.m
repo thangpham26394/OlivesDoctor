@@ -302,7 +302,12 @@ static NSString * const reuseIdentifier = @"medicalRecordImage";
 }
 
 -(void)downloadImage{
-    [self loadPartnerFromCoredata];
+    if (self.selectedPartnerID ==nil) {
+        [self loadPartnerFromCoredata];
+    }else{
+        self.partner = self.selectedPartnerID;
+    }
+
     self.medicalRecordImages = [[NSMutableArray alloc]init];
     [self downloadMedicalRecordImageFromAPI];
     NSArray *imageArray = [self.responseJSONData objectForKey:@"MedicalImages"];
@@ -447,6 +452,9 @@ static NSString * const reuseIdentifier = @"medicalRecordImage";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    if (self.selectedPartnerID !=nil) {
+        self.canEdit = YES;
+    }
     self.medicalRecordImages = [[NSMutableArray alloc]init];
     // self.clearsSelectionOnViewWillAppear = NO;
     

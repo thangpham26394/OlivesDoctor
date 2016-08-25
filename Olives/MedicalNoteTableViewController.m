@@ -74,13 +74,11 @@
                                           [medicalRecord valueForKey:@"name" ],@"Name",
                                           [medicalRecord valueForKey:@"createdDate" ],@"Created",
                                           [medicalRecord valueForKey:@"lastModified" ],@"LastModified",
-
                                           nil];
 
         if ([[medicalRecord valueForKey:@"medicalRecordID" ] isEqual:[NSString stringWithFormat:@"%@",[self.medicalRecordDic objectForKey:@"Id"]]]) {
             self.medicalRecordDic = medicalRecordDic;
         }
-
     }
 }
 
@@ -93,6 +91,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    if (self.isNotificationView) {
+        self.canEdit = YES;
+    }
     [self setupGestureRecognizer];
     NSLog(@"%@",self.medicalRecordDic);
 

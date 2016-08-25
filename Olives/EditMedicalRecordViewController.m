@@ -228,14 +228,10 @@
                                                   dispatch_async(dispatch_get_main_queue(), ^{
                                                       [self showSucces];
                                                   });
-
-
                                               }else{
                                                   dispatch_async(dispatch_get_main_queue(), ^{
                                                       [self showAlertError:@"Cannot connect to server"];
                                                   });
-
-
                                               }
 
                                               //stop waiting after get response from API
@@ -265,7 +261,6 @@
                                                   dispatch_semaphore_signal(sem);
                                                   return;
                                               }
-                                              
 
                                           }
                                       }];

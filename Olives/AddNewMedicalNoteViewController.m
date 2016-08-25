@@ -373,6 +373,9 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
+    if (self.isNotificationView) {
+        self.canEdit = YES;
+    }
     // Do any additional setup after loading the view.
     self.navigationController.navigationBar.translucent = NO;
     self.saveButton.backgroundColor = [UIColor colorWithRed:17/255.0 green:122/255.0 blue:101/255.0 alpha:1.0];

@@ -10,5 +10,6 @@
 
 @interface MedicalRecordImagesCollectionViewController : UICollectionViewController<UIImagePickerControllerDelegate>
 @property (strong,nonatomic) NSString *medicalRecordID;
+@property(strong,nonatomic) NSString *selectedPartnerID;
 @property (assign,nonatomic)BOOL canEdit;
 @end

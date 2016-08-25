@@ -12,4 +12,5 @@
 @property (strong,nonatomic) NSString *selectedMedicalRecordId;
 @property(strong,nonatomic) NSDictionary *selectedMedicalNote;
 @property (assign,nonatomic)BOOL canEdit;
+@property (assign,nonatomic)BOOL isNotificationView;
 @end

@@ -369,6 +369,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    if (self.isNotificationView) {
+        self.canEdit = YES;
+    }
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     self.buttonEdit.layer.cornerRadius = 5.0f;
     self.isUpDateName = NO;
@@ -412,8 +415,14 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // get the selected string string info
     self.selectedExperimentNoteID = [[self.info allKeys] objectAtIndex:indexPath.row];
-    [self showPopUpViewForEdit:YES];
-    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+    if (self.canEdit) {
+        [self showPopUpViewForEdit:YES];
+        [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+    }else{
+        [self showAlertError:@"You don't have permission in this medical record"];
+    }
+
+
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -464,18 +473,23 @@
 */
 
 - (IBAction)buttonEditNameAction:(id)sender {
-    if (self.isUpDateName) {
-        [self.buttonEdit setTitle:@"Edit Name" forState:UIControlStateNormal];
-        [self.experimentNameTextField setUserInteractionEnabled:NO];
-        self.isUpDateName = NO;
-        [self.experimentNameTextField resignFirstResponder];
-        //call api func to update name here
-        [self editExperimentNoteAPI];
+    if (self.canEdit) {
+        if (self.isUpDateName) {
+            [self.buttonEdit setTitle:@"Edit Name" forState:UIControlStateNormal];
+            [self.experimentNameTextField setUserInteractionEnabled:NO];
+            self.isUpDateName = NO;
+            [self.experimentNameTextField resignFirstResponder];
+            //call api func to update name here
+            [self editExperimentNoteAPI];
+        }else{
+            [self.buttonEdit setTitle:@"Save" forState:UIControlStateNormal];
+            [self.experimentNameTextField setUserInteractionEnabled:YES];
+            self.isUpDateName = YES;
+            [self.experimentNameTextField becomeFirstResponder];
+        }
     }else{
-        [self.buttonEdit setTitle:@"Save" forState:UIControlStateNormal];
-        [self.experimentNameTextField setUserInteractionEnabled:YES];
-        self.isUpDateName = YES;
-        [self.experimentNameTextField becomeFirstResponder];
+        [self showAlertError:@"You don't have permission in this medical record"];
     }
+
 }
 @end

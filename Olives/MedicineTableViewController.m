@@ -101,6 +101,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    if (self.isNotificationView) {
+        self.canEdit = YES;
+    }
     NSLog(@"-------------------------%@",self.selectedPrescriptionID);
     [self setupGestureRecognizer];
 }
