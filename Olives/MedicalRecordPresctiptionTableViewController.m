@@ -273,13 +273,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     self.selectedPrescription = self.prescriptionArray[indexPath.row];
-    if (!self.canEdit) {
-        [self showAlertError:@"You don't have permission in this medical record"];
-    }else{
-        [self performSegueWithIdentifier:@"medicalRecordPrescriptionShowDetail" sender:self];
-    }
-
-
+    [self performSegueWithIdentifier:@"medicalRecordPrescriptionShowDetail" sender:self];
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 
 }
@@ -342,6 +336,7 @@
     {
         MedicineTableViewController * medicineTableViewcontroller = [segue destinationViewController];
         medicineTableViewcontroller.selectedPrescriptionID = [self.selectedPrescription objectForKey:@"Id"];
+        medicineTableViewcontroller.canEdit = self.canEdit;
 
     }
     if ([[segue identifier] isEqualToString:@"addMedicalRecordPrescription"])

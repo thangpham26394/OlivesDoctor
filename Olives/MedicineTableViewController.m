@@ -128,6 +128,29 @@
     }
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == 2) {
+        if (!self.canEdit) {
+            [self showAlertError:@"You don't have permission in this medical record"];
+        }else{
+            [self performSegueWithIdentifier:@"editMedicineInfo" sender:self];
+        }
+
+    }
+}
+
+//show alert message for error
+-(void)showAlertError:(NSString *)errorString{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:errorString
+                                                                   message:nil
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {}];
+    [alert addAction:OKAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
 //- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 //    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"medicineImagesCell" forIndexPath:indexPath];
 //    
@@ -182,6 +205,7 @@
     {
         MedicineDetailsTableViewController * medicineDetailTableViewcontroller = [segue destinationViewController];
         medicineDetailTableViewcontroller.selectedPrescriptionID = self.selectedPrescriptionID ;
+        medicineDetailTableViewcontroller.canEdit = self.canEdit;
 
     }
     if ([[segue identifier] isEqualToString:@"showPrescriptionImage"])
@@ -189,12 +213,15 @@
         MedicineImagesCollectionViewController * medicineImageColectionViewcontroller = [segue destinationViewController];
         medicineImageColectionViewcontroller.selectedPrescriptionID = [self.selectedPrescription objectForKey:@"Id"];
         medicineImageColectionViewcontroller.selectedPartnerID = self.selectedPatientID;
+        medicineImageColectionViewcontroller.canEdit = self.canEdit;
 
     }
+
     if ([[segue identifier] isEqualToString:@"editMedicineInfo"])
     {
         AddNewPrescriptionViewController * addNewPrescriptionViewcontroller = [segue destinationViewController];
         addNewPrescriptionViewcontroller.selectedPrescription = self.selectedPrescription;
+        addNewPrescriptionViewcontroller.canEdit = self.canEdit;
 
     }
 }

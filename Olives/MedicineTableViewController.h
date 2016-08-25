@@ -11,4 +11,5 @@
 @interface MedicineTableViewController : UITableViewController
 @property(strong,nonatomic) NSString *selectedPrescriptionID;
 @property(strong,nonatomic) NSString *selectedPatientID;
+@property (assign,nonatomic)BOOL canEdit;
 @end

@@ -85,8 +85,25 @@
 }
 
 -(IBAction)addMedicine:(id)sender{
+    if (!self.canEdit) {
+        [self showAlertError:@"You don't have permission in this medical record"];
+        return;
+    }
     [self performSegueWithIdentifier:@"addNewMedicine" sender:self];
 }
+
+//show alert message for error
+-(void)showAlertError:(NSString *)errorString{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:errorString
+                                                                   message:nil
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {}];
+    [alert addAction:OKAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
@@ -127,7 +144,11 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSString *key = [[self.medicinedic allKeys] objectAtIndex:indexPath.row];
     self.selectedMedicine = [NSDictionary dictionaryWithObjectsAndKeys:[self.medicinedic objectForKey:key], key,nil];
-    [self performSegueWithIdentifier:@"updateMedicine" sender:self];
+    if (!self.canEdit) {
+        [self showAlertError:@"You don't have permission in this medical record"];
+    }else{
+        [self performSegueWithIdentifier:@"updateMedicine" sender:self];
+    }
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 
 }

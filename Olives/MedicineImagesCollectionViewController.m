@@ -364,7 +364,23 @@ static NSString * const reuseIdentifier = @"medicineImageCell";
     self.navigationController.topViewController.navigationItem.rightBarButtonItem = rightBarButton;
 }
 
+//show alert message for error
+-(void)showAlertError:(NSString *)errorString{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:errorString
+                                                                   message:nil
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {}];
+    [alert addAction:OKAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
 -(IBAction)addImage:(id)sender{
+    if (!self.canEdit) {
+        [self showAlertError:@"You don't have permission in this medical record"];
+        return;
+    }
     UIImagePickerController *myImagePicker = [[UIImagePickerController alloc] init];
     myImagePicker.delegate = self;
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Select Image..."

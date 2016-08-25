@@ -1534,7 +1534,7 @@
                                 <rect key="frame" x="0.0" y="64" width="600" height="536"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hGs-2T-f7h" userLabel="ContentView">
-                                        <rect key="frame" x="0.0" y="0.0" width="600" height="500"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="570"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0Nr-5n-oCe" userLabel="ChosingPatient">
                                                 <rect key="frame" x="10" y="15" width="580" height="130"/>
@@ -1633,7 +1633,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cT6-Er-m8y">
-                                                <rect key="frame" x="0.0" y="460" width="600" height="40"/>
+                                                <rect key="frame" x="0.0" y="530" width="600" height="40"/>
                                                 <color key="backgroundColor" red="0.43824625830000002" green="0.7082583442" blue="0.65507155159999997" alpha="1" colorSpace="calibratedRGB"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="40" id="P98-QT-HZH"/>
@@ -1664,7 +1664,7 @@
                                                 </date>
                                             </datePicker>
                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="7dJ-uK-cXe">
-                                                <rect key="frame" x="10" y="402" width="580" height="28"/>
+                                                <rect key="frame" x="10" y="402" width="580" height="98"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -1683,7 +1683,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="maq-9X-gki">
-                                                <rect key="frame" x="300" y="460" width="300" height="40"/>
+                                                <rect key="frame" x="300" y="530" width="300" height="40"/>
                                                 <color key="backgroundColor" red="0.29799450709999997" green="0.53249754579999997" blue="0.51509440080000002" alpha="1" colorSpace="calibratedRGB"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="40" id="ytw-dd-vmu"/>
@@ -1709,7 +1709,7 @@
                                                 </connections>
                                             </textView>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xgO-4y-Fzy">
-                                                <rect key="frame" x="0.0" y="460" width="300" height="40"/>
+                                                <rect key="frame" x="0.0" y="530" width="300" height="40"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                                 <state key="normal" title="Edit Appointment">
@@ -1723,7 +1723,7 @@
                                         <color key="backgroundColor" red="0.7871809555" green="0.7871809555" blue="0.7871809555" alpha="1" colorSpace="calibratedRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="bottom" secondItem="xgO-4y-Fzy" secondAttribute="bottom" id="0W4-sO-tuq"/>
-                                            <constraint firstAttribute="height" constant="500" id="4OD-Y2-h6Q"/>
+                                            <constraint firstAttribute="height" constant="570" id="4OD-Y2-h6Q"/>
                                             <constraint firstItem="0Nr-5n-oCe" firstAttribute="top" secondItem="hGs-2T-f7h" secondAttribute="top" constant="15" id="9A0-fY-uuf"/>
                                             <constraint firstItem="7dJ-uK-cXe" firstAttribute="centerX" secondItem="hGs-2T-f7h" secondAttribute="centerX" id="9nv-xG-sZL"/>
                                             <constraint firstAttribute="trailing" secondItem="maq-9X-gki" secondAttribute="trailing" id="A0o-oR-mgZ"/>
@@ -1767,7 +1767,6 @@
                                 </constraints>
                             </scrollView>
                         </subviews>
-                        <color key="backgroundColor" red="0.73286342130000004" green="0.80004499350000002" blue="0.2456755511" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="hGs-2T-f7h" firstAttribute="width" secondItem="znp-SB-u5U" secondAttribute="width" id="1Rz-br-afR"/>
                             <constraint firstAttribute="trailing" secondItem="V5C-vz-0kJ" secondAttribute="trailing" id="4oN-mb-PxW"/>
@@ -4208,9 +4207,6 @@
                                                 <constraint firstAttribute="bottom" secondItem="eDK-3G-nwA" secondAttribute="bottom" constant="10" id="n6C-FW-DSE"/>
                                             </constraints>
                                         </tableViewCellContentView>
-                                        <connections>
-                                            <segue destination="gpi-tS-a61" kind="show" identifier="editMedicineInfo" id="DTx-UW-86k"/>
-                                        </connections>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
@@ -4223,6 +4219,7 @@
                     <connections>
                         <outlet property="noteView" destination="eDK-3G-nwA" id="Xef-LC-2EV"/>
                         <outlet property="timeLabel" destination="W76-ZH-reN" id="Hpe-hL-wM2"/>
+                        <segue destination="gpi-tS-a61" kind="show" identifier="editMedicineInfo" id="AUu-0j-y2r"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tC6-34-NYz" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -5687,12 +5684,12 @@
         <segue reference="l4a-Ba-k5I"/>
         <segue reference="0hi-JC-OGj"/>
         <segue reference="LJC-eh-bQz"/>
-        <segue reference="5gd-Kh-nKI"/>
         <segue reference="pcU-gL-Sv4"/>
         <segue reference="qjh-YP-raP"/>
         <segue reference="yKq-Pc-vjG"/>
         <segue reference="Vgv-jc-HXX"/>
-        <segue reference="DTx-UW-86k"/>
+        <segue reference="8SN-OV-8rI"/>
+        <segue reference="AUu-0j-y2r"/>
         <segue reference="z2S-tF-6C6"/>
         <segue reference="4NF-RN-mxh"/>
         <segue reference="wkR-0j-gpv"/>
