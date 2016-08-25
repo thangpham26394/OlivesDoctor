@@ -476,7 +476,7 @@
                                               self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
                                               if (self.responseJSONData != nil) {
                                                   self.mistake = nil;
-                                                  [self updateNewProfileToCoreData];
+                                                  [self updateNewProfileToCoreDataWithNewPassword:doctorPassword];
                                               }else{
 
                                               }
@@ -525,7 +525,7 @@
 
 }
 
--(void)updateNewProfileToCoreData{
+-(void)updateNewProfileToCoreDataWithNewPassword:(NSString *)passwordString{
     NSDictionary *newDoctor = [self.responseJSONData objectForKey:@"Doctor"];
 
 
@@ -540,7 +540,9 @@
     [doctor setValue:[newDoctor objectForKey:@"Phone"]  forKey:@"phone"];
     [doctor setValue:[NSString stringWithFormat:@"%@",[newDoctor objectForKey:@"Gender"]] forKey:@"gender"];
     [doctor setValue:[newDoctor objectForKey:@"Address"]  forKey:@"address"];
-    [doctor setValue:[newDoctor objectForKey:@"Password"]  forKey:@"password"];
+    [doctor setValue:passwordString  forKey:@"password"];
+
+
     NSError *error = nil;
     // Save the object to persistent store
     if (![context save:&error]) {

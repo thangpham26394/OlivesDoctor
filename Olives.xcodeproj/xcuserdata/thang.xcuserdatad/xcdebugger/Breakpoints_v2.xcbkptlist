@@ -25,22 +25,6 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Olives/EditProfileViewController.m"
-            timestampString = "493306476.481272"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "540"
-            endingLineNumber = "540"
-            landmarkName = "-updateNewProfileToCoreData"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "Olives/PatientsTableViewController.m"
             timestampString = "493155688.354071"
             startingColumnNumber = "9223372036854775807"
@@ -138,11 +122,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Olives/EditProfileViewController.m"
-            timestampString = "493306476.481272"
+            timestampString = "493804781.513346"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "579"
-            endingLineNumber = "579"
+            startingLineNumber = "581"
+            endingLineNumber = "581"
             landmarkName = "-updateProfile:"
             landmarkType = "5">
          </BreakpointContent>
@@ -1323,7 +1307,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "532"
             endingLineNumber = "532"
-            landmarkName = "-updateNewProfileToCoreData"
+            landmarkName = "-updateNewProfileToCoreDataWithNewPassword:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

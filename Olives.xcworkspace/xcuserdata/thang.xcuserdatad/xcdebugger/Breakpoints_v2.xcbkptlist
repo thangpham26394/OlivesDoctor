@@ -570,28 +570,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Olives/EditProfileViewController.m"
-            timestampString = "493306476.481272"
+            timestampString = "493804781.513346"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "459"
-            endingLineNumber = "459"
-            landmarkName = "-updateDoctorProfileToAPIWith:and:forDocTor:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Olives/EditProfileViewController.m"
-            timestampString = "493306476.481272"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "550"
-            endingLineNumber = "550"
-            landmarkName = "-updateNewProfileToCoreData"
+            startingLineNumber = "552"
+            endingLineNumber = "552"
+            landmarkName = "-updateNewProfileToCoreDataWithNewPassword:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1194,28 +1178,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Olives/MedicalRecordDetailTableViewController.m"
-            timestampString = "493765393.526102"
+            timestampString = "493822885.114474"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "175"
-            endingLineNumber = "175"
+            startingLineNumber = "177"
+            endingLineNumber = "177"
             landmarkName = "-createMedicalRecordDataToAPI"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Olives/MedicalRecordDetailTableViewController.m"
-            timestampString = "493765393.526102"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "499"
-            endingLineNumber = "499"
-            landmarkName = "-okButtonActionNormal:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1274,7 +1242,7 @@
                   moduleName = "Olives"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/thang/Desktop/OlivesDoctorApp/Olives/ManagePatientViewController.m"
-                  timestampString = "493770961.238876"
+                  timestampString = "493823482.892954"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "646"
@@ -1289,7 +1257,7 @@
                   moduleName = "Olives"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/thang/Desktop/OlivesDoctorApp/Olives/ManagePatientViewController.m"
-                  timestampString = "493770961.238987"
+                  timestampString = "493823482.893077"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "646"
@@ -1304,7 +1272,7 @@
                   moduleName = "Olives"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/thang/Desktop/OlivesDoctorApp/Olives/ManagePatientViewController.m"
-                  timestampString = "493770961.239085"
+                  timestampString = "493823482.893173"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "646"
@@ -1481,11 +1449,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Olives/MedicalRecordDetailTableViewController.m"
-            timestampString = "493765393.526102"
+            timestampString = "493822885.114474"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "190"
-            endingLineNumber = "190"
+            startingLineNumber = "192"
+            endingLineNumber = "192"
             landmarkName = "-createMedicalRecordDataToAPI"
             landmarkType = "5">
          </BreakpointContent>
@@ -1497,11 +1465,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Olives/MedicalRecordDetailTableViewController.m"
-            timestampString = "493765393.526102"
+            timestampString = "493822885.114474"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "202"
-            endingLineNumber = "202"
+            startingLineNumber = "204"
+            endingLineNumber = "204"
             landmarkName = "-createMedicalRecordDataToAPI"
             landmarkType = "5">
          </BreakpointContent>
@@ -1545,7 +1513,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Olives/MedicalRecordDetailTableViewController.m"
-            timestampString = "493765393.526102"
+            timestampString = "493822885.114474"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "87"
@@ -2249,11 +2217,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Olives/MedicalRecordDetailTableViewController.m"
-            timestampString = "493765393.526102"
+            timestampString = "493822885.114474"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "284"
-            endingLineNumber = "284"
+            startingLineNumber = "286"
+            endingLineNumber = "286"
             landmarkName = "-tableView:cellForRowAtIndexPath:"
             landmarkType = "5">
          </BreakpointContent>
@@ -2457,11 +2425,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Olives/MedicalRecordDetailTableViewController.m"
-            timestampString = "493765353.318693"
+            timestampString = "493822885.114474"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "528"
-            endingLineNumber = "528"
+            startingLineNumber = "530"
+            endingLineNumber = "530"
             landmarkName = "-prepareForSegue:sender:"
             landmarkType = "5">
          </BreakpointContent>
@@ -2607,6 +2575,150 @@
             startingLineNumber = "290"
             endingLineNumber = "290"
             landmarkName = "-createShowAllDataArray"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Olives/PatientsTableViewController.m"
+            timestampString = "493804176.378436"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "93"
+            endingLineNumber = "93"
+            landmarkName = "-loadPatienttDataFromAPI"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Olives/EditProfileViewController.m"
+            timestampString = "493804993.802621"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "546"
+            endingLineNumber = "546"
+            landmarkName = "-updateNewProfileToCoreDataWithNewPassword:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Olives/EditProfileViewController.m"
+            timestampString = "493805147.030602"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "459"
+            endingLineNumber = "459"
+            landmarkName = "-updateDoctorProfileToAPIWith:and:forDocTor:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Olives/ChangePasswordViewController.m"
+            timestampString = "493805219.338249"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "170"
+            endingLineNumber = "170"
+            landmarkName = "-saveNewPassword:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Olives/MedicalRecordDetailTableViewController.m"
+            timestampString = "493822885.114474"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "128"
+            endingLineNumber = "128"
+            landmarkName = "-saveMedicalRecordToCoreData"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Olives/MedicalRecordDetailTableViewController.m"
+            timestampString = "493823067.165119"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "273"
+            endingLineNumber = "273"
+            landmarkName = "-tableView:numberOfRowsInSection:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Olives/MedicalRecordDetailTableViewController.m"
+            timestampString = "493823084.708812"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "502"
+            endingLineNumber = "502"
+            landmarkName = "-okButtonActionNormal:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Olives/MedicalRecordDetailTableViewController.m"
+            timestampString = "493823192.17664"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "329"
+            endingLineNumber = "329"
+            landmarkName = "-tableView:cellForRowAtIndexPath:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Olives/MedicalRecordDetailTableViewController.m"
+            timestampString = "493823392.695673"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "301"
+            endingLineNumber = "301"
+            landmarkName = "-tableView:cellForRowAtIndexPath:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

@@ -253,7 +253,7 @@
                                                   //                                              NSLog(@"\n\n\nError = %@",[errorArray objectAtIndex:0]);
 
                                                   dispatch_async(dispatch_get_main_queue(), ^{
-                                                      UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                      UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Invalid email or password"
                                                                                                                      message:[errorArray objectAtIndex:0]
                                                                                                               preferredStyle:UIAlertControllerStyleAlert];
 
