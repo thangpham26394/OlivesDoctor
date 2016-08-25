@@ -757,11 +757,27 @@
     [[NSUserDefaults standardUserDefaults] setDouble:selectedDateTimeInterval forKey:@"currentSelectedDate"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 
-    [self.addNewAppointmentBarButton setEnabled:YES];
-    self.addNewAppointmentBarButtonStatus = YES;
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
     [dateFormatter setDateFormat:@"MM/dd/yyyy"];
+
+
+    NSDateFormatter *dateFormatterToCheck = [[NSDateFormatter alloc] init];
+    [dateFormatterToCheck setTimeZone:[NSTimeZone systemTimeZone]];
+    [dateFormatterToCheck setDateFormat:@"MM/dd/yyyy/HH:mm:ss:SSS"];
+
+    //check if patient choose date in past then disable
+    NSString *today = [dateFormatter stringFromDate:[NSDate date]];
+    NSDate *todayForCheck = [dateFormatterToCheck dateFromString:[NSString stringWithFormat:@"%@/00:00:00:000",today]];
+
+    if ([todayForCheck timeIntervalSince1970] > [date timeIntervalSince1970]) {
+        [self.addNewAppointmentBarButton setEnabled:NO];
+    }else{
+        [self.addNewAppointmentBarButton setEnabled:YES];
+    }
+    self.addNewAppointmentBarButtonStatus = YES;
+
+
 
     NSLog(@"Selected date = %@",[dateFormatter stringFromDate:date]);
     self.chosenDate =[dateFormatter stringFromDate:date];
