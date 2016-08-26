@@ -280,7 +280,7 @@
                                               NSArray *errorArray = [errorDic objectForKey:@"Errors"];
                                               //                                              NSLog(@"\n\n\nError = %@",[errorArray objectAtIndex:0]);
 
-                                              UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                              UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Can't create medicine"
                                                                                                              message:[errorArray objectAtIndex:0]
                                                                                                       preferredStyle:UIAlertControllerStyleAlert];
 
