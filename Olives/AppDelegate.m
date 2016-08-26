@@ -60,6 +60,31 @@
     }
 
 
+
+    [self openHubConnection];
+
+    if ([UIApplication instancesRespondToSelector:@selector(registerUserNotificationSettings:)]){
+
+        [application registerUserNotificationSettings:[UIUserNotificationSettings
+                                                       settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|
+                                                       UIUserNotificationTypeSound categories:nil]];
+    }
+
+    UILocalNotification *locationNotification = [launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
+    if (locationNotification) {
+        // Set icon badge number to zero
+        application.applicationIconBadgeNumber = 0;
+    }
+
+    return YES;
+}
+
+-(void)closeHubConnection{
+    [self.hubConnection  stop];
+    [self.hubConnectionForChat stop];
+}
+
+-(void)openHubConnection{
     //get doctor email and password from coredata
     NSManagedObjectContext *context = [self managedObjectContext];
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
@@ -136,26 +161,9 @@
         }];
         // Start the connection for chat API
         [self.hubConnectionForChat start];
-
+        
     }
-
-
-    if ([UIApplication instancesRespondToSelector:@selector(registerUserNotificationSettings:)]){
-
-        [application registerUserNotificationSettings:[UIUserNotificationSettings
-                                                       settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|
-                                                       UIUserNotificationTypeSound categories:nil]];
-    }
-
-    UILocalNotification *locationNotification = [launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
-    if (locationNotification) {
-        // Set icon badge number to zero
-        application.applicationIconBadgeNumber = 0;
-    }
-
-    return YES;
 }
-
 
 - (void)messageReceived:(id)message
 {
@@ -222,6 +230,15 @@
 }
 
 -(void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
+    if ([notification.alertBody isEqualToString:@"OpenHubForAppDoctor"]) {
+        [self openHubConnection];
+        return;
+    }
+
+    if ([notification.alertBody isEqualToString:@"CloseHubForAppDoctor"]) {
+        [self closeHubConnection];
+        return;
+    }
 
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     CGFloat screenWidth = screenRect.size.width;

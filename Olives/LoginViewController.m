@@ -78,7 +78,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
     //Set login status for current account to be NO
     //This case is happen after user choose log out from sidebar
     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"loginStatus"];
@@ -100,6 +99,8 @@
 - (void)viewWillAppear:(BOOL)animated {
 
     [super viewWillAppear:animated];
+    [self deleteDoctorInfoWhenLogout];
+    [self stopHubConnection];
     [self registerForKeyboardNotifications];
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"loginViewLoaded"];
     [[NSUserDefaults standardUserDefaults] synchronize];
@@ -277,9 +278,20 @@
     if (self.canLogin ) {
         //store doctor's data to Coredata
         [self saveDoctorInfoToCoreData:self.responseJSONData];
+        //create local noti to open hub connection in appdeledate
+        UILocalNotification *notification = [[UILocalNotification alloc] init];
+        notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:0];
+        notification.alertBody = @"OpenHubForAppDoctor";
+        notification.alertAction = @"Show me";
+        notification.timeZone = [NSTimeZone defaultTimeZone];
+        notification.soundName = UILocalNotificationDefaultSoundName;
+        [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+
 
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"loginStatus"];
         [[NSUserDefaults standardUserDefaults] synchronize];
+
+
         //perform segue to move to homescreen
         [self performSegueWithIdentifier: @"loginSegue" sender: self];
     }else{
@@ -317,6 +329,39 @@
 
 }
 
+-(void)stopHubConnection{
+    //create local noti to close hub connection in appdeledate
+    UILocalNotification *notification = [[UILocalNotification alloc] init];
+    notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:0];
+    notification.alertBody = @"CloseHubForAppDoctor";
+    notification.alertAction = @"Show me";
+    notification.timeZone = [NSTimeZone defaultTimeZone];
+    notification.soundName = UILocalNotificationDefaultSoundName;
+    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+}
+
+-(void)deleteDoctorInfoWhenLogout{
+    NSManagedObjectContext *context = [self managedObjectContext];
+    //Check if there is already a doctor account in coredata
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    NSManagedObject *currentDoctor;
+    if (doctorObject.count >0) {
+        for (int index =0; index <doctorObject.count; index++) {
+            currentDoctor = [doctorObject objectAtIndex:index];
+            [context deleteObject:currentDoctor];
+        }
+    }
+
+    NSError *error = nil;
+    // Save the object to persistent store
+    if (![context save:&error]) {
+        NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
+    }else{
+        NSLog(@"delete success!");
+    }
+
+}
 
 -(void)saveDoctorInfoToCoreData:(NSDictionary*) jsonData
 {
