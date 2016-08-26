@@ -1988,7 +1988,7 @@
                     <navigationItem key="navigationItem" title="Patients" id="MVH-nv-TuV">
                         <barButtonItem key="rightBarButtonItem" title="Manage" id="WKz-sE-W3G">
                             <connections>
-                                <segue destination="WpN-Ic-r9Y" kind="show" id="C0G-Uc-bJc"/>
+                                <action selector="manageActionBarButton:" destination="6qD-RH-A2u" id="sG0-vQ-Dxy"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -1996,6 +1996,7 @@
                         <outlet property="manageBarButton" destination="WKz-sE-W3G" id="SSU-Nl-AcO"/>
                         <segue destination="67E-ag-jJT" kind="show" identifier="showDetailPatient" id="q21-24-ZtI"/>
                         <segue destination="BNQ-Zd-Zja" kind="unwind" identifier="unwindToTimePicker" unwindAction="unwindToTimePicker:" id="wjQ-pX-ixj"/>
+                        <segue destination="WpN-Ic-r9Y" kind="show" identifier="showManagePatient" id="OPl-ud-AaH"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6yO-6Z-aMc" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -5678,23 +5679,23 @@
         <image name="zoro.jpeg" width="204" height="204"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="o2O-wy-pPe"/>
-        <segue reference="bsp-8F-ycE"/>
         <segue reference="byS-eb-3hF"/>
-        <segue reference="l4a-Ba-k5I"/>
+        <segue reference="bsp-8F-ycE"/>
+        <segue reference="o2O-wy-pPe"/>
+        <segue reference="OPl-ud-AaH"/>
+        <segue reference="oKW-n0-eRL"/>
         <segue reference="0hi-JC-OGj"/>
-        <segue reference="LJC-eh-bQz"/>
-        <segue reference="pcU-gL-Sv4"/>
         <segue reference="qjh-YP-raP"/>
-        <segue reference="yKq-Pc-vjG"/>
         <segue reference="Vgv-jc-HXX"/>
+        <segue reference="pcU-gL-Sv4"/>
+        <segue reference="yKq-Pc-vjG"/>
+        <segue reference="LJC-eh-bQz"/>
+        <segue reference="wkR-0j-gpv"/>
+        <segue reference="0gn-oy-B7q"/>
+        <segue reference="kVf-YF-K2w"/>
         <segue reference="8SN-OV-8rI"/>
         <segue reference="AUu-0j-y2r"/>
         <segue reference="z2S-tF-6C6"/>
         <segue reference="4NF-RN-mxh"/>
-        <segue reference="wkR-0j-gpv"/>
-        <segue reference="kVf-YF-K2w"/>
-        <segue reference="0gn-oy-B7q"/>
-        <segue reference="oKW-n0-eRL"/>
     </inferredMetricsTieBreakers>
 </document>

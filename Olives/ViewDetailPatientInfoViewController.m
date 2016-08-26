@@ -154,17 +154,8 @@
     }else{
         //display info for pending patient
         NSDictionary *patientDic = [self.selectedPatient objectForKey:@"Source"];
-
-        UIImage *img;
-        NSString *imgURL = [patientDic objectForKey:@"Photo"];
-        if ((id)imgURL != [NSNull null]) {
-            NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:imgURL]];
-            img = [[UIImage alloc] initWithData:data];
-        }else{
-            img = [UIImage imageNamed:@"nullAvatar"];
-        }
-
-        self.avatar.image = img; //set avatar
+        NSData *data = [patientDic objectForKey:@"Photo"];
+        self.avatar.image = [[UIImage alloc] initWithData:data];//set avatar
 
 
 

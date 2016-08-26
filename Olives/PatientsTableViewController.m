@@ -27,6 +27,7 @@
 @property (strong,nonatomic) UIView *backgroundView;
 @property (strong,nonatomic) UIActivityIndicatorView *  activityIndicator;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *manageBarButton;
+- (IBAction)manageActionBarButton:(id)sender;
 
 
 -(IBAction)cancel:(id)sender;
@@ -213,6 +214,7 @@
 
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
+    [self.manageBarButton setEnabled:YES];
     self.patientArray = [[NSArray alloc]init];
     self.tableView.multipleTouchEnabled = NO;
     self.tableView.userInteractionEnabled = YES;
@@ -232,6 +234,7 @@
     [currentWindow bringSubviewToFront:self.backgroundView];
 
     [self.activityIndicator startAnimating];
+
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
 
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -299,6 +302,11 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (IBAction)manageActionBarButton:(id)sender {
+    [self.manageBarButton setEnabled:NO];
+    [self performSegueWithIdentifier:@"showManagePatient" sender:self];
 }
 
 -(IBAction)cancel:(id)sender{

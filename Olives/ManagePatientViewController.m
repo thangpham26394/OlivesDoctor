@@ -313,7 +313,8 @@
                                               NSError *parsJSONError = nil;
                                               self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
                                               if (self.responseJSONData != nil) {
-                                                  self.currentPatientArray = [self.responseJSONData objectForKey:@"Relationships"];
+                                                  self.currentPatientArray = [self downloadAvatarWith:[self.responseJSONData objectForKey:@"Relationships"]];
+
                                               }else{
                                               }
 
@@ -379,7 +380,8 @@
                                               NSError *parsJSONError = nil;
                                               self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
                                               if (self.responseJSONData != nil) {
-                                                  self.pendingPatientArray = [self.responseJSONData objectForKey:@"RelationshipRequests"];
+//                                                  self.pendingPatientArray = [self.responseJSONData objectForKey:@"RelationshipRequests"];
+                                                  self.pendingPatientArray = [self downloadAvatarWith:[self.responseJSONData objectForKey:@"RelationshipRequests"]];
                                               }else{
                                               }
 
@@ -400,14 +402,81 @@
     
 }
 
+-(NSMutableArray *)downloadAvatarWith:(NSArray *)patientListArray{
+    NSMutableArray *patientListWithDownloadedAvatar = [[NSMutableArray alloc]init];
+    if (patientListArray.count >0) {
+        for (int index =0; index <patientListArray.count; index ++) {
+            NSDictionary *currentDic = patientListArray[index];
 
+            NSDictionary *currentPatientDic = [currentDic objectForKey:@"Source"];
+            NSString *imageURL = [currentPatientDic objectForKey:@"Photo"];
+            NSData *data ;
+
+            if ((id)imageURL != [NSNull null])  {
+                NSURL *url = [NSURL URLWithString:imageURL];
+                data = [NSData dataWithContentsOfURL:url];
+            }else{
+                data = UIImagePNGRepresentation([UIImage imageNamed:@"nullAvatar"]);
+            }
+
+            NSDictionary *newDic = [[NSDictionary alloc]init];
+            //new source dictionary in response json
+
+            if ([currentDic objectForKey:@"Content"] != nil) {
+                //pending patient
+                NSDictionary *newSource = [NSDictionary dictionaryWithObjectsAndKeys:
+                                           [currentPatientDic objectForKey:@"Address"],@"Address",
+                                           [currentPatientDic objectForKey:@"Birthday"],@"Birthday",
+                                           [currentPatientDic objectForKey:@"FirstName"],@"FirstName",
+                                           [currentPatientDic objectForKey:@"Height"],@"Height",
+                                           [currentPatientDic objectForKey:@"Id"],@"Id",
+                                           [currentPatientDic objectForKey:@"LastName"],@"LastName",
+                                           [currentPatientDic objectForKey:@"Phone"],@"Phone",
+                                           [currentPatientDic objectForKey:@"Weight"],@"Weight",
+                                           data,@"Photo"
+                                           , nil];
+
+                //create new dic containt download image for avatar
+                newDic = [NSDictionary dictionaryWithObjectsAndKeys:
+                          [currentDic objectForKey:@"Content"],@"Content",
+                          [currentDic objectForKey:@"Created"],@"Created",
+                          [currentDic objectForKey:@"Id"],@"Id",
+                          [currentDic objectForKey:@"Target"],@"Target",
+                          newSource,@"Source"
+                          , nil];
+                [patientListWithDownloadedAvatar addObject:newDic];
+            }else{
+                //current patient
+                NSDictionary *newSource = [NSDictionary dictionaryWithObjectsAndKeys:
+                                           [currentPatientDic objectForKey:@"FirstName"],@"FirstName",
+                                           [currentPatientDic objectForKey:@"Id"],@"Id",
+                                           [currentPatientDic objectForKey:@"LastName"],@"LastName",
+                                           data,@"Photo"
+                                           , nil];
+
+                //create new dic containt download image for avatar
+                newDic = [NSDictionary dictionaryWithObjectsAndKeys:
+                                        [currentDic objectForKey:@"Created"],@"Created",
+                                        [currentDic objectForKey:@"Id"],@"Id",
+                                        [currentDic objectForKey:@"Target"],@"Target",
+                                        newSource,@"Source"
+                                        , nil];
+                [patientListWithDownloadedAvatar addObject:newDic];
+            }
+
+
+        }
+    }
+
+    return patientListWithDownloadedAvatar;
+}
 
 
 #pragma mark view controller
 
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
-
+    [self.view setUserInteractionEnabled:YES];
     //start animation
     [self.currentWindow addSubview:self.backgroundView];
     [self.activityIndicator startAnimating];
@@ -479,16 +548,7 @@
 
         //config cell
         NSDictionary *currentPatientDic = [currentDic objectForKey:@"Source"];
-        NSString *imageURL = [currentPatientDic objectForKey:@"Photo"];
-        NSData *data ;
-        
-        if ((id)imageURL != [NSNull null])  {
-            NSURL *url = [NSURL URLWithString:imageURL];
-            data = [NSData dataWithContentsOfURL:url];
-        }else{
-            data = UIImagePNGRepresentation([UIImage imageNamed:@"nullAvatar"]);
-        }
-
+        NSData *data = [currentPatientDic objectForKey:@"Photo"];
         UIImage *img = [[UIImage alloc] initWithData:data];
 
         cell.avatar.image = img; //set avatar
@@ -504,16 +564,7 @@
 
         //config cell
         NSDictionary *pendingPatientDic = [pendingDic objectForKey:@"Source"];
-        NSString *imageURL = [pendingPatientDic objectForKey:@"Photo"];
-        NSData *data ;
-
-        if ((id)imageURL != [NSNull null])  {
-            NSURL *url = [NSURL URLWithString:imageURL];
-            data = [NSData dataWithContentsOfURL:url];
-        }else{
-            data = UIImagePNGRepresentation([UIImage imageNamed:@"nullAvatar"]);
-        }
-
+        NSData *data = [pendingPatientDic objectForKey:@"Photo"];
         UIImage *img = [[UIImage alloc] initWithData:data];
 
         cell.patientAvatar.image = img; //set avatar
@@ -528,7 +579,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // Do some stuff when the row is selected
-
+    [self.view setUserInteractionEnabled:NO];
     if (self.segmentcontroller.selectedSegmentIndex ==0) {
         // if the view current state is not for add new appointment
         self.selectedPatient = self.currentPatientArray[indexPath.row];
