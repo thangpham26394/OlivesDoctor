@@ -397,6 +397,8 @@
 
 
 -(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:YES];
+    [self.view setUserInteractionEnabled:YES];
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     CGFloat screenWidth = screenRect.size.width;
     CGFloat screenHeight = screenRect.size.height;
@@ -668,7 +670,7 @@
 
 
     }
-
+    [self.view setUserInteractionEnabled:NO];
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 

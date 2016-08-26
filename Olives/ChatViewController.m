@@ -455,13 +455,13 @@
             ChatMessageSendTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:@"sendCell" forIndexPath:indexPath];
             cell.messageLabel.text =[messageInfo objectForKey:@"Content"];
             cell.timeLabel.text = [dateFormatterToLocal stringFromDate:notiDate];
-            cell.bgCardView.layer.cornerRadius = cell.bgCardView.frame.size.height/2+1;
+//            cell.bgCardView.layer.cornerRadius = cell.bgCardView.frame.size.height/2+1;
             return cell;
         }else{
             ChatMessageReceiveTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:@"receiveCell" forIndexPath:indexPath];
             cell.messageLabel.text = [messageInfo objectForKey:@"Content"];
             cell.timeLabel.text = [dateFormatterToLocal stringFromDate:notiDate];
-            cell.bgCardView.layer.cornerRadius = cell.bgCardView.frame.size.height/2+1;
+//            cell.bgCardView.layer.cornerRadius = cell.bgCardView.frame.size.height/2+1;
             return cell;
         }
     

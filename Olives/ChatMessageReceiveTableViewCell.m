@@ -13,7 +13,7 @@
 - (void)awakeFromNib {
     [super awakeFromNib];
     // Initialization code
-    self.bgCardView.layer.cornerRadius = 5.0f;
+    self.bgCardView.layer.cornerRadius = 15.0f;
     [self.bgCardView.layer setMasksToBounds:NO];
 }
 
