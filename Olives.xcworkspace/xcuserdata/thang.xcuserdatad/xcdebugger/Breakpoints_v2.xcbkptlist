@@ -1178,7 +1178,7 @@
                   moduleName = "Olives"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/thang/Desktop/OlivesDoctorApp/Olives/ManagePatientViewController.m"
-                  timestampString = "493920403.271614"
+                  timestampString = "493923666.988831"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "697"
@@ -1189,11 +1189,11 @@
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "__copy_helper_block_.323"
+                  symbolName = "__copy_helper_block_.327"
                   moduleName = "Olives"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/thang/Desktop/OlivesDoctorApp/Olives/ManagePatientViewController.m"
-                  timestampString = "493920403.271727"
+                  timestampString = "493923666.988927"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "697"
@@ -1204,11 +1204,11 @@
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "__destroy_helper_block_.324"
+                  symbolName = "__destroy_helper_block_.328"
                   moduleName = "Olives"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/thang/Desktop/OlivesDoctorApp/Olives/ManagePatientViewController.m"
-                  timestampString = "493920403.271828"
+                  timestampString = "493923666.989015"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "697"
@@ -1337,11 +1337,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Olives/DoctorNoteTableViewController.m"
-            timestampString = "492972687.993406"
+            timestampString = "493921574.317614"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "467"
-            endingLineNumber = "467"
+            startingLineNumber = "468"
+            endingLineNumber = "468"
             landmarkName = "-prepareForSegue:sender:"
             landmarkType = "5">
          </BreakpointContent>
@@ -1369,11 +1369,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Olives/DoctorNoteTableViewController.m"
-            timestampString = "492972687.993406"
+            timestampString = "493921574.317614"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "474"
-            endingLineNumber = "474"
+            startingLineNumber = "475"
+            endingLineNumber = "475"
             landmarkName = "-prepareForSegue:sender:"
             landmarkType = "5">
          </BreakpointContent>
@@ -1945,11 +1945,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Olives/AddNewPrescriptionViewController.m"
-            timestampString = "493298936.741752"
+            timestampString = "493922575.349446"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "220"
-            endingLineNumber = "220"
+            startingLineNumber = "221"
+            endingLineNumber = "221"
             landmarkName = "-addNewPrescriptionAPI"
             landmarkType = "5">
          </BreakpointContent>
@@ -2729,11 +2729,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Olives/AddNewPrescriptionViewController.m"
-            timestampString = "493841974.091934"
+            timestampString = "493922575.349446"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "480"
-            endingLineNumber = "480"
+            startingLineNumber = "481"
+            endingLineNumber = "481"
             landmarkName = "-savePrescriptionAction:"
             landmarkType = "5">
          </BreakpointContent>
@@ -3247,6 +3247,70 @@
             startingLineNumber = "591"
             endingLineNumber = "591"
             landmarkName = "-tableView:didSelectRowAtIndexPath:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Olives/DoctorNoteTableViewController.m"
+            timestampString = "493921404.677933"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "150"
+            endingLineNumber = "150"
+            landmarkName = "-deleteDiaryAPI:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Olives/DoctorNoteTableViewController.m"
+            timestampString = "493921409.369662"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "260"
+            endingLineNumber = "260"
+            landmarkName = "-viewDidAppear:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Olives/AddNewDiaryViewController.m"
+            timestampString = "493921694.419516"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "265"
+            endingLineNumber = "265"
+            landmarkName = "-addNewDiaryNoteAPI"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Olives/AddNewDiaryViewController.m"
+            timestampString = "493921704.98229"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "278"
+            endingLineNumber = "278"
+            landmarkName = "-addNewDiaryNoteAPI"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

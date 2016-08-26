@@ -325,6 +325,17 @@
 
 - (IBAction)saveAction:(id)sender {
     if (self.canEdit) {
+        //validate name info
+        if ([self.textField.text isEqualToString: @""]) {
+            [self showAlertError:@"Name can not be empty!"];
+            return;
+        }
+        //validate info
+        if ([self.textView.text isEqualToString: @""]) {
+            [self showAlertError:@"Result can not be empty!"];
+            return;
+        }
+
         if (self.isUpdateView) {
             //edit an exist info string
             [self performSegueWithIdentifier:@"updateInfoUnwind" sender:self];

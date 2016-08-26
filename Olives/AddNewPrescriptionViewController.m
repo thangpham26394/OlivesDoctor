@@ -103,6 +103,7 @@
 - (void)viewWillAppear:(BOOL)animated {
 
     [super viewWillAppear:animated];
+    self.navigationController.topViewController.title=@"New Prescription";
     [self registerForKeyboardNotifications];
     [self setupGestureRecognizerToDisMissKeyBoard];
 }

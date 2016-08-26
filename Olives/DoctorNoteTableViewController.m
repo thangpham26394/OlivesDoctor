@@ -411,19 +411,20 @@
                                                                  dispatch_async(dispatch_get_main_queue(), ^{
                                                                      //call api to delete in server
                                                                      [self deleteDiaryAPI:[deleteDiary objectForKey:@"Id"]];
+                                                                     if (self.apiDeleted) {
+                                                                         //delete in category array
+                                                                         [self.diaryArray removeObjectAtIndex:indexPath.row];
+                                                                         //delete in tableview
+                                                                         [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+                                                                     }else{
+                                                                         [self showAlertCannotDelete];
+                                                                     }
                                                                      [self.activityIndicator stopAnimating];
                                                                      [self.backgroundView removeFromSuperview];
                                                                  });
                                                              });
 
-                                                             if (self.apiDeleted) {
-                                                                 //delete in category array
-                                                                 [self.diaryArray removeObjectAtIndex:indexPath.row];
-                                                                 //delete in tableview
-                                                                 [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-                                                             }else{
-                                                                 [self showAlertCannotDelete];
-                                                             }
+
 
                                                          }];
     UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel

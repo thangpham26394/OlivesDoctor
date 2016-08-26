@@ -200,7 +200,7 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
-    self.navigationController.topViewController.title=@"Medical Prescription";
+    self.navigationController.topViewController.title=@"Prescription";
     //setup barbutton
     UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc]
                                        initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addInfo:)];

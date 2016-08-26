@@ -127,8 +127,8 @@
 
 #pragma mark - View delegate
 - (void)viewWillAppear:(BOOL)animated {
-
     [super viewWillAppear:animated];
+    self.navigationController.topViewController.title=@"New Medicine";
     [self registerForKeyboardNotifications];
     [self setupGestureRecognizerToDisMissKeyBoard];
 }

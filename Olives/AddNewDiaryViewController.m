@@ -434,6 +434,18 @@
 }
 */
 
+//show alert message for error
+-(void)showAlertError:(NSString *)errorString{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:errorString
+                                                                   message:nil
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* OKAction = [UIAlertAction actionWithTitle:@"OK"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {}];
+    [alert addAction:OKAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
 - (IBAction)addOrUpdateDiarryAction:(id)sender {
     //start animation
     [self.currentWindow addSubview:self.backgroundView];
@@ -441,11 +453,23 @@
 
 
     if (self.selectedDiary !=nil) {
-        //this view is used for edit prescription
-        [self editDiaryAPI];
+        //check time diary
+        if ([self.timePicker.date timeIntervalSince1970] > [[NSDate date] timeIntervalSince1970]) {
+            [self showAlertError:@"Time choosing is in future!"];
+        }else{
+            //this view is used for edit prescription
+            [self editDiaryAPI];
+        }
+
     }else{
-        //this view is used for add new prescription
-        [self addNewDiaryNoteAPI];
+        //check time diary
+        if ([self.timePicker.date timeIntervalSince1970] > [[NSDate date] timeIntervalSince1970]) {
+            [self showAlertError:@"Time choosing is in future!"];
+        }else{
+            //this view is used for add new prescription
+            [self addNewDiaryNoteAPI];
+        }
+
     }
 
     //stop animation
