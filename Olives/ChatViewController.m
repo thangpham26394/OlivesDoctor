@@ -416,10 +416,6 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-
-
-
-
         NSDictionary *messageInfo = [self.messageArray objectAtIndex:indexPath.row];
         self.noteLabelHeight = [[messageInfo objectForKey:@"Content"] boundingRectWithSize:CGSizeMake(self.view.bounds.size.width - 140, CGFLOAT_MAX)
                                                                                    options:NSStringDrawingUsesLineFragmentOrigin

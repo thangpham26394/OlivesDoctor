@@ -416,6 +416,7 @@
                                                                          [self.diaryArray removeObjectAtIndex:indexPath.row];
                                                                          //delete in tableview
                                                                          [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+                                                                         [self.tableView reloadData];
                                                                      }else{
                                                                          [self showAlertCannotDelete];
                                                                      }
