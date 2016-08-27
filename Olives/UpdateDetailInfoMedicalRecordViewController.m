@@ -290,12 +290,20 @@
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
 
+    if (self.textField.text.length > 32) {
+        [self showAlertError:@"Name can content maximum 32 characters only!"];
+        return;
+    }
+    if (self.textView.text.length >32) {
+        [self showAlertError:@"Value can content maximum 32 characters only!"];
+        return;
+    }
+
     if ([[segue identifier] isEqualToString:@"addNewInfoUnwind"])
     {
         NSString *name = self.textField.text;
         NSString *value = self.textView.text;
         [self.totalInfo setObject:value forKey:name];
-        
     }
 
     if ([[segue identifier] isEqualToString:@"updateInfoUnwind"])
@@ -316,6 +324,7 @@
         self.updateCopy = [self.totalInfo mutableCopy];
         [self.totalInfo removeObjectForKey:self.selectedInfoKey]; //remove info in dictionary
     }
+
 
 
     [self updateNewMedicalRecordDataToAPI];

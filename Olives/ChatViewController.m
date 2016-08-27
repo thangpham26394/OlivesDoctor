@@ -292,6 +292,12 @@
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"chatScreenLoaded"];
     [[NSUserDefaults standardUserDefaults] setObject:self.selectedPatientID forKey:@"chattingPatient"];
     [[NSUserDefaults standardUserDefaults] synchronize];
+    [self.tableView reloadData];
+    NSInteger  lastRowNumber = [self.tableView numberOfRowsInSection:0] - 1;
+    if (lastRowNumber >=0) {
+        NSIndexPath* ip = [NSIndexPath indexPathForRow:lastRowNumber inSection:0];
+        [self.tableView scrollToRowAtIndexPath:ip atScrollPosition:UITableViewScrollPositionNone animated:NO];
+    }
 }
 
 -(void)viewDidDisappear:(BOOL)animated{
@@ -369,30 +375,9 @@
     self.buttonSend.layer.cornerRadius = 5.0f;
     self.messageTextView.layer.cornerRadius = 5.0f;
     self.contentViewHeight.constant = [[UIScreen mainScreen] bounds].size.height - [UIApplication sharedApplication].statusBarFrame.size.height - self.navigationController.navigationBar.frame.size.height;
-//    [self.tableView setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
-
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
-
-
-//    for (NSInteger index =self.unseenMessage.count-1; index >=0 ; index --) {
-//        NSDictionary *currentUnseen = [self.unseenMessage objectAtIndex:index];
-//        NSDictionary *cellContent = [NSDictionary dictionaryWithObjectsAndKeys:
-//                                     @"1",@"type",
-//                                     [currentUnseen objectForKey:@"content"],@"content",
-//                                     [currentUnseen objectForKey:@"time"],@"time"
-//                                     , nil];
-//        [self.messageArray addObject:cellContent];
-//    }
-
     [self.tableView reloadData];
     [self updateTableContentInset];
-    NSInteger  lastRowNumber = [self.tableView numberOfRowsInSection:0] - 1;
-    if (lastRowNumber >=0) {
-        NSIndexPath* ip = [NSIndexPath indexPathForRow:lastRowNumber inSection:0];
-        [self.tableView scrollToRowAtIndexPath:ip atScrollPosition:UITableViewScrollPositionNone animated:NO];
-    }
-
-    
 }
 
 
@@ -455,13 +440,11 @@
             ChatMessageSendTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:@"sendCell" forIndexPath:indexPath];
             cell.messageLabel.text =[messageInfo objectForKey:@"Content"];
             cell.timeLabel.text = [dateFormatterToLocal stringFromDate:notiDate];
-//            cell.bgCardView.layer.cornerRadius = cell.bgCardView.frame.size.height/2+1;
             return cell;
         }else{
             ChatMessageReceiveTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:@"receiveCell" forIndexPath:indexPath];
             cell.messageLabel.text = [messageInfo objectForKey:@"Content"];
             cell.timeLabel.text = [dateFormatterToLocal stringFromDate:notiDate];
-//            cell.bgCardView.layer.cornerRadius = cell.bgCardView.frame.size.height/2+1;
             return cell;
         }
     
