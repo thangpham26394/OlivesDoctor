@@ -8,7 +8,7 @@
 #define APIURL @"http://olive.azurewebsites.net"
 #define APIURL_CREATE_MESSAGE @"http://olive.azurewebsites.net/api/message"
 #define API_MESSAGE_URL @"http://olive.azurewebsites.net/api/message/filter"
-
+#define API_MESSAGE_SEEN_URL @"http://olive.azurewebsites.net/api/message/seen"
 
 #import "ChatViewController.h"
 #import "ChatDateTimeTableViewCell.h"
@@ -46,6 +46,75 @@
 }
 
 #pragma mark - Connect to API function
+
+-(void)putSeenMessageDataToAPIWithPatientID:(NSString *) patientID{
+
+    // create url
+    NSURL *url = [NSURL URLWithString:API_MESSAGE_SEEN_URL];
+    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+    //    sessionConfig.timeoutIntervalForRequest = 5.0;
+    //    sessionConfig.timeoutIntervalForResource = 5.0;
+
+    //NSURLSession *defaultSession = [NSURLSession sharedSession];
+    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:sessionConfig];
+    //create request
+    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
+
+    //get doctor email and password from coredata
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"DoctorInfo"];
+    NSMutableArray *doctorObject = [[context executeFetchRequest:fetchRequest error:nil] mutableCopy];
+
+    NSManagedObject *doctor = [doctorObject objectAtIndex:0];
+
+
+    //setup header and body for request
+    [urlRequest setHTTPMethod:@"POST"];
+    [urlRequest setValue:[doctor valueForKey:@"email"] forHTTPHeaderField:@"Email"];
+    [urlRequest setValue:[doctor valueForKey:@"password"]  forHTTPHeaderField:@"Password"];
+    [urlRequest setValue:@"en-US" forHTTPHeaderField:@"Accept-Language"];
+    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [urlRequest setTimeoutInterval:10];
+
+    //create JSON data to post to API
+    NSDictionary *account = @{
+                              @"Partner" :  patientID,
+                              };
+    NSError *error = nil;
+    NSData *jsondata = [NSJSONSerialization dataWithJSONObject:account options:NSJSONWritingPrettyPrinted error:&error];
+    [urlRequest setHTTPBody:jsondata];
+
+//    dispatch_semaphore_t    sem;
+//    sem = dispatch_semaphore_create(0);
+
+    NSURLSessionDataTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
+                                                       completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+                                      {
+                                          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+
+                                          if((long)[httpResponse statusCode] == 200  && error ==nil)
+                                          {
+                                              NSError *parsJSONError = nil;
+                                              self.responseJSONData = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &parsJSONError];
+                                              if (self.responseJSONData != nil) {
+                                              }else{
+                                              }
+
+                                              //stop waiting after get response from API
+//                                              dispatch_semaphore_signal(sem);
+                                          }
+                                          else{
+                                              NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+                                              NSLog(@"\n\n\nError = %@",text);
+//                                              dispatch_semaphore_signal(sem);
+                                              return;
+                                          }
+                                      }];
+    [dataTask resume];
+    //start waiting until get response from API
+//    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+
+}
 
 
 -(void)getAllMessageFromAPIWithPatientID:(NSString *) patientID{
@@ -412,7 +481,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return self.noteLabelHeight + 50;
+    return self.noteLabelHeight + 60;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -489,6 +558,7 @@
         NSInteger  lastRowNumber = [self.tableView numberOfRowsInSection:0] - 1;
         NSIndexPath* ip = [NSIndexPath indexPathForRow:lastRowNumber inSection:0];
         [self.tableView scrollToRowAtIndexPath:ip atScrollPosition:UITableViewScrollPositionNone animated:NO];
+        [self putSeenMessageDataToAPIWithPatientID:self.selectedPatientID];
 
     }
 }

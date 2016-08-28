@@ -3261,7 +3261,7 @@
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="XA7-sK-F57">
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Subtitle" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="XA7-sK-F57">
                                             <rect key="frame" x="15" y="84.5" width="37.5" height="13"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="11"/>
@@ -3697,7 +3697,7 @@
                                                                             <nil key="highlightedColor"/>
                                                                         </label>
                                                                     </subviews>
-                                                                    <color key="backgroundColor" red="0.17203380120586997" green="0.53249754581151831" blue="0.3847292581178286" alpha="1" colorSpace="calibratedRGB"/>
+                                                                    <color key="backgroundColor" red="0.27016207968758033" green="0.66181282722513091" blue="0.4610212833722831" alpha="1" colorSpace="calibratedRGB"/>
                                                                     <constraints>
                                                                         <constraint firstItem="vvn-rG-IZh" firstAttribute="top" secondItem="V99-Vd-nHV" secondAttribute="top" constant="5" id="2pB-Y8-vi1"/>
                                                                         <constraint firstAttribute="trailing" secondItem="vvn-rG-IZh" secondAttribute="trailing" constant="5" id="6Bm-rl-PzG"/>
