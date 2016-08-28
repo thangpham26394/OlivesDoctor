@@ -78,6 +78,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self.forgotPasswordButton setEnabled:NO];
     //Set login status for current account to be NO
     //This case is happen after user choose log out from sidebar
     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"loginStatus"];

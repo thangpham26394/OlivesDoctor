@@ -532,7 +532,7 @@
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="38" id="hBo-fs-I3f"/>
                                                 </constraints>
-                                                <state key="normal" title="Forgot password?">
+                                                <state key="normal">
                                                     <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
                                                 <connections>
