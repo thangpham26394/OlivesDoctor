@@ -30,6 +30,8 @@
 		156A40141D67FDEC001EED7D /* medicalNoti.png in Resources */ = {isa = PBXBuildFile; fileRef = 156A40101D67FDEC001EED7D /* medicalNoti.png */; };
 		156A40151D67FDEC001EED7D /* messageNoti.png in Resources */ = {isa = PBXBuildFile; fileRef = 156A40111D67FDEC001EED7D /* messageNoti.png */; };
 		156A40161D67FDEC001EED7D /* patientRequestNoti.png in Resources */ = {isa = PBXBuildFile; fileRef = 156A40121D67FDEC001EED7D /* patientRequestNoti.png */; };
+		157854871D741FDA007FDF1A /* Logo_app01.png in Resources */ = {isa = PBXBuildFile; fileRef = 157854861D741FDA007FDF1A /* Logo_app01.png */; };
+		1578548C1D742348007FDF1A /* olivesicon2.png in Resources */ = {isa = PBXBuildFile; fileRef = 1578548B1D742348007FDF1A /* olivesicon2.png */; };
 		15BF12671D5516E900728456 /* AddOrUpdateMedicineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BF12661D5516E900728456 /* AddOrUpdateMedicineViewController.m */; };
 		15BF126A1D56462800728456 /* AddNewMedicalNoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BF12691D56462800728456 /* AddNewMedicalNoteViewController.m */; };
 		15BF126E1D56744100728456 /* MedicalRecordExperimentNoteTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BF126D1D56744100728456 /* MedicalRecordExperimentNoteTableViewController.m */; };
@@ -238,6 +240,8 @@
 		156A40101D67FDEC001EED7D /* medicalNoti.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = medicalNoti.png; sourceTree = "<group>"; };
 		156A40111D67FDEC001EED7D /* messageNoti.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = messageNoti.png; sourceTree = "<group>"; };
 		156A40121D67FDEC001EED7D /* patientRequestNoti.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = patientRequestNoti.png; sourceTree = "<group>"; };
+		157854861D741FDA007FDF1A /* Logo_app01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Logo_app01.png; sourceTree = "<group>"; };
+		1578548B1D742348007FDF1A /* olivesicon2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = olivesicon2.png; sourceTree = "<group>"; };
 		15BF12651D5516E900728456 /* AddOrUpdateMedicineViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddOrUpdateMedicineViewController.h; sourceTree = "<group>"; };
 		15BF12661D5516E900728456 /* AddOrUpdateMedicineViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddOrUpdateMedicineViewController.m; sourceTree = "<group>"; };
 		15BF12681D56462800728456 /* AddNewMedicalNoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddNewMedicalNoteViewController.h; sourceTree = "<group>"; };
@@ -608,6 +612,8 @@
 		15DCF5AC1CF4A52200013F19 /* image */ = {
 			isa = PBXGroup;
 			children = (
+				1578548B1D742348007FDF1A /* olivesicon2.png */,
+				157854861D741FDA007FDF1A /* Logo_app01.png */,
 				156A400F1D67FDEC001EED7D /* appointmentNoti.png */,
 				156A40101D67FDEC001EED7D /* medicalNoti.png */,
 				156A40111D67FDEC001EED7D /* messageNoti.png */,
@@ -1153,6 +1159,7 @@
 			files = (
 				15F0A63A1D1E75F600A32848 /* menuscreen.jpg in Resources */,
 				15E8C4D91D3ADE020056E8AE /* mypatient2.png in Resources */,
+				1578548C1D742348007FDF1A /* olivesicon2.png in Resources */,
 				15E76B761D2F973D0028EFEB /* typeicon.jpeg in Resources */,
 				15E586141D4E5E0F00C6F468 /* menuBackGround2.jpg in Resources */,
 				15F010611D49644A001663CE /* requesticon.png in Resources */,
@@ -1176,6 +1183,7 @@
 				156A3FFF1D64E6D6001EED7D /* medicalRecord01.png in Resources */,
 				15F010571D47FB8C001663CE /* cellBackground1.png in Resources */,
 				15F0105F1D49644A001663CE /* serviceicon.png in Resources */,
+				157854871D741FDA007FDF1A /* Logo_app01.png in Resources */,
 				156A40151D67FDEC001EED7D /* messageNoti.png in Resources */,
 				15E76B771D2F973D0028EFEB /* timeicon.png in Resources */,
 				15E75A311CF7345C00A985E7 /* backgroundIOS.jpeg in Resources */,

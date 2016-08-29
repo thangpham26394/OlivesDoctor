@@ -326,10 +326,27 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     PatientTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"patientCell" forIndexPath:indexPath];
+    NSDictionary *currentPatient = self.patientArray[indexPath.row];
+
     cell.nameLabel.text = [NSString stringWithFormat:@"%@ %@",[self.patientArray[indexPath.row] objectForKey:@"FirstName"],[self.patientArray[indexPath.row] objectForKey:@"LastName"]];
-    cell.phoneLabel.text = [NSString stringWithFormat:@"Phone:%@",[self.patientArray[indexPath.row] objectForKey:@"Phone"]];
-    cell.address.text = [NSString stringWithFormat:@"Address:%@",[self.patientArray[indexPath.row] objectForKey:@"Address"]];
-    cell.emailLabel.text  = [NSString stringWithFormat:@"Email:%@",[self.patientArray[indexPath.row] objectForKey:@"Email"]];
+    
+    if ([currentPatient objectForKey:@"Phone"] != [NSNull null]) {
+        cell.phoneLabel.text = [NSString stringWithFormat:@"Phone:%@",[self.patientArray[indexPath.row] objectForKey:@"Phone"]];
+    }
+
+    if ([currentPatient objectForKey:@"Address"] != [NSNull null]) {
+        cell.address.text = [NSString stringWithFormat:@"Address:%@",[self.patientArray[indexPath.row] objectForKey:@"Address"]];
+    }
+
+    if ([currentPatient objectForKey:@"Email"] != [NSNull null]) {
+        cell.emailLabel.text  = [NSString stringWithFormat:@"Email:%@",[self.patientArray[indexPath.row] objectForKey:@"Email"]];
+    }
+
+//    cell.phoneLabel.text = [NSString stringWithFormat:@"Phone:%@",[self.patientArray[indexPath.row] objectForKey:@"Phone"]];
+//    cell.address.text = [NSString stringWithFormat:@"Address:%@",[self.patientArray[indexPath.row] objectForKey:@"Address"]];
+//    cell.emailLabel.text  = [NSString stringWithFormat:@"Email:%@",[self.patientArray[indexPath.row] objectForKey:@"Email"]];
+
+
 
     NSData *data;
     if (self.connectToAPISuccess) {
